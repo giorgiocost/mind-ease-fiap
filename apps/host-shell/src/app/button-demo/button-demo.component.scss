@@ -1,0 +1,49 @@
+.button-demo {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 1rem;
+    color: #1a202c;
+  }
+
+  h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+    font-size: 1.25rem;
+  }
+
+  section {
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background: #f7fafc;
+    border-radius: 8px;
+  }
+
+  .button-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .hint {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #718096;
+    font-style: italic;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    color: #4a5568;
+  }
+}

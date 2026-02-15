@@ -22,6 +22,13 @@ export const appRoutes: Route[] = [
       import('mfe-profile/Routes').then((m) => m!.remoteRoutes),
   },
   {
+    path: 'button-demo',
+    loadComponent: () =>
+      import('./button-demo/button-demo.component').then(
+        (m) => m.ButtonDemoComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/dashboard',
   },

@@ -1,0 +1,116 @@
+<div class="button-demo">
+  <h1>Button Component - Demo</h1>
+  <p>Click count: {{ clickCount }}</p>
+
+  <section>
+    <h2>Variantes</h2>
+    <div class="button-row">
+      <ui-button variant="primary" (clicked)="handleClick($event)">
+        Primary Button
+      </ui-button>
+      <ui-button variant="secondary" (clicked)="handleClick($event)">
+        Secondary Button
+      </ui-button>
+      <ui-button variant="danger" (clicked)="handleClick($event)">
+        Danger Button
+      </ui-button>
+      <ui-button variant="ghost" (clicked)="handleClick($event)">
+        Ghost Button
+      </ui-button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tamanhos</h2>
+    <div class="button-row">
+      <ui-button size="sm" (clicked)="handleClick($event)">
+        Small
+      </ui-button>
+      <ui-button size="md" (clicked)="handleClick($event)">
+        Medium (default)
+      </ui-button>
+      <ui-button size="lg" (clicked)="handleClick($event)">
+        Large
+      </ui-button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Estados</h2>
+    <div class="button-row">
+      <ui-button [disabled]="true" (clicked)="handleClick($event)">
+        Disabled
+      </ui-button>
+      <ui-button [loading]="true" (clicked)="handleClick($event)">
+        Loading
+      </ui-button>
+      <ui-button variant="secondary" [disabled]="true" (clicked)="handleClick($event)">
+        Secondary Disabled
+      </ui-button>
+      <ui-button variant="danger" [loading]="true" (clicked)="handleClick($event)">
+        Danger Loading
+      </ui-button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Com Ícones</h2>
+    <div class="button-row">
+      <ui-button icon="plus" iconPosition="left" (clicked)="handleClick($event)">
+        Add Item
+      </ui-button>
+      <ui-button icon="check" iconPosition="right" variant="secondary" (clicked)="handleClick($event)">
+        Confirm
+      </ui-button>
+      <ui-button icon="trash" variant="danger" (clicked)="handleClick($event)">
+        Delete
+      </ui-button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Debounce (1000ms)</h2>
+    <div class="button-row">
+      <ui-button [debounce]="1000" (clicked)="handleClick($event)">
+        Click me fast (debounced)
+      </ui-button>
+      <ui-button (clicked)="handleClick($event)">
+        Click me fast (no debounce)
+      </ui-button>
+    </div>
+    <p class="hint">Try clicking the first button rapidly - only one click per second will register (ADHD feature)</p>
+  </section>
+
+  <section>
+    <h2>Acessibilidade</h2>
+    <div class="button-row">
+      <ui-button (clicked)="handleClick($event)">
+        Tab para focar
+      </ui-button>
+      <ui-button variant="secondary" (clicked)="handleClick($event)">
+        Enter ou Space para ativar
+      </ui-button>
+      <ui-button variant="danger" (clicked)="handleClick($event)">
+        Esc para desfocar
+      </ui-button>
+    </div>
+    <p class="hint">Use Tab para navegar, Enter/Space para ativar (WCAG 2.4.7 Focus Visible)</p>
+  </section>
+
+  <section>
+    <h2>Todas as Combinações</h2>
+    <div class="button-grid">
+      <ui-button size="sm" variant="primary" (clicked)="handleClick($event)">SM Primary</ui-button>
+      <ui-button size="sm" variant="secondary" (clicked)="handleClick($event)">SM Secondary</ui-button>
+      <ui-button size="sm" variant="danger" (clicked)="handleClick($event)">SM Danger</ui-button>
+      <ui-button size="sm" variant="ghost" (clicked)="handleClick($event)">SM Ghost</ui-button>
+
+      <ui-button size="md" variant="primary" (clicked)="handleClick($event)">MD Primary</ui-button>
+      <ui-button size="md" variant="secondary" (clicked)="handleClick($event)">MD Secondary</ui-button>
+      <ui-button size="md" variant="danger" (clicked)="handleClick($event)">MD Danger</ui-button>
+      <ui-button size="md" variant="ghost" (clicked)="handleClick($event)">MD Ghost</ui-button>
+
+      <ui-button size="lg" variant="primary" (clicked)="handleClick($event)">LG Primary</ui-button>
+      <ui-button size="lg" variant="secondary" (clicked)="handleClick($event)">LG Secondary</ui-button>
+      <ui-button size="lg" variant="danger" (clicked)="handleClick($event)">LG Danger</ui-button>
+      <ui-button size="lg" variant="ghost" (clicked)="handleClick($event)">LG Ghost</ui-button>
