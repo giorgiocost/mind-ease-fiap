@@ -1,0 +1,94 @@
+@import '../styles/tokens';
+@import '../styles/mixins';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  
+  transition: 
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Variants
+:host(.card-flat) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: none;
+}
+
+:host(.card-outlined) {
+  border: 1px solid var(--color-neutral-300);
+  box-shadow: var(--shadow-sm);
+}
+
+:host(.card-elevated) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-md);
+}
+
+:host(.card-raised) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-lg);
+}
+
+// Clickable
+:host(.card-clickable) {
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Density (spacing)
+:host(.card-density-simple) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-sm);
+  }
+}
+
+:host(.card-density-medium) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-md);
+  }
+}
+
+:host(.card-density-full) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-lg);
+  }
+}
+
+// High contrast mode
+[data-contrast="high"] :host {
+  border-width: 2px;
+}
+
+// Cognitive spacing scale
+:host {
+  @include cognitive-spacing;
+}

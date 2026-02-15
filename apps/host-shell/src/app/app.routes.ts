@@ -29,6 +29,27 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'input-demo',
+    loadComponent: () =>
+      import('./input-demo/input-demo.component').then(
+        (m) => m.InputDemoComponent
+      ),
+  },
+  {
+    path: 'card-demo',
+    loadComponent: () =>
+      import('./card-demo/card-demo.component').then(
+        (m) => m.CardDemoComponent
+      ),
+  },
+  {
+    path: 'modal-demo',
+    loadComponent: () =>
+      import('./modal-demo/modal-demo.component').then(
+        (m) => m.ModalDemoComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '/dashboard',
   },

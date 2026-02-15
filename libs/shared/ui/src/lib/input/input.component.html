@@ -1,0 +1,68 @@
+<div class="input-wrapper">
+  @if (hasLabel()) {
+    <label class="input-label" [class.input-label-required]="required()">
+      {{ label() }}
+      @if (required()) {
+        <span class="input-label-asterisk" aria-label="obrigatório">*</span>
+      }
+    </label>
+  }
+
+  <div class="input-container">
+    <input
+      #inputElement
+      class="input-field"
+      [type]="inputType()"
+      [placeholder]="placeholder()"
+      [value]="value()"
+      [disabled]="disabled()"
+      [readonly]="readonly()"
+      [required]="required()"
+      [attr.maxlength]="maxLength()"
+      [autocomplete]="autocomplete()"
+      [attr.aria-invalid]="validationState() === 'error'"
+      [attr.aria-describedby]="ariaDescribedBy()"
+      (input)="handleInput($event)"
+      (focus)="handleFocus()"
+      (blur)="handleBlur()"
+    />
+
+    @if (type() === 'password' && showPasswordToggle()) {
+      <button
+        type="button"
+        class="input-toggle-password"
+        [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+        (click)="togglePasswordVisibility()"
+      >
+        @if (showPassword()) {
+          <span class="icon-eye-off" aria-hidden="true">👁️‍🗨️</span>
+        } @else {
+          <span class="icon-eye" aria-hidden="true">👁️</span>
+        }
+      </button>
+    }
+
+    @if (validationState() === 'success') {
+      <span class="input-icon-success icon-check" aria-hidden="true">✓</span>
+    }
+  </div>
+
+  @if (hasHelperText() && validationState() === 'default') {
+    <div id="input-helper" class="input-helper-text">
+      {{ helperText() }}
+    </div>
+  }
+
+  @if (hasValidationMessage()) {
+    <div
+      id="input-validation"
+      class="input-validation-message"
+      [class.input-validation-error]="validationState() === 'error'"
+      [class.input-validation-warning]="validationState() === 'warning'"
+      [class.input-validation-success]="validationState() === 'success'"
+      role="alert"
+    >
+      {{ validationMessage() }}
+    </div>
+  }
+</div>

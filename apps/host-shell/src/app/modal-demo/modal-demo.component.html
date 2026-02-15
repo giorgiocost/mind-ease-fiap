@@ -1,0 +1,250 @@
+<div class="demo-container">
+  <h1>Modal Component</h1>
+  <p class="description">
+    Componente de modal acessível com foco trap, fechamento por ESC, backdrop e múltiplos tamanhos.
+  </p>
+
+  <section class="demo-section">
+    <h2>Modal Sizes</h2>
+    <div class="button-group">
+      <ui-button (click)="confirmModal.set(true)" variant="primary">
+        Small Modal (sm)
+      </ui-button>
+
+      <ui-button (click)="infoModal.set(true)" variant="secondary">
+        Medium Modal (md)
+      </ui-button>
+
+      <ui-button (click)="longContentModal.set(true)" variant="ghost">
+        Large Modal (lg)
+      </ui-button>
+
+      <ui-button (click)="sideModal.set(true)" variant="secondary">
+        Side Modal
+      </ui-button>
+
+      <ui-button (click)="fullscreenModal.set(true)" variant="primary">
+        Fullscreen Modal
+      </ui-button>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Advanced Features</h2>
+    <div class="button-group">
+      <ui-button (click)="noBackdropModal.set(true)" variant="ghost">
+        No Backdrop Close
+      </ui-button>
+
+      <ui-button (click)="openServiceModal()" variant="secondary">
+        Open via Service
+      </ui-button>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Accessibility Features</h2>
+    <ul>
+      <li>✅ Focus trap - Tab/Shift+Tab contidos dentro do modal</li>
+      <li>✅ Escape key - Fecha o modal (se closeOnEscape=true)</li>
+      <li>✅ Backdrop click - Fecha ao clicar fora (se closeOnBackdrop=true)</li>
+      <li>✅ Body scroll lock - Previne scroll da página ao fundo</li>
+      <li>✅ Focus restoration - Restaura foco ao elemento anterior</li>
+      <li>✅ ARIA attributes - role="dialog", aria-modal, aria-labelledby</li>
+      <li>✅ Keyboard navigation - Navegação completa por teclado</li>
+    </ul>
+  </section>
+</div>
+
+<!-- Confirmation Modal (Small) -->
+<ui-modal
+  [open]="confirmModal()"
+  (openChange)="confirmModal.set($event)"
+  size="sm"
+  title="Confirmar exclusão"
+  [closeOnBackdropClick]="false"
+>
+  <p>Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="ghost"
+      (click)="confirmModal.set(false)"
+    >
+      Cancelar
+    </ui-button>
+    <ui-button
+      variant="danger"
+      (click)="handleDelete()"
+    >
+      Excluir
+    </ui-button>
+  </div>
+</ui-modal>
+
+<!-- Info Modal (Medium) -->
+<ui-modal
+  [open]="infoModal()"
+  (openChange)="infoModal.set($event)"
+  size="md"
+  title="Informações importantes"
+>
+  <p>
+    Este modal usa o tamanho padrão (medium) e demonstra conteúdo informativo
+    com múltiplas ações disponíveis.
+  </p>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="secondary"
+      (click)="infoModal.set(false)"
+    >
+      Fechar
+    </ui-button>
+    <ui-button
+      variant="primary"
+      (click)="handleSave()"
+    >
+      Salvar alterações
+    </ui-button>
+  </div>
+</ui-modal>
+
+<!-- Long Content Modal (Large) -->
+<ui-modal
+  [open]="longContentModal()"
+  (openChange)="longContentModal.set($event)"
+  size="lg"
+  title="Terms of Service"
+>
+  <h3>1. Acceptance of Terms</h3>
+  <p>
+    By accessing and using this application, you accept and agree to be bound
+    by the terms and provision of this agreement.
+  </p>
+
+  <h3>2. Privacy Policy</h3>
+  <p>
+    Your privacy is important to us. This Privacy Policy explains how we collect,
+    use, disclose, and safeguard your information when you use our application.
+  </p>
+
+  <h3>3. User Responsibilities</h3>
+  <p>
+    You are responsible for maintaining the confidentiality of your account and
+    password and for restricting access to your computer.
+  </p>
+
+  <h3>4. Intellectual Property</h3>
+  <p>
+    The Service and its original content, features, and functionality are and will
+    remain the exclusive property of the Company and its licensors.
+  </p>
+
+  <h3>5. Limitation of Liability</h3>
+  <p>
+    In no event shall the Company, nor its directors, employees, partners, agents,
+    suppliers, or affiliates, be liable for any indirect, incidental, special,
+    consequential or punitive damages.
+  </p>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="primary"
+      (click)="longContentModal.set(false)"
+    >
+      I Accept
+    </ui-button>
+  </div>
+</ui-modal>
+
+<!-- Side Modal -->
+<ui-modal
+  [open]="sideModal()"
+  (openChange)="sideModal.set($event)"
+  position="side"
+  title="Settings Panel"
+  size="md"
+>
+  <h3>Appearance</h3>
+  <p>Customize the appearance of your workspace</p>
+
+  <h3>Notifications</h3>
+  <p>Manage how and when you receive notifications</p>
+
+  <h3>Privacy</h3>
+  <p>Control your privacy settings and data sharing</p>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="secondary"
+      (click)="sideModal.set(false)"
+    >
+      Close
+    </ui-button>
+    <ui-button
+      variant="primary"
+      (click)="sideModal.set(false)"
+    >
+      Save Changes
+    </ui-button>
+  </div>
+</ui-modal>
+
+<!-- Fullscreen Modal -->
+<ui-modal
+  [open]="fullscreenModal()"
+  (openChange)="fullscreenModal.set($event)"
+  size="fullscreen"
+  title="Fullscreen Editor"
+>
+  <h2>Rich Text Editor</h2>
+  <p>
+    Este modal em tela cheia é ideal para editores, formulários complexos,
+    ou qualquer conteúdo que precise de máximo espaço disponível.
+  </p>
+
+  <div class="editor-placeholder">
+    <p>Editor content area...</p>
+  </div>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="ghost"
+      (click)="fullscreenModal.set(false)"
+    >
+      Cancel
+    </ui-button>
+    <ui-button
+      variant="primary"
+      (click)="fullscreenModal.set(false)"
+    >
+      Save & Close
+    </ui-button>
+  </div>
+</ui-modal>
+
+<!-- No Backdrop Close Modal -->
+<ui-modal
+  [open]="noBackdropModal()"
+  (openChange)="noBackdropModal.set($event)"
+  size="md"
+  title="Atenção"
+  [closeOnBackdropClick]="false"
+  [closeOnEscape]="false"
+  [showCloseButton]="false"
+>
+  <p>
+    Este modal não pode ser fechado clicando no backdrop, pressionando ESC,
+    ou no botão X. Você precisa clicar em uma das ações abaixo.
+  </p>
+
+  <div modal-footer class="modal-actions">
+    <ui-button
+      variant="primary"
+      (click)="noBackdropModal.set(false)"
+    >
+      Entendi
+    </ui-button>
+  </div>
+</ui-modal>

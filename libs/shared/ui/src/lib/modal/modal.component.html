@@ -1,0 +1,36 @@
+@if (open()) {
+  <div class="modal-backdrop" (click)="handleBackdropClick($event)">
+    <div
+      #modalContent
+      class="modal-content"
+      (click)="$event.stopPropagation()"
+    >
+      @if (hasTitle() || showCloseButton()) {
+        <div class="modal-header">
+          @if (hasTitle()) {
+            <h2 id="modal-title" class="modal-title">{{ title() }}</h2>
+          }
+
+          @if (showCloseButton()) {
+            <button
+              type="button"
+              class="modal-close-button"
+              aria-label="Fechar modal"
+              (click)="close()"
+            >
+              <span class="icon-x" aria-hidden="true">✕</span>
+            </button>
+          }
+        </div>
+      }
+
+      <div id="modal-body" class="modal-body">
+        <ng-content></ng-content>
+      </div>
+
+      <div class="modal-footer">
+        <ng-content select="[modal-footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+}
