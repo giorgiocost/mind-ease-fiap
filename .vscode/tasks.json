@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Nx: serve host-shell",
+      "type": "shell",
+      "command": "npm start",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: serve all MFEs (start:all)",
+      "type": "shell",
+      "command": "npm run start:all",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: lint (all)",
+      "type": "shell",
+      "command": "npm run lint:all",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: test (all)",
+      "type": "shell",
+      "command": "npm run test:all",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: build (all)",
+      "type": "shell",
+      "command": "npm run build:all",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: graph",
+      "type": "shell",
+      "command": "npm run graph",
+      "problemMatcher": []
+    },
+    {
+      "label": "Nx: reset",
+      "type": "shell",
+      "command": "npm run reset",
+      "problemMatcher": []
+    }
+  ]
+}
+  ]
+}

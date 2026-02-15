@@ -1,101 +1,98 @@
-# AdhdTaskManager
+# MindEase Web - Frontend Monorepo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+> Plataforma de acessibilidade cognitiva com Micro-Frontends
 
-‚ú® Your new, shiny [Nx workspace](https://nx.dev) is ready ‚ú®.
+## ÌøóÔ∏è Arquitetura
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- **Nx Monorepo** (v22+)
+- **Angular 21+** com Standalone Components
+- **Module Federation** (pr√≥xima fase)
+- **MVVM** com Angular Signals
+- **Clean Architecture** adaptada ao frontend
 
-## Run tasks
+## Ì≥¶ Estrutura
 
-To run the dev server for your app, use:
+\`\`\`
+apps/
+  host-shell/          ‚Üê Host MFE (shell)
+  mfe-dashboard/       ‚Üê Remote: Painel cognitivo (pr√≥xima fase)
+  mfe-tasks/           ‚Üê Remote: Kanban tarefas (pr√≥xima fase)
+  mfe-profile/         ‚Üê Remote: Perfil usu√°rio (pr√≥xima fase)
 
-```sh
-npx nx serve host-shell
-```
+libs/
+  shared/
+    ui/                ‚Üê Design System
+    a11y/              ‚Üê Tokens cognitivos
+    data-access/       ‚Üê HTTP, Auth, Stores
+    state/             ‚Üê Global state (Signals)
+    utils/             ‚Üê Helpers, pipes
+  domain/              ‚Üê Regras de neg√≥cio
+  application/         ‚Üê Use cases
+  infrastructure/      ‚Üê Adapters
+\`\`\`
 
-To create a production bundle:
+## Ì∫Ä Quick Start
 
-```sh
-npx nx build host-shell
-```
+\`\`\`bash
+# Instalar depend√™ncias (j√° feito)
+npm install
 
-To see all available targets to run for a project, run:
+# Servir host-shell
+npm start
 
-```sh
-npx nx show project host-shell
-```
+# Build de produ√ß√£o
+npm run build
+\`\`\`
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## Ì≥ã Scripts Dispon√≠veis
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+| Script | Descri√ß√£o |
+|--------|-----------|
+| \`npm start\` | Serve host-shell (porta 4200) |
+| \`npm run start:all\` | Serve todos os MFEs em paralelo |
+| \`npm run build\` | Build de produ√ß√£o (host-shell) |
+| \`npm run build:all\` | Build de todos os projetos |
+| \`npm test\` | Roda testes unit√°rios |
+| \`npm run lint\` | Lint de c√≥digo |
+| \`npm run lint:fix\` | Lint + auto-fix |
+| \`npm run format\` | Formata c√≥digo (Prettier) |
+| \`nx graph\` | Visualiza grafo de depend√™ncias |
+| \`nx affected:test\` | Testa apenas o que mudou |
 
-## Add new projects
+## Ì∑™ Testes
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+\`\`\`bash
+# Rodar todos os testes
+npm test
 
-Use the plugin's generator to create new projects.
+# Testes com coverage
+nx test --code-coverage
 
-To generate a new application, use:
+# Testes E2E (quando implementado)
+nx e2e host-shell-e2e
+\`\`\`
 
-```sh
-npx nx g @nx/angular:app demo
-```
+## Ìæ® Design System
 
-To generate a new library, use:
+Tokens cognitivos dispon√≠veis via \`@shared/a11y\`:
+- \`uiDensity\`: simple | medium | full
+- \`focusMode\`: boolean
+- \`contentMode\`: summary | detailed
+- \`contrast\`: low | normal | high
+- \`fontScale\`: 0.9 - 1.4
+- \`spacingScale\`: 0.9 - 1.4
+- \`motion\`: full | reduced | off
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
+## Ì¥ó Links √öteis
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+- [Nx Documentation](https://nx.dev)
+- [Angular Documentation](https://angular.io/docs)
+- [Module Federation](https://webpack.js.org/concepts/module-federation/)
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Ì±• Time
 
-## Set up CI!
+Projeto desenvolvido para o Hackathon FIAP Inclusive 2026.
 
-### Step 1
+## Ì≥Ñ Licen√ßa
 
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+MIT

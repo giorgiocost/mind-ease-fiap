@@ -1,0 +1,55 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "adhd-task-manager"
+    }
+  ],
+  "settings": {
+    "liveServer.settings.port": 5500,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "prettier.requireConfig": true,
+    "prettier.useEditorConfig": true,
+    "eslint.validate": ["typescript", "html", "json"],
+    "eslint.format.enable": false,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "angular.enable-strict-mode-prompt": false,
+    "files.exclude": {
+      "**/.nx/**": true,
+      "**/dist/**": true,
+      "**/coverage/**": true,
+      "**/.angular/**": true
+    },
+    "search.exclude": {
+      "**/node_modules/**": true,
+      "**/dist/**": true,
+      "**/coverage/**": true,
+      "**/.nx/**": true,
+      "**/.angular/**": true
+    },
+    "git.autofetch": true
+  },
+  "extensions": {
+    "recommendations": [
+      "nrwl.angular-console",
+      "angular.ng-template",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "ms-vscode.vscode-typescript-next",
+      "formulahendry.auto-rename-tag",
+      "christian-kohler.path-intellisense"
+    ]
+  }
+}

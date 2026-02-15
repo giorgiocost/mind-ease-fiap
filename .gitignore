@@ -23,6 +23,7 @@ node_modules
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+!*.code-workspace
 
 # misc
 /.sass-cache
@@ -44,3 +45,32 @@ Thumbs.db
 .angular
 
 __screenshots__/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# AI and Planning files (not for production)
+AI_EXECUTION_CHECKLIST.md
+AI_README.md
+.copilot-context.md
+docs.html
+passo-passo.html
+prompts/
+tasks/
+
+# Logs
+logs
+*.log
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Testing
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Build files
+*.tsbuildinfo
+.cache

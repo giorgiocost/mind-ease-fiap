@@ -1,0 +1,54 @@
+{
+  "liveServer.settings.port": 5500,
+
+  // ===== Editor / Qualidade =====
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+
+  // ===== Prettier =====
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": true,
+
+  // ===== ESLint (Angular/Nx) =====
+  "eslint.validate": ["typescript", "html", "json"],
+  "eslint.format.enable": false,
+
+  // ===== TypeScript / Imports =====
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // ===== Angular =====
+  "angular.enable-strict-mode-prompt": false,
+
+  // ===== Explorer / Monorepo =====
+  "files.exclude": {
+    "**/.nx/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/.angular/**": true
+  },
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/.nx/**": true,
+    "**/.angular/**": true
+  },
+
+  // ===== Git =====
+  "git.autofetch": true,
+
+  // ===== Markdown (docs do projeto) =====
+  "markdown.validate.enabled": true,
+  "markdown.preview.breaks": true
+}
