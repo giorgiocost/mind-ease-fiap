@@ -1,0 +1,404 @@
+// =============================================================================
+// MindEase — Reusable SCSS Mixins
+// =============================================================================
+//
+// A curated set of mixins that encode common patterns used across the Design
+// System.  They keep component stylesheets DRY and ensure consistency.
+//
+// Categories:
+//   1. Responsive (breakpoints)
+//   2. Focus & Accessibility
+//   3. Text
+//   4. Layout
+//   5. Visual Effects
+//   6. Cognitive Helpers
+//   7. Animations
+//
+// Usage:
+//   @use '@shared/styles/mixins' as *;
+//   .card { @include tablet { padding: var(--spacing-lg); } }
+// =============================================================================
+
+@use 'tokens' as *;
+
+// =============================================================================
+// 1. RESPONSIVE BREAKPOINTS
+// =============================================================================
+// Mobile-first: these mixins apply styles AT or ABOVE the given breakpoint.
+//
+// Example:
+//   .hero { font-size: 1rem; @include tablet { font-size: 1.5rem; } }
+
+/// Styles for screens ≥ 640px (small tablets, landscape phones)
+@mixin mobile {
+  @media (min-width: #{$breakpoint-sm}) {
+    @content;
+  }
+}
+
+/// Styles for screens ≥ 768px (tablets)
+@mixin tablet {
+  @media (min-width: #{$breakpoint-md}) {
+    @content;
+  }
+}
+
+/// Styles for screens ≥ 1024px (desktops)
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+/// Styles for screens ≥ 1280px (large desktops)
+@mixin wide {
+  @media (min-width: #{$breakpoint-xl}) {
+    @content;
+  }
+}
+
+/// Styles for screens ≥ 1536px (ultra-wide)
+@mixin ultra-wide {
+  @media (min-width: #{$breakpoint-2xl}) {
+    @content;
+  }
+}
+
+/// Generic breakpoint mixin using the $breakpoints map
+/// @param {String} $name — key in the $breakpoints map (sm, md, lg, xl, 2xl)
+@mixin breakpoint($name) {
+  $value: map-get($breakpoints, $name);
+  @if $value {
+    @media (min-width: #{$value}) {
+      @content;
+    }
+  } @else {
+    @warn 'Unknown breakpoint "#{$name}". Available: sm, md, lg, xl, 2xl.';
+  }
+}
+
+// =============================================================================
+// 2. FOCUS & ACCESSIBILITY
+// =============================================================================
+
+/// Visible focus ring — only shown on keyboard navigation (focus-visible).
+/// Replaces browser defaults with MindEase focus style.
+@mixin focus-visible {
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus, #{$color-border-focus});
+    outline-offset: 2px;
+    box-shadow: var(--shadow-focus, #{$shadow-focus});
+    @content;
+  }
+}
+
+/// Focus-within — highlights a container when any child has focus.
+@mixin focus-within {
+  &:focus-within {
+    outline: 2px solid var(--color-border-focus, #{$color-border-focus});
+    outline-offset: 2px;
+    box-shadow: var(--shadow-focus, #{$shadow-focus});
+    @content;
+  }
+}
+
+/// Visually hidden — accessible to screen readers, invisible on-screen.
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/// Undo sr-only — make the element visible again (e.g. on focus).
+@mixin sr-only-focusable {
+  &:focus,
+  &:focus-visible {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
+// =============================================================================
+// 3. TEXT
+// =============================================================================
+
+/// Truncate text with ellipsis after N lines.
+/// @param {Number} $lines [1] — number of visible lines
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/// Remove default list styles.
+@mixin list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/// Apply the sans-serif font stack with anti-aliasing.
+@mixin font-sans {
+  font-family: var(--font-family-sans, #{$font-family-sans});
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/// Apply the monospace font stack.
+@mixin font-mono {
+  font-family: var(--font-family-mono, #{$font-family-mono});
+}
+
+// =============================================================================
+// 4. LAYOUT
+// =============================================================================
+
+/// Flex center (both axes).
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/// Flex with items evenly distributed.
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/// Flex column.
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/// Absolute centering (requires positioned parent).
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/// Absolute fill (stretch to cover parent).
+@mixin absolute-fill {
+  position: absolute;
+  inset: 0;
+}
+
+/// Hide scrollbar while keeping scroll functionality.
+@mixin hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/// Responsive container with max-width and auto margins.
+/// @param {Length} $max [$container-xl] — maximum width
+@mixin container($max: $container-xl) {
+  width: 100%;
+  max-width: $max;
+  margin-inline: auto;
+  padding-inline: var(--spacing-md);
+
+  @include tablet {
+    padding-inline: var(--spacing-lg);
+  }
+}
+
+/// CSS Grid with auto-fill responsive columns.
+/// @param {Length} $min [280px] — minimum column width
+/// @param {Length} $gap [var(--spacing-md)] — gap between items
+@mixin grid-auto-fill($min: 280px, $gap: var(--spacing-md)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($min, 1fr));
+  gap: $gap;
+}
+
+// =============================================================================
+// 5. VISUAL EFFECTS
+// =============================================================================
+
+/// Elevated card style with border, shadow, and radius.
+@mixin card-elevated {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--density-radius, var(--radius-lg));
+  box-shadow: var(--shadow-sm);
+}
+
+/// Hover lift effect — subtle elevation on hover.
+@mixin hover-lift {
+  transition: transform var(--motion-duration-base, #{$transition-base}) var(--easing-default),
+              box-shadow var(--motion-duration-base, #{$transition-base}) var(--easing-default);
+
+  &:hover {
+    transform: translateY(-2px) scale(calc(1 + 0.01 * var(--motion-scale, 1)));
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/// Smooth color transition for interactive elements.
+@mixin interactive-transition {
+  transition: color var(--motion-duration-fast, #{$transition-fast}) var(--easing-default),
+              background-color var(--motion-duration-fast, #{$transition-fast}) var(--easing-default),
+              border-color var(--motion-duration-fast, #{$transition-fast}) var(--easing-default),
+              box-shadow var(--motion-duration-fast, #{$transition-fast}) var(--easing-default),
+              opacity var(--motion-duration-fast, #{$transition-fast}) var(--easing-default);
+}
+
+/// Glass-morphism (frosted glass) effect.
+@mixin glass($opacity: 0.8) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+// =============================================================================
+// 6. COGNITIVE HELPERS
+// =============================================================================
+// Mixins that tie into the cognitive token system.
+
+/// Apply density-aware spacing.
+/// Uses the cognitive --density-padding / --density-gap variables.
+@mixin cognitive-spacing {
+  padding: var(--density-padding, var(--spacing-md));
+  gap: var(--density-gap, var(--spacing-md));
+}
+
+/// Hide element when UI density is "simple".
+@mixin hide-in-simple {
+  [data-ui-density='simple'] & {
+    display: none !important;
+  }
+}
+
+/// Hide element when focus mode is active.
+@mixin hide-in-focus {
+  [data-focus-mode='true'] & {
+    display: none !important;
+  }
+}
+
+/// Show element ONLY in detailed content mode.
+@mixin show-in-detailed {
+  [data-content-mode='summary'] & {
+    display: none !important;
+  }
+}
+
+/// Motion-safe wrapper — only runs the content when motion is NOT "off".
+@mixin motion-safe {
+  [data-motion='full'] &,
+  [data-motion='reduced'] & {
+    @content;
+  }
+}
+
+// =============================================================================
+// 7. ANIMATIONS
+// =============================================================================
+// All animation mixins respect the motion token. They produce zero output
+// when motion is disabled.
+
+/// Fade-in animation.
+/// @param {Time} $duration [var(--motion-duration-base)] — animation length
+@mixin fade-in($duration: var(--motion-duration-base, #{$transition-base})) {
+  animation: mindease-fade-in $duration var(--easing-out, #{$easing-out}) both;
+}
+
+/// Slide-in from top animation.
+/// @param {Time} $duration [var(--motion-duration-slow)] — animation length
+/// @param {Length} $distance [16px] — slide distance
+@mixin slide-in-from-top($duration: var(--motion-duration-slow, #{$transition-slow}), $distance: 16px) {
+  animation: mindease-slide-in-top $duration var(--easing-out, #{$easing-out}) both;
+
+  @at-root {
+    @keyframes mindease-slide-in-top {
+      from {
+        opacity: 0;
+        transform: translateY(-#{$distance});
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+/// Slide-in from bottom animation.
+@mixin slide-in-from-bottom($duration: var(--motion-duration-slow, #{$transition-slow}), $distance: 16px) {
+  animation: mindease-slide-in-bottom $duration var(--easing-out, #{$easing-out}) both;
+
+  @at-root {
+    @keyframes mindease-slide-in-bottom {
+      from {
+        opacity: 0;
+        transform: translateY(#{$distance});
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+/// Scale-in animation (for modals, popovers).
+@mixin scale-in($duration: var(--motion-duration-base, #{$transition-base})) {
+  animation: mindease-scale-in $duration var(--easing-bounce, #{$easing-bounce}) both;
+
+  @at-root {
+    @keyframes mindease-scale-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+}
+
+// -- Global keyframes (needs to be declared once) -----------------------------
+
+@keyframes mindease-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mindease-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

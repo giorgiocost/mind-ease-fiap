@@ -1,0 +1,370 @@
+// =============================================================================
+// MindEase — Cognitive Accessibility Tokens
+// =============================================================================
+//
+// Seven runtime-configurable tokens that adapt the entire UI to each user's
+// cognitive profile.  All tokens are applied via `data-*` attributes on
+// <html> or a container element, so they cascade naturally through CSS.
+//
+// Tokens implemented:
+//   1. ui-density     — simple | medium | full
+//   2. focus-mode     — true | false
+//   3. content-mode   — summary | detailed
+//   4. contrast       — low | normal | high
+//   5. font-scale     — 0.9 | 1.0 | 1.1 | 1.2 | 1.3 | 1.4
+//   6. spacing-scale  — 0.9 | 1.0 | 1.1 | 1.2 | 1.3 | 1.4
+//   7. motion         — full | reduced | off
+//
+// Usage:
+//   <html data-ui-density="simple"
+//         data-focus-mode="false"
+//         data-content-mode="summary"
+//         data-contrast="normal"
+//         data-font-scale="1.0"
+//         data-spacing-scale="1.0"
+//         data-motion="full">
+//
+// References:
+//   - ADR-003: Tokens Cognitivos para Acessibilidade
+//   - WCAG 2.1 §1.4.3 (Contrast — Minimum)
+//   - WCAG 2.1 §1.4.6 (Contrast — Enhanced, AAA)
+//   - WCAG 2.1 §2.3.3 (Animation from Interactions)
+// =============================================================================
+
+@use 'tokens' as *;
+
+// =============================================================================
+// 1. UI DENSITY
+// =============================================================================
+// Controls the visual complexity of the interface.
+//   simple  — minimal chrome, larger touch targets, fewer elements visible
+//   medium  — balanced (default)
+//   full    — all details, compact layout
+
+// -- Simple density -----------------------------------------------------------
+[data-ui-density='simple'] {
+  --density-padding:  #{$spacing-lg};
+  --density-gap:      #{$spacing-lg};
+  --density-radius:   #{$radius-xl};
+  --density-font-size:#{$font-size-md};
+
+  // Hide elements marked as non-essential
+  .density-medium-only,
+  .density-full-only {
+    display: none !important;
+  }
+}
+
+// -- Medium density (default) -------------------------------------------------
+[data-ui-density='medium'] {
+  --density-padding:  #{$spacing-md};
+  --density-gap:      #{$spacing-md};
+  --density-radius:   #{$radius-lg};
+  --density-font-size:#{$font-size-base};
+
+  .density-full-only {
+    display: none !important;
+  }
+}
+
+// -- Full density -------------------------------------------------------------
+[data-ui-density='full'] {
+  --density-padding:  #{$spacing-sm};
+  --density-gap:      #{$spacing-xs};
+  --density-radius:   #{$radius-md};
+  --density-font-size:#{$font-size-sm};
+}
+
+// =============================================================================
+// 2. FOCUS MODE
+// =============================================================================
+// When active, strips away all non-essential UI to let the user concentrate
+// on the current task.  Hides navigation chrome, decorations, badges, etc.
+
+[data-focus-mode='true'] {
+  // Reduce visual noise
+  --focus-opacity-secondary: 0.3;
+  --focus-opacity-tertiary:  0;
+
+  // Hide sidebars, badges, non-essential widgets
+  .hide-in-focus,
+  .badge,
+  .notification-dot {
+    display: none !important;
+  }
+
+  // Soften elements that remain visible but aren't primary
+  .reduce-in-focus {
+    opacity: 0.4;
+    transition: opacity var(--transition-base) var(--easing-default);
+
+    &:hover,
+    &:focus-within {
+      opacity: 1;
+    }
+  }
+
+  // Mute background colors to reduce distraction
+  --color-bg-secondary: #{$color-neutral-50};
+  --color-bg-tertiary:  #{$color-neutral-50};
+}
+
+[data-focus-mode='false'] {
+  --focus-opacity-secondary: 1;
+  --focus-opacity-tertiary:  1;
+}
+
+// =============================================================================
+// 3. CONTENT MODE
+// =============================================================================
+// Controls how much textual information is displayed.
+//   summary   — short labels, collapsed descriptions
+//   detailed  — full descriptions, helper text visible
+
+[data-content-mode='summary'] {
+  .content-detailed-only {
+    display: none !important;
+  }
+
+  .content-summary-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+[data-content-mode='detailed'] {
+  .content-summary-only {
+    display: none !important;
+  }
+}
+
+// =============================================================================
+// 4. CONTRAST
+// =============================================================================
+// Three contrast levels to meet different visual needs.
+//   low    — softer colors, lower contrast ratios (decorative only)
+//   normal — WCAG AA compliant (4.5:1 for text)
+//   high   — WCAG AAA compliant (7:1+ for text)
+
+[data-contrast='low'] {
+  --color-text-primary:   #{$color-neutral-600};
+  --color-text-secondary: #{$color-neutral-400};
+  --color-text-tertiary:  #{$color-neutral-300};
+  --color-border-default: #{$color-neutral-200};
+  --color-border-light:   #{$color-neutral-100};
+  --color-bg-tertiary:    #{$color-neutral-50};
+}
+
+[data-contrast='normal'] {
+  // Uses default token values — no overrides needed
+}
+
+[data-contrast='high'] {
+  --color-text-primary:   #{$color-neutral-900};
+  --color-text-secondary: #{$color-neutral-800};
+  --color-text-tertiary:  #{$color-neutral-700};
+  --color-border-default: #{$color-neutral-700};
+  --color-border-light:   #{$color-neutral-500};
+  --color-bg-primary:     #FFFFFF;
+  --color-bg-secondary:   #F0F0F0;
+  --color-bg-tertiary:    #E0E0E0;
+
+  // Stronger primary colors for readability
+  --color-primary:     #1A6BD4;
+  --color-primary-500: #1A6BD4;
+  --color-secondary:   #1A8A50;
+
+  // High-contrast focus ring
+  --shadow-focus: 0 0 0 3px #000000, 0 0 0 5px #FFFFFF;
+
+  // Force underline on links for discoverability
+  a {
+    text-decoration: underline !important;
+  }
+}
+
+// =============================================================================
+// 5. FONT SCALE
+// =============================================================================
+// Multiplier applied to the base font size. The `font-size` on <html> is
+// adjusted, and all `rem`-based sizes scale proportionally.
+//
+// Range: 0.9 → 1.4  (90 % — 140 %)
+
+$_font-scales: (0.9, 1.0, 1.1, 1.2, 1.3, 1.4);
+
+@each $scale in $_font-scales {
+  [data-font-scale='#{$scale}'] {
+    font-size: #{$scale * 100}%;
+  }
+}
+
+// =============================================================================
+// 6. SPACING SCALE
+// =============================================================================
+// Multiplier applied to spacing tokens. Uses CSS `calc()` so it works at
+// runtime without recompilation.
+//
+// Range: 0.9 → 1.4  (90 % — 140 %)
+
+$_spacing-scales: (0.9, 1.0, 1.1, 1.2, 1.3, 1.4);
+
+@each $scale in $_spacing-scales {
+  [data-spacing-scale='#{$scale}'] {
+    --spacing-xxs: calc(#{$spacing-xxs} * #{$scale});
+    --spacing-xs:  calc(#{$spacing-xs}  * #{$scale});
+    --spacing-sm:  calc(#{$spacing-sm}  * #{$scale});
+    --spacing-md:  calc(#{$spacing-md}  * #{$scale});
+    --spacing-lg:  calc(#{$spacing-lg}  * #{$scale});
+    --spacing-xl:  calc(#{$spacing-xl}  * #{$scale});
+    --spacing-2xl: calc(#{$spacing-2xl} * #{$scale});
+    --spacing-3xl: calc(#{$spacing-3xl} * #{$scale});
+    --spacing-4xl: calc(#{$spacing-4xl} * #{$scale});
+    --spacing-5xl: calc(#{$spacing-5xl} * #{$scale});
+  }
+}
+
+// =============================================================================
+// 7. MOTION
+// =============================================================================
+// Controls animation behaviour across the entire application.
+//   full    — all animations enabled
+//   reduced — essential transitions only (fade, opacity); no transform-based
+//   off     — zero animations / transitions
+//
+// Also honours the OS-level `prefers-reduced-motion: reduce` media query.
+
+[data-motion='full'] {
+  --motion-duration-fast:   #{$transition-fast};
+  --motion-duration-base:   #{$transition-base};
+  --motion-duration-slow:   #{$transition-slow};
+  --motion-duration-slower: #{$transition-slower};
+  --motion-scale: 1;
+}
+
+[data-motion='reduced'] {
+  --motion-duration-fast:   0ms;
+  --motion-duration-base:   #{$transition-fast};
+  --motion-duration-slow:   #{$transition-base};
+  --motion-duration-slower: #{$transition-base};
+  --motion-scale: 0;
+
+  // Disable transform-based animations
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: #{$transition-fast} !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+[data-motion='off'] {
+  --motion-duration-fast:   0ms;
+  --motion-duration-base:   0ms;
+  --motion-duration-slow:   0ms;
+  --motion-duration-slower: 0ms;
+  --motion-scale: 0;
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// -- OS-level preference override ---------------------------------------------
+// If the user has `prefers-reduced-motion: reduce` at the OS level AND the
+// app token hasn't been explicitly set to "full", we honour the OS setting.
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    --motion-duration-fast:   0ms;
+    --motion-duration-base:   #{$transition-fast};
+    --motion-duration-slow:   #{$transition-base};
+    --motion-duration-slower: #{$transition-base};
+    --motion-scale: 0;
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: #{$transition-fast} !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+// =============================================================================
+// COGNITIVE HELPER CLASSES
+// =============================================================================
+// Convenience classes for component authors to conditionally show/hide content
+// based on cognitive tokens. These complement the data-attribute selectors
+// above.
+
+/// Hide element when UI density is "simple"
+.hide-in-simple {
+  [data-ui-density='simple'] & {
+    display: none !important;
+  }
+}
+
+/// Hide element when focus mode is active
+.hide-in-focus {
+  [data-focus-mode='true'] & {
+    display: none !important;
+  }
+}
+
+/// Reduce opacity when focus mode is active (still accessible, but muted)
+.reduce-in-focus {
+  [data-focus-mode='true'] & {
+    opacity: 0.4;
+    transition: opacity var(--transition-base, 200ms) var(--easing-default, ease);
+
+    &:hover,
+    &:focus-within {
+      opacity: 1;
+    }
+  }
+}
+
+/// Show element ONLY in detailed content mode
+.show-in-detailed {
+  [data-content-mode='summary'] & {
+    display: none !important;
+  }
+}
+
+/// Show element ONLY in summary content mode
+.show-in-summary {
+  [data-content-mode='detailed'] & {
+    display: none !important;
+  }
+}
+
+// =============================================================================
+// DEFAULT COGNITIVE PROFILE
+// =============================================================================
+// Applied when no data attributes are set. "Medium" complexity, standard
+// contrast, base scales, full motion.
+
+:root {
+  --density-padding:  var(--spacing-md);
+  --density-gap:      var(--spacing-md);
+  --density-radius:   var(--radius-lg);
+  --density-font-size:var(--font-size-base);
+
+  --focus-opacity-secondary: 1;
+  --focus-opacity-tertiary:  1;
+
+  --motion-duration-fast:   var(--transition-fast);
+  --motion-duration-base:   var(--transition-base);
+  --motion-duration-slow:   var(--transition-slow);
+  --motion-duration-slower: var(--transition-slower);
+  --motion-scale: 1;
+}

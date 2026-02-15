@@ -1,0 +1,456 @@
+// =============================================================================
+// MindEase — Core Design Tokens
+// =============================================================================
+//
+// Single source of truth for ALL visual primitives in the MindEase Design System.
+// These SCSS variables are compiled to CSS Custom Properties at build time so
+// they can be overridden at runtime (e.g. theming, cognitive preferences).
+//
+// Naming convention:
+//   SCSS  → $<category>-<variant>        e.g. $color-primary-500
+//   CSS   → --<category>-<variant>        e.g. --color-primary-500
+//
+// Grid: 8 pt (all spacing values are multiples of 4 or 8)
+// Scale: Major-third (1.25) for typography
+// Breakpoints: mobile-first (min-width)
+//
+// References:
+//   - ADR-002: Design System componentizado
+//   - ADR-003: Tokens Cognitivos para Acessibilidade
+//   - WCAG 2.1 — https://www.w3.org/WAI/WCAG21/quickref/
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 1. COLOR PALETTE
+// -----------------------------------------------------------------------------
+// Calming palette — deliberately avoids intense reds / oranges that may
+// increase anxiety in neurodivergent users.
+
+// -- Primary (Blue — trust, calm, focus) --------------------------------------
+$color-primary-50:  #EBF5FF;
+$color-primary-100: #D6EBFF;
+$color-primary-200: #ADD6FF;
+$color-primary-300: #85C2FF;
+$color-primary-400: #5CADFF;
+$color-primary-500: #3399FF;   // ← main
+$color-primary-600: #297ACC;
+$color-primary-700: #1F5C99;
+$color-primary-800: #143D66;
+$color-primary-900: #0A1F33;
+
+// -- Secondary (Green — growth, success, well-being) --------------------------
+$color-secondary-50:  #E8F8F0;
+$color-secondary-100: #D1F1E1;
+$color-secondary-200: #A3E3C3;
+$color-secondary-300: #75D5A5;
+$color-secondary-400: #47C787;
+$color-secondary-500: #2EAD6E;   // ← main
+$color-secondary-600: #258A58;
+$color-secondary-700: #1C6842;
+$color-secondary-800: #12452C;
+$color-secondary-900: #092316;
+
+// -- Neutral (Warm gray — softer than pure gray) ------------------------------
+$color-neutral-0:   #FFFFFF;
+$color-neutral-50:  #F9FAFB;
+$color-neutral-100: #F3F4F6;
+$color-neutral-200: #E5E7EB;
+$color-neutral-300: #D1D5DB;
+$color-neutral-400: #9CA3AF;
+$color-neutral-500: #6B7280;
+$color-neutral-600: #4B5563;
+$color-neutral-700: #374151;
+$color-neutral-800: #1F2937;
+$color-neutral-900: #111827;
+
+// -- Semantic -----------------------------------------------------------------
+$color-success-light: #D1FAE5;
+$color-success:       #10B981;
+$color-success-dark:  #065F46;
+
+$color-warning-light: #FEF3C7;
+$color-warning:       #F59E0B;
+$color-warning-dark:  #92400E;
+
+$color-error-light:   #FEE2E2;
+$color-error:         #EF4444;
+$color-error-dark:    #991B1B;
+
+$color-info-light:    #DBEAFE;
+$color-info:          #3B82F6;
+$color-info-dark:     #1E40AF;
+
+// -- Kanban status (task board) -----------------------------------------------
+$color-status-todo:   #94A3B8;   // slate-400
+$color-status-doing:  #3399FF;   // primary-500
+$color-status-done:   #2EAD6E;   // secondary-500
+
+// -- Surface / Background -----------------------------------------------------
+$color-bg-primary:   #FFFFFF;
+$color-bg-secondary: #F9FAFB;
+$color-bg-tertiary:  #F3F4F6;
+$color-bg-inverse:   #1F2937;
+
+// -- Text  --------------------------------------------------------------------
+$color-text-primary:   #111827;
+$color-text-secondary: #4B5563;
+$color-text-tertiary:  #9CA3AF;
+$color-text-inverse:   #F9FAFB;
+$color-text-link:      #3399FF;
+$color-text-link-hover:#297ACC;
+
+// -- Border -------------------------------------------------------------------
+$color-border-light:  #E5E7EB;
+$color-border-default:#D1D5DB;
+$color-border-strong: #9CA3AF;
+$color-border-focus:  #3399FF;
+
+// -- Overlay ------------------------------------------------------------------
+$color-overlay: rgba(17, 24, 39, 0.5);
+
+// -----------------------------------------------------------------------------
+// 2. SPACING (8 pt grid)
+// -----------------------------------------------------------------------------
+// Every value is a multiple of 4 px (sub-grid) or 8 px (main grid).
+
+$spacing-0:   0;
+$spacing-xxs: 0.25rem;   //  4px
+$spacing-xs:  0.5rem;    //  8px
+$spacing-sm:  0.75rem;   // 12px
+$spacing-md:  1rem;      // 16px
+$spacing-lg:  1.5rem;    // 24px
+$spacing-xl:  2rem;      // 32px
+$spacing-2xl: 2.5rem;    // 40px
+$spacing-3xl: 3rem;      // 48px
+$spacing-4xl: 4rem;      // 64px
+$spacing-5xl: 6rem;      // 96px
+
+// -----------------------------------------------------------------------------
+// 3. TYPOGRAPHY
+// -----------------------------------------------------------------------------
+
+// -- Font families ------------------------------------------------------------
+$font-family-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                    Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-mono:  'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+                    'SF Mono', Menlo, Consolas, monospace;
+
+// -- Font sizes (major-third scale ≈ 1.25) ------------------------------------
+$font-size-xs:   0.75rem;    // 12px
+$font-size-sm:   0.875rem;   // 14px
+$font-size-base: 1rem;       // 16px
+$font-size-md:   1.125rem;   // 18px
+$font-size-lg:   1.25rem;    // 20px
+$font-size-xl:   1.5rem;     // 24px
+$font-size-2xl:  1.875rem;   // 30px
+$font-size-3xl:  2.25rem;    // 36px
+$font-size-4xl:  3rem;       // 48px
+
+// -- Font weights -------------------------------------------------------------
+$font-weight-light:    300;
+$font-weight-normal:   400;
+$font-weight-medium:   500;
+$font-weight-semibold: 600;
+$font-weight-bold:     700;
+
+// -- Line heights -------------------------------------------------------------
+$line-height-tight:  1.25;
+$line-height-snug:   1.375;
+$line-height-normal: 1.5;
+$line-height-relaxed:1.625;
+$line-height-loose:  2;
+
+// -- Letter spacing -----------------------------------------------------------
+$letter-spacing-tighter: -0.05em;
+$letter-spacing-tight:   -0.025em;
+$letter-spacing-normal:   0;
+$letter-spacing-wide:     0.025em;
+$letter-spacing-wider:    0.05em;
+
+// -----------------------------------------------------------------------------
+// 4. BORDER RADIUS
+// -----------------------------------------------------------------------------
+
+$radius-none: 0;
+$radius-sm:   0.25rem;   //  4px
+$radius-md:   0.375rem;  //  6px
+$radius-lg:   0.5rem;    //  8px
+$radius-xl:   0.75rem;   // 12px
+$radius-2xl:  1rem;      // 16px
+$radius-full: 9999px;
+
+// -----------------------------------------------------------------------------
+// 5. SHADOWS (elevation system)
+// -----------------------------------------------------------------------------
+// Shadows use warm-toned black for a softer feel.
+
+$shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-sm:    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+               0 1px 2px -1px rgba(0, 0, 0, 0.1);
+$shadow-md:    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+               0 2px 4px -2px rgba(0, 0, 0, 0.1);
+$shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+               0 4px 6px -4px rgba(0, 0, 0, 0.1);
+$shadow-xl:    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+               0 8px 10px -6px rgba(0, 0, 0, 0.1);
+$shadow-2xl:   0 25px 50px -12px rgba(0, 0, 0, 0.25);
+$shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+$shadow-none:  none;
+
+// Focus ring (accessibility)
+$shadow-focus: 0 0 0 3px rgba(51, 153, 255, 0.4);
+$shadow-focus-error: 0 0 0 3px rgba(239, 68, 68, 0.4);
+
+// -----------------------------------------------------------------------------
+// 6. Z-INDEX SCALE
+// -----------------------------------------------------------------------------
+// Predictable stacking — every layer has a clear purpose.
+
+$z-index-base:     0;
+$z-index-dropdown: 1000;
+$z-index-sticky:   1010;
+$z-index-fixed:    1020;
+$z-index-backdrop: 1030;
+$z-index-modal:    1040;
+$z-index-popover:  1050;
+$z-index-tooltip:  1060;
+$z-index-toast:    1070;
+
+// -----------------------------------------------------------------------------
+// 7. BREAKPOINTS (mobile-first)
+// -----------------------------------------------------------------------------
+
+$breakpoint-sm:  640px;
+$breakpoint-md:  768px;
+$breakpoint-lg:  1024px;
+$breakpoint-xl:  1280px;
+$breakpoint-2xl: 1536px;
+
+// Map for programmatic access in mixins
+$breakpoints: (
+  'sm':  $breakpoint-sm,
+  'md':  $breakpoint-md,
+  'lg':  $breakpoint-lg,
+  'xl':  $breakpoint-xl,
+  '2xl': $breakpoint-2xl,
+);
+
+// -----------------------------------------------------------------------------
+// 8. TRANSITIONS & ANIMATIONS
+// -----------------------------------------------------------------------------
+
+$transition-fast:     150ms;
+$transition-base:     200ms;
+$transition-slow:     300ms;
+$transition-slower:   500ms;
+
+$easing-default:      cubic-bezier(0.4, 0, 0.2, 1);     // ease-in-out
+$easing-in:           cubic-bezier(0.4, 0, 1, 1);
+$easing-out:          cubic-bezier(0, 0, 0.2, 1);
+$easing-bounce:       cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// -----------------------------------------------------------------------------
+// 9. SIZING
+// -----------------------------------------------------------------------------
+
+$size-icon-sm:   1rem;      // 16px
+$size-icon-md:   1.25rem;   // 20px
+$size-icon-lg:   1.5rem;    // 24px
+$size-icon-xl:   2rem;      // 32px
+
+$size-avatar-sm: 2rem;      // 32px
+$size-avatar-md: 2.5rem;    // 40px
+$size-avatar-lg: 3rem;      // 48px
+$size-avatar-xl: 4rem;      // 64px
+
+$size-input-height-sm: 2rem;     // 32px
+$size-input-height-md: 2.5rem;   // 40px
+$size-input-height-lg: 3rem;     // 48px
+
+// Container widths
+$container-sm:   640px;
+$container-md:   768px;
+$container-lg:   1024px;
+$container-xl:   1280px;
+
+// -----------------------------------------------------------------------------
+// 10. CSS CUSTOM PROPERTIES EXPORT
+// -----------------------------------------------------------------------------
+// Runtime-overridable variables consumed by components via var(--token-name).
+
+:root {
+  // -- Colors: Primary --------------------------------------------------------
+  --color-primary-50:  #{$color-primary-50};
+  --color-primary-100: #{$color-primary-100};
+  --color-primary-200: #{$color-primary-200};
+  --color-primary-300: #{$color-primary-300};
+  --color-primary-400: #{$color-primary-400};
+  --color-primary-500: #{$color-primary-500};
+  --color-primary-600: #{$color-primary-600};
+  --color-primary-700: #{$color-primary-700};
+  --color-primary-800: #{$color-primary-800};
+  --color-primary-900: #{$color-primary-900};
+  --color-primary:     #{$color-primary-500};
+
+  // -- Colors: Secondary ------------------------------------------------------
+  --color-secondary-50:  #{$color-secondary-50};
+  --color-secondary-100: #{$color-secondary-100};
+  --color-secondary-200: #{$color-secondary-200};
+  --color-secondary-300: #{$color-secondary-300};
+  --color-secondary-400: #{$color-secondary-400};
+  --color-secondary-500: #{$color-secondary-500};
+  --color-secondary-600: #{$color-secondary-600};
+  --color-secondary-700: #{$color-secondary-700};
+  --color-secondary-800: #{$color-secondary-800};
+  --color-secondary-900: #{$color-secondary-900};
+  --color-secondary:     #{$color-secondary-500};
+
+  // -- Colors: Neutral --------------------------------------------------------
+  --color-neutral-0:   #{$color-neutral-0};
+  --color-neutral-50:  #{$color-neutral-50};
+  --color-neutral-100: #{$color-neutral-100};
+  --color-neutral-200: #{$color-neutral-200};
+  --color-neutral-300: #{$color-neutral-300};
+  --color-neutral-400: #{$color-neutral-400};
+  --color-neutral-500: #{$color-neutral-500};
+  --color-neutral-600: #{$color-neutral-600};
+  --color-neutral-700: #{$color-neutral-700};
+  --color-neutral-800: #{$color-neutral-800};
+  --color-neutral-900: #{$color-neutral-900};
+
+  // -- Colors: Semantic -------------------------------------------------------
+  --color-success-light: #{$color-success-light};
+  --color-success:       #{$color-success};
+  --color-success-dark:  #{$color-success-dark};
+
+  --color-warning-light: #{$color-warning-light};
+  --color-warning:       #{$color-warning};
+  --color-warning-dark:  #{$color-warning-dark};
+
+  --color-error-light:   #{$color-error-light};
+  --color-error:         #{$color-error};
+  --color-error-dark:    #{$color-error-dark};
+
+  --color-info-light:    #{$color-info-light};
+  --color-info:          #{$color-info};
+  --color-info-dark:     #{$color-info-dark};
+
+  // -- Colors: Kanban status --------------------------------------------------
+  --color-status-todo:  #{$color-status-todo};
+  --color-status-doing: #{$color-status-doing};
+  --color-status-done:  #{$color-status-done};
+
+  // -- Colors: Surfaces -------------------------------------------------------
+  --color-bg-primary:   #{$color-bg-primary};
+  --color-bg-secondary: #{$color-bg-secondary};
+  --color-bg-tertiary:  #{$color-bg-tertiary};
+  --color-bg-inverse:   #{$color-bg-inverse};
+
+  // -- Colors: Text -----------------------------------------------------------
+  --color-text-primary:   #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-tertiary:  #{$color-text-tertiary};
+  --color-text-inverse:   #{$color-text-inverse};
+  --color-text-link:      #{$color-text-link};
+  --color-text-link-hover:#{$color-text-link-hover};
+
+  // -- Colors: Borders --------------------------------------------------------
+  --color-border-light:   #{$color-border-light};
+  --color-border-default: #{$color-border-default};
+  --color-border-strong:  #{$color-border-strong};
+  --color-border-focus:   #{$color-border-focus};
+
+  // -- Colors: Overlay --------------------------------------------------------
+  --color-overlay: #{$color-overlay};
+
+  // -- Spacing ----------------------------------------------------------------
+  --spacing-0:   #{$spacing-0};
+  --spacing-xxs: #{$spacing-xxs};
+  --spacing-xs:  #{$spacing-xs};
+  --spacing-sm:  #{$spacing-sm};
+  --spacing-md:  #{$spacing-md};
+  --spacing-lg:  #{$spacing-lg};
+  --spacing-xl:  #{$spacing-xl};
+  --spacing-2xl: #{$spacing-2xl};
+  --spacing-3xl: #{$spacing-3xl};
+  --spacing-4xl: #{$spacing-4xl};
+  --spacing-5xl: #{$spacing-5xl};
+
+  // -- Typography -------------------------------------------------------------
+  --font-family-sans: #{$font-family-sans};
+  --font-family-mono: #{$font-family-mono};
+
+  --font-size-xs:   #{$font-size-xs};
+  --font-size-sm:   #{$font-size-sm};
+  --font-size-base: #{$font-size-base};
+  --font-size-md:   #{$font-size-md};
+  --font-size-lg:   #{$font-size-lg};
+  --font-size-xl:   #{$font-size-xl};
+  --font-size-2xl:  #{$font-size-2xl};
+  --font-size-3xl:  #{$font-size-3xl};
+  --font-size-4xl:  #{$font-size-4xl};
+
+  --font-weight-light:    #{$font-weight-light};
+  --font-weight-normal:   #{$font-weight-normal};
+  --font-weight-medium:   #{$font-weight-medium};
+  --font-weight-semibold: #{$font-weight-semibold};
+  --font-weight-bold:     #{$font-weight-bold};
+
+  --line-height-tight:   #{$line-height-tight};
+  --line-height-snug:    #{$line-height-snug};
+  --line-height-normal:  #{$line-height-normal};
+  --line-height-relaxed: #{$line-height-relaxed};
+  --line-height-loose:   #{$line-height-loose};
+
+  // -- Border radius ----------------------------------------------------------
+  --radius-none: #{$radius-none};
+  --radius-sm:   #{$radius-sm};
+  --radius-md:   #{$radius-md};
+  --radius-lg:   #{$radius-lg};
+  --radius-xl:   #{$radius-xl};
+  --radius-2xl:  #{$radius-2xl};
+  --radius-full: #{$radius-full};
+
+  // -- Shadows ----------------------------------------------------------------
+  --shadow-xs:    #{$shadow-xs};
+  --shadow-sm:    #{$shadow-sm};
+  --shadow-md:    #{$shadow-md};
+  --shadow-lg:    #{$shadow-lg};
+  --shadow-xl:    #{$shadow-xl};
+  --shadow-2xl:   #{$shadow-2xl};
+  --shadow-inner: #{$shadow-inner};
+  --shadow-none:  #{$shadow-none};
+  --shadow-focus: #{$shadow-focus};
+  --shadow-focus-error: #{$shadow-focus-error};
+
+  // -- Z-index ----------------------------------------------------------------
+  --z-dropdown: #{$z-index-dropdown};
+  --z-sticky:   #{$z-index-sticky};
+  --z-fixed:    #{$z-index-fixed};
+  --z-backdrop: #{$z-index-backdrop};
+  --z-modal:    #{$z-index-modal};
+  --z-popover:  #{$z-index-popover};
+  --z-tooltip:  #{$z-index-tooltip};
+  --z-toast:    #{$z-index-toast};
+
+  // -- Transitions ------------------------------------------------------------
+  --transition-fast:   #{$transition-fast};
+  --transition-base:   #{$transition-base};
+  --transition-slow:   #{$transition-slow};
+  --transition-slower: #{$transition-slower};
+
+  --easing-default: #{$easing-default};
+  --easing-in:      #{$easing-in};
+  --easing-out:     #{$easing-out};
+  --easing-bounce:  #{$easing-bounce};
+
+  // -- Sizing -----------------------------------------------------------------
+  --size-icon-sm: #{$size-icon-sm};
+  --size-icon-md: #{$size-icon-md};
+  --size-icon-lg: #{$size-icon-lg};
+  --size-icon-xl: #{$size-icon-xl};
+
+  --size-input-height-sm: #{$size-input-height-sm};
+  --size-input-height-md: #{$size-input-height-md};
+  --size-input-height-lg: #{$size-input-height-lg};
+}

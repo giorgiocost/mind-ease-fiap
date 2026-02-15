@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+/* MindEase — Global Styles */
+@use 'libs/shared/ui/src/lib/styles' as *;
+
+// -- Base reset & global defaults ---------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family-sans);
+  font-size: 100%; // Overridden by data-font-scale token
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color var(--motion-duration-fast, 150ms) var(--easing-default);
+
+  &:hover {
+    color: var(--color-text-link-hover);
+  }
+}
+
+// Focus-visible global override
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
