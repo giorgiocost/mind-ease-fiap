@@ -7,6 +7,7 @@
     "EditorConfig.EditorConfig",
     "streetsidesoftware.code-spell-checker",
     "Gruntfuggly.todo-tree",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "ms-playwright.playwright"
   ]
 }

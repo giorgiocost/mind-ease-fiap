@@ -1,144 +1,215 @@
 # Module Federation — MindEase
 
-**Last Updated:** 2026-02-14
+**Last Updated:** 2026-02-15  
+**Status:** ✅ Implemented (Task 02)
 
 ---
 
 ## Overview
 
-MindEase uses **Webpack 5 Module Federation** to split the application into independently deployable micro-frontends (MFEs). The **Host Shell** orchestrates routing and authentication, while **Remotes** provide isolated feature modules.
+MindEase uses **Webpack 5 Module Federation** (via Nx) to implement a Micro-Frontend (MFE) architecture. The system consists of a **host shell** that orchestrates multiple independent **remote applications**, each responsible for a specific domain.
+
+**Benefits:**
+- **Independent deployment**: Each MFE can be deployed separately
+- **Team autonomy**: Different teams can work on different remotes
+- **Optimized loading**: Lazy-load MFEs only when needed
+- **Shared dependencies**: Angular and RxJS loaded once (singleton)
 
 ---
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────┐
-│         Host Shell (Port 4200)          │
-│  - Routing principal                    │
-│  - Auth flow                            │
-│  - Layout base (header/nav)             │
-│  - Carrega remotes dinamicamente        │
-└──────────┬──────────────────────────────┘
-           │  loadRemoteModule()
-           ├──────────────┬─────────────┬─────────────┐
-           ▼              ▼             ▼             ▼
-┌──────────────────┐ ┌─────────┐ ┌──────────┐ ┌───────────┐
-│  mfe-dashboard   │ │mfe-tasks│ │mfe-profile│ │(future)   │
-│  (Port 4201)     │ │(4202)   │ │(4203)     │ │           │
-│  exposes:        │ │exposes: │ │exposes:   │ │           │
-│  ./Component     │ │./Module │ │./Routes   │ │           │
-└──────────────────┘ └─────────┘ └──────────┘ └───────────┘
+┌───────────────────────────────────────────────────────────┐
+│              HOST SHELL (Port 4200)                       │
+│  - Main routing and navigation                            │
+│  - Layout (header, navigation bar)                        │
+│  - Authentication flow                                    │
+│  - Global state management (AuthStore, PreferencesStore)  │
+│  - Dynamically loads remotes at runtime                   │
+└─────────────────────┬─────────────────────────────────────┘
+                      │
+       ┌──────────────┼──────────────┬─────────────────┐
+       │              │              │                 │
+       ▼              ▼              ▼                 ▼
+┌─────────────┐ ┌──────────┐ ┌───────────┐ ┌──────────────┐
+│mfe-dashboard│ │mfe-tasks │ │mfe-profile│ │mfe-library   │
+│(Port 4201)  │ │(Port 4202│ │(Port 4203)│ │(Port 4204)   │
+│             │ │          │ │           │ │              │
+│Dashboard    │ │Kanban    │ │User       │ │Content       │
+│Stats Cards  │ │Drag&Drop │ │Onboarding │ │Library       │
+│Preferences  │ │Pomodoro  │ │Settings   │ │(Optional)    │
+│             │ │          │ │           │ │              │
+│exposes:     │ │exposes:  │ │exposes:   │ │exposes:      │
+│./Routes     │ │./Routes  │ │./Routes   │ │./Routes      │
+└─────────────┘ └──────────┘ └───────────┘ └──────────────┘
 ```
 
 ---
 
-## Host and Remotes
+## Applications
 
-### Host Shell (`apps/host-shell`)
-**Port:** 4200
-**Responsibilities:**
-- Authentication (guards, interceptors)
-- Global layout (header, sidebar)
-- Routing to remotes via `loadRemoteModule()`
-- Shared state providers (AuthStore, PreferencesStore)
-
-**Exposes:** Nothing (host does not expose modules)
-
-**Consumes:**
-- `mfe-dashboard/Component`
-- `mfe-tasks/Module`
-- `mfe-profile/Routes`
+| Application | Port | Route | Responsibility | Status |
+|-------------|------|-------|----------------|--------|
+| **host-shell** | 4200 | `/` | Host orchestrator, auth, layout, routing | ✅ Implemented |
+| **mfe-dashboard** | 4201 | `/dashboard` | Cognitive dashboard, stats, preferences panel | ✅ Implemented |
+| **mfe-tasks** | 4202 | `/tasks` | Kanban board, drag & drop, Pomodoro timer | ✅ Implemented |
+| **mfe-profile** | 4203 | `/profile` | User profile, onboarding flow, settings | ✅ Implemented |
+| **mfe-library** | 4204 | `/library` | Content library (optional, future) | ⏳ Planned |
 
 ---
 
-### Remote: Dashboard (`apps/mfe-dashboard`)
-**Port:** 4201
+## Host and Remotes Configuration
+
+### Host Shell (`apps/host-shell`)
+**Port:** 4200  
+**File:** `apps/host-shell/module-federation.config.ts`
+
+```typescript
+{
+  name: 'host-shell',
+  remotes: ['mfe-dashboard', 'mfe-tasks', 'mfe-profile']
+}
+```
+
+**Responsibilities:**
+- Authentication (guards, interceptors)
+- Global layout (header with MindEase navigation)
+- Routing to remotes via `import('remoteName/Routes')`
+- Shared state providers (AuthStore, PreferencesStore)
+
+**Exposes:** Nothing (host only consumes)
+
+**Navigation Bar:**
+- Dashboard 📊
+- Tasks ✅
+- Profile 👤
+
+---
+
+### Remote: Dashboard (`mfe-dashboard`)
+**Port:** 4201  
+**File:** `apps/mfe-dashboard/module-federation.config.ts`
+
+```typescript
+{
+  name: 'mfe-dashboard',
+  exposes: {
+    './Routes': 'apps/mfe-dashboard/src/app/remote-entry/entry.routes.ts'
+  }
+}
+```
+
 **Responsibilities:**
 - Cognitive control panel (complexity, focus mode, reading mode)
 - User preferences UI (contrast, font, animations)
 - Stats cards (tasks completed, focus time)
 
-**Exposes:**
-- `./Component` → `DashboardComponent`
-
 ---
 
-### Remote: Tasks (`apps/mfe-tasks`)
-**Port:** 4202
+### Remote: Tasks (`mfe-tasks`)
+**Port:** 4202  
+**File:** `apps/mfe-tasks/module-federation.config.ts`
+
+```typescript
+{
+  name: 'mfe-tasks',
+  exposes: {
+    './Routes': 'apps/mfe-tasks/src/app/remote-entry/entry.routes.ts'
+  }
+}
+```
+
 **Responsibilities:**
 - Kanban board (3 columns: To Do, Doing, Done)
 - Task CRUD (create, edit, move, delete)
 - Checklist items with smooth transitions
 - Pomodoro-style focus timer
 
-**Exposes:**
-- `./Module` → `TasksModule` (or standalone routes)
-
 ---
 
-### Remote: Profile (`apps/mfe-profile`)
-**Port:** 4203
+### Remote: Profile (`mfe-profile`)
+**Port:** 4203  
+**File:** `apps/mfe-profile/module-federation.config.ts`
+
+```typescript
+{
+  name: 'mfe-profile',
+  exposes: {
+    './Routes': 'apps/mfe-profile/src/app/remote-entry/entry.routes.ts'
+  }
+}
+```
+
 **Responsibilities:**
 - Onboarding wizard for first-time users
 - Profile settings and recommendations
 - Persona-based customization (TDAH, TEA, Dislexia, Burnout)
 
-**Exposes:**
-- `./Routes` → Profile routes array
-
 ---
 
 ## Routing Strategy
 
-### Dynamic Loading with `loadRemoteModule()`
+### Dynamic Loading with `import()`
 
 ```typescript
 // apps/host-shell/src/app/app.routes.ts
-import { loadRemoteModule } from '@nx/angular/mf';
-
-export const routes: Routes = [
+export const appRoutes: Route[] = [
   {
     path: 'dashboard',
-    loadChildren: () =>
-      loadRemoteModule('mfe-dashboard', './Component').then(
-        (m) => m.DashboardComponent
-      ),
-    canActivate: [authGuard],
+    loadChildren: () => 
+      import('mfe-dashboard/Routes').then((m) => m!.remoteRoutes),
   },
   {
     path: 'tasks',
-    loadChildren: () =>
-      loadRemoteModule('mfe-tasks', './Module').then(
-        (m) => m.TasksModule
-      ),
-    canActivate: [authGuard],
+    loadChildren: () => 
+      import('mfe-tasks/Routes').then((m) => m!.remoteRoutes),
   },
   {
     path: 'profile',
-    loadChildren: () =>
-      loadRemoteModule('mfe-profile', './Routes').then(
-        (m) => m.profileRoutes
-      ),
-    canActivate: [authGuard],
+    loadChildren: () => 
+      import('mfe-profile/Routes').then((m) => m!.remoteRoutes),
+  },
+  {
+    path: '',
+    component: NxWelcome, // Will be replaced with Dashboard redirect
   },
 ];
 ```
 
+**Routing Flow:**
+1. User clicks "Dashboard" in nav bar
+2. Angular Router matches `/dashboard` route
+3. `loadChildren` triggers `import('mfe-dashboard/Routes')`
+4. Module Federation fetches `remoteEntry.js` from port 4201
+5. Remote bundle is loaded and rendered in `<router-outlet>`
+
 ### Route Guards
-- All remote routes protected by `authGuard`
-- Unauthenticated users redirected to `/login`
+- All remote routes can be protected by `authGuard` (Task 12)
+- Unauthenticated users will be redirected to `/login`
 
 ---
 
 ## Shared Dependencies Strategy
 
-### Singleton Packages (Critical)
+### Nx Auto-Configuration
 
-These packages **must** be singletons to avoid duplicate instances:
+**Default Behavior:**
+- Nx Module Federation plugin automatically configures shared dependencies
+- Angular packages are shared with `singleton: true, strictVersion: true`
+- RxJS is shared as singleton
+- Custom shared libraries (`@shared/*`) are auto-detected
 
-```javascript
-// module-federation.config.ts (shared by all apps)
+**Benefits:**
+- No manual configuration needed initially
+- Optimal defaults for Angular MFE
+
+### Future Custom Configuration (Task 08-09)
+
+When implementing shared state (AuthStore, PreferencesStore), we can explicitly configure:
+
+```typescript
+// Example (not yet implemented)
 shared: {
   '@angular/core': { singleton: true, strictVersion: true },
   '@angular/common': { singleton: true, strictVersion: true },
@@ -173,7 +244,7 @@ shared: {
 ### Serve All MFEs (Recommended)
 
 ```bash
-pnpm run start:all
+npm run start:all
 ```
 
 This script runs all apps concurrently for local development.
@@ -186,7 +257,7 @@ This script runs all apps concurrently for local development.
 
 ```bash
 # Build all apps
-pnpm run build:all
+nx run-many --target=build --all
 
 # Output:
 # dist/apps/host-shell
@@ -227,7 +298,7 @@ remotes: [
 
 **Cause:** Remote is not running or not accessible
 **Fix:**
-- Ensure remote is running on correct port
+- Ensure remote is running on correct port (`nx serve mfe-dashboard`)
 - Check `module-federation.config.ts` for correct `remotes` array
 - Verify network/firewall not blocking localhost ports
 
@@ -239,8 +310,8 @@ remotes: [
 **Cause:** `@angular/core` not set as singleton
 **Fix:**
 - Ensure `singleton: true` in `module-federation.config.ts` shared config
-- Clear Nx cache: `pnpm nx reset`
-- Rebuild: `pnpm run build:all`
+- Clear Nx cache: `nx reset`
+- Rebuild: `nx run-many --target=build --all`
 
 ---
 
@@ -250,7 +321,7 @@ remotes: [
 **Fix:**
 - Ensure all apps use **exact same** Angular version
 - Check `package.json` for mismatched versions
-- Run `pnpm install` to sync dependencies
+- Run `npm install` to sync dependencies
 
 ---
 
@@ -261,7 +332,7 @@ remotes: [
 - Check remote's `module-federation.config.ts` → `exposes` section
 - Verify remote's main component/module is exported correctly
 - Check browser console for errors
-- Ensure remote is built: `pnpm nx build mfe-dashboard`
+- Ensure remote is built: `nx build mfe-dashboard`
 
 ---
 
@@ -271,7 +342,7 @@ remotes: [
 **Fix:**
 - Add `eager: true` to problematic shared dependency (use sparingly)
 - Or ensure all apps import shared libs correctly
-- Rebuild and clear cache: `pnpm nx reset && pnpm run build:all`
+- Rebuild and clear cache: `nx reset && nx run-many --target=build --all`
 
 ---
 

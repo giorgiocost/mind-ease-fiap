@@ -28,7 +28,12 @@
       "@shared/services/*": ["libs/shared/data-access/src/lib/services/*"],
       "@shared/models/*": ["libs/shared/data-access/src/lib/models/*"],
       "@shared/styles/*": ["libs/shared/ui/src/lib/styles/*"],
-      "@shared/tokens": ["libs/shared/a11y/src/lib/tokens.ts"]
+      "@shared/tokens": ["libs/shared/a11y/src/lib/tokens.ts"],
+      "mfe-dashboard/Routes": [
+        "apps/mfe-dashboard/src/app/remote-entry/entry.routes.ts"
+      ],
+      "mfe-tasks/Routes": ["apps/mfe-tasks/src/app/remote-entry/entry.routes.ts"],
+      "mfe-profile/Routes": ["apps/mfe-profile/src/app/remote-entry/entry.routes.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

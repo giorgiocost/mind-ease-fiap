@@ -1,2 +1,28 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<div class="app-container">
+  <!-- Navigation Bar -->
+  <nav class="main-nav">
+    <h1 class="logo">MindEase</h1>
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+          📊 Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/tasks" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+          ✅ Tasks
+        </a>
+      </li>
+      <li>
+        <a routerLink="/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+          👤 Profile
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content Area (remotes load here) -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
