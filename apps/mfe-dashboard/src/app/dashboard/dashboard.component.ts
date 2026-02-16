@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthStore, PreferencesStore } from '@shared/state';
 import { CardComponent } from '@shared/ui';
 import { StatsCardComponent } from '../components/stats-card/stats-card.component';
+import { PreferencesPanelComponent } from '../components/preferences-panel/preferences-panel.component';
 
 interface DashboardStats {
   pendingTasks: number;
@@ -16,7 +17,7 @@ interface DashboardStats {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CardComponent, StatsCardComponent],
+  imports: [CommonModule, CardComponent, StatsCardComponent, PreferencesPanelComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

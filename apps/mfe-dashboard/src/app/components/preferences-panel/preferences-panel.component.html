@@ -1,0 +1,245 @@
+<!-- apps/mfe-dashboard/src/app/components/preferences-panel/preferences-panel.component.html -->
+<div class="preferences-panel">
+  <!-- Presets Section -->
+  <div class="control-group">
+    <h4 class="control-label">Presets</h4>
+    <div class="presets-grid">
+      <button
+        *ngFor="let preset of presets"
+        [class.loading]="saving()"
+        class="preset-button"
+        type="button"
+        (click)="applyPreset(preset)"
+        [disabled]="saving()"
+      >
+        <span>{{ preset.name }}</span>
+        <div *ngIf="saving()" class="loading-spinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- UI Density Control -->
+  <div class="control-group">
+    <label class="control-label" for="ui-density">
+      Densidade da Interface
+    </label>
+    <div class="button-group" role="radiogroup" aria-labelledby="ui-density">
+      <button
+        type="button"
+        [class.active]="uiDensity() === 'simple'"
+        (click)="updateUiDensity('simple')"
+        role="radio"
+        [attr.aria-checked]="uiDensity() === 'simple'"
+      >
+        Simples
+      </button>
+      <button
+        type="button"
+        [class.active]="uiDensity() === 'medium'"
+        (click)="updateUiDensity('medium')"
+        role="radio"
+        [attr.aria-checked]="uiDensity() === 'medium'"
+      >
+        Médio
+      </button>
+      <button
+        type="button"
+        [class.active]="uiDensity() === 'full'"
+        (click)="updateUiDensity('full')"
+        role="radio"
+        [attr.aria-checked]="uiDensity() === 'full'"
+      >
+        Completo
+      </button>
+    </div>
+  </div>
+
+  <!-- Focus Mode Toggle -->
+  <div class="control-group">
+    <label class="control-label" for="focus-mode">
+      Modo Foco
+    </label>
+    <div class="toggle-container">
+      <label class="toggle-switch">
+        <input
+          type="checkbox"
+          id="focus-mode"
+          [checked]="focusMode()"
+          (change)="toggleFocusMode()"
+          aria-describedby="focus-mode-desc"
+        />
+        <span class="toggle-slider"></span>
+      </label>
+      <span id="focus-mode-desc" class="toggle-description">
+        {{ focusMode() ? 'Ativo' : 'Inativo' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Content Mode Control -->
+  <div class="control-group">
+    <label class="control-label" for="content-mode">
+      Modo de Conteúdo
+    </label>
+    <div class="button-group" role="radiogroup" aria-labelledby="content-mode">
+      <button
+        type="button"
+        [class.active]="contentMode() === 'summary'"
+        (click)="updateContentMode('summary')"
+        role="radio"
+        [attr.aria-checked]="contentMode() === 'summary'"
+      >
+        Resumo
+      </button>
+      <button
+        type="button"
+        [class.active]="contentMode() === 'detailed'"
+        (click)="updateContentMode('detailed')"
+        role="radio"
+        [attr.aria-checked]="contentMode() === 'detailed'"
+      >
+        Detalhado
+      </button>
+    </div>
+  </div>
+
+  <!-- Contrast Control -->
+  <div class="control-group">
+    <label class="control-label" for="contrast">
+      Contraste
+    </label>
+    <div class="button-group" role="radiogroup" aria-labelledby="contrast">
+      <button
+        type="button"
+        [class.active]="contrast() === 'low'"
+        (click)="updateContrast('low')"
+        role="radio"
+        [attr.aria-checked]="contrast() === 'low'"
+      >
+        Baixo
+      </button>
+      <button
+        type="button"
+        [class.active]="contrast() === 'normal'"
+        (click)="updateContrast('normal')"
+        role="radio"
+        [attr.aria-checked]="contrast() === 'normal'"
+      >
+        Normal
+      </button>
+      <button
+        type="button"
+        [class.active]="contrast() === 'high'"
+        (click)="updateContrast('high')"
+        role="radio"
+        [attr.aria-checked]="contrast() === 'high'"
+      >
+        Alto
+      </button>
+    </div>
+  </div>
+
+  <!-- Font Scale Slider -->
+  <div class="control-group">
+    <label class="control-label" for="font-scale">
+      Escala de Fonte
+    </label>
+    <div class="slider-container">
+      <div class="slider-labels">
+        <span>Pequeno</span>
+        <span class="slider-value">{{ fontScale() }}x</span>
+        <span>Grande</span>
+      </div>
+      <input
+        type="range"
+        id="font-scale"
+        min="0.9"
+        max="1.4"
+        step="0.1"
+        [value]="fontScale().toFixed(1)"
+        (input)="updateFontScale($event)"
+        class="slider"
+        aria-describedby="font-scale-value"
+      />
+      <div id="font-scale-value" class="sr-only">
+        Tamanho da fonte: {{ fontScale() }}x
+      </div>
+    </div>
+  </div>
+
+  <!-- Spacing Scale Slider -->
+  <div class="control-group">
+    <label class="control-label" for="spacing-scale">
+      Espaçamento
+    </label>
+    <div class="slider-container">
+      <div class="slider-labels">
+        <span>Compacto</span>
+        <span class="slider-value">{{ spacingScale() }}x</span>
+        <span>Espaçoso</span>
+      </div>
+      <input
+        type="range"
+        id="spacing-scale"
+        min="0.9"
+        max="1.4"
+        step="0.1"
+        [value]="spacingScale().toFixed(1)"
+        (input)="updateSpacingScale($event)"
+        class="slider"
+        aria-describedby="spacing-scale-value"
+      />
+      <div id="spacing-scale-value" class="sr-only">
+        Espaçamento: {{ spacingScale() }}x
+      </div>
+    </div>
+  </div>
+
+  <!-- Motion Control -->
+  <div class="control-group">
+    <label class="control-label" for="motion">
+      Animações
+    </label>
+    <div class="button-group" role="radiogroup" aria-labelledby="motion">
+      <button
+        type="button"
+        [class.active]="motion() === 'full'"
+        (click)="updateMotion('full')"
+        role="radio"
+        [attr.aria-checked]="motion() === 'full'"
+      >
+        Completas
+      </button>
+      <button
+        type="button"
+        [class.active]="motion() === 'reduced'"
+        (click)="updateMotion('reduced')"
+        role="radio"
+        [attr.aria-checked]="motion() === 'reduced'"
+      >
+        Reduzidas
+      </button>
+      <button
+        type="button"
+        [class.active]="motion() === 'off'"
+        (click)="updateMotion('off')"
+        role="radio"
+        [attr.aria-checked]="motion() === 'off'"
+      >
+        Desligadas
+      </button>
+    </div>
+  </div>
+
+  <!-- Reset Button -->
+  <div class="control-group">
+    <ui-button
+      variant="outline"
+      size="sm"
+      [loading]="saving()"
+      (clicked)="resetToDefaults()"
+    >
+      Restaurar Padrões
+    </ui-button>
+  </div>
+</div>

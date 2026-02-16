@@ -2,13 +2,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { DashboardComponent } from './dashboard.component';
-import { AuthStore, PreferencesStore } from '@shared/state';
+import { AuthStore, PreferencesStore, DEFAULT_PREFERENCES } from '@shared/state';
+
+// Manual mock for PreferencesStore (same as in preferences-panel component)
+class MockPreferencesStore {
+  preferences = signal(DEFAULT_PREFERENCES);
+  uiDensity = signal(DEFAULT_PREFERENCES.uiDensity);
+  focusMode = signal(DEFAULT_PREFERENCES.focusMode);
+  contentMode = signal(DEFAULT_PREFERENCES.contentMode);
+  contrast = signal(DEFAULT_PREFERENCES.contrast);
+  fontScale = signal(DEFAULT_PREFERENCES.fontScale);
+  spacingScale = signal(DEFAULT_PREFERENCES.spacingScale);
+  motion = signal(DEFAULT_PREFERENCES.motion);
+
+  updatePreferences = jest.fn().mockResolvedValue(undefined);
+  resetToDefaults = jest.fn().mockResolvedValue(undefined);
+}
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   let authStoreMock: Partial<AuthStore>;
-  let prefsStoreMock: Partial<PreferencesStore>;
+  let prefsStoreMock: MockPreferencesStore;
 
   beforeEach(async () => {
     // Mock AuthStore
@@ -22,10 +37,7 @@ describe('DashboardComponent', () => {
     };
 
     // Mock PreferencesStore
-    prefsStoreMock = {
-      uiDensity: signal('medium' as 'simple' | 'medium' | 'full'),
-      focusMode: signal(false)
-    };
+    prefsStoreMock = new MockPreferencesStore();
 
     await TestBed.configureTestingModule({
       imports: [DashboardComponent],
