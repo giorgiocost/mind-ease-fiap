@@ -2,11 +2,6 @@ import { Route } from '@angular/router';
 import { authGuard } from '@shared/guards';
 
 export const appRoutes: Route[] = [
-  {
-    path: 'mfeDashboard',
-    loadChildren: () =>
-      import('mfeDashboard/Routes').then((m) => m!.remoteRoutes),
-  },
   // Default redirect
   {
     path: '',
