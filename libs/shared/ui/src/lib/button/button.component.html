@@ -1,17 +1,22 @@
-<span class="button-content">
+<button
+  [type]="type()"
+  [disabled]="isDisabled()"
+  [attr.aria-busy]="loading()"
+  (click)="handleClick($event)"
+  class="button-content">
   @if (loading()) {
     <span class="button-spinner" aria-hidden="true"></span>
   }
-  
+
   @if (hasIcon() && iconPosition() === 'left') {
     <span class="button-icon button-icon-left" [class]="iconClass()" aria-hidden="true"></span>
   }
-  
+
   <span class="button-label">
     <ng-content></ng-content>
   </span>
-  
+
   @if (hasIcon() && iconPosition() === 'right') {
     <span class="button-icon button-icon-right" [class]="iconClass()" aria-hidden="true"></span>
   }
-</span>
+</button>

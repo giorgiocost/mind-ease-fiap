@@ -1,0 +1,245 @@
+<div
+  class="tasks-container"
+  [attr.data-ui-density]="vm.uiDensity()"
+  [attr.data-focus-mode]="vm.focusMode()"
+  [attr.data-content-mode]="vm.contentMode()"
+>
+  <!-- ========================================
+       HEADER COM FILTROS E AÇÕES
+       ======================================== -->
+  <header class="tasks-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="title-text">My Tasks</span>
+        @if (vm.tasks().length > 0) {
+          <span class="task-count">({{ vm.tasks().length }})</span>
+        }
+      </h1>
+    </div>
+
+    <div class="header-actions">
+      <!-- Busca/Filtro -->
+      @if (vm.uiDensity() !== 'simple') {
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            [value]="vm.uiState().filterText"
+            (input)="onFilterChange($any($event.target).value)"
+            class="search-input"
+            aria-label="Search tasks"
+          />
+        </div>
+      }
+
+      <!-- Botão Refresh -->
+      @if (vm.uiDensity() === 'full') {
+        <button
+          type="button"
+          class="btn-icon btn-refresh"
+          (click)="onRefresh()"
+          [disabled]="vm.isLoading()"
+          aria-label="Refresh tasks"
+        >
+          <span class="icon">🔄</span>
+        </button>
+      }
+
+      <!-- Botão Criar -->
+      <button
+        type="button"
+        class="btn-primary btn-create"
+        (click)="onOpenCreateModal()"
+        [disabled]="vm.isLoading()"
+      >
+        <span class="icon">➕</span>
+        <span class="label">New Task</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================
+       LOADING STATE
+       ======================================== -->
+  @if (vm.isLoading()) {
+    <div class="loading-state">
+      <div class="spinner" role="status">
+        <span class="sr-only">Loading tasks...</span>
+      </div>
+      <p class="loading-message">Loading your tasks...</p>
+    </div>
+  }
+
+  <!-- ========================================
+       ERROR STATE
+       ======================================== -->
+  @if (vm.error() && !vm.isLoading()) {
+    <div class="error-state">
+      <div class="error-card">
+        <span class="error-icon">⚠️</span>
+        <p class="error-message">{{ vm.error() }}</p>
+        <div class="error-actions">
+          <button type="button" class="btn-secondary" (click)="onRefresh()">
+            Try Again
+          </button>
+          <button type="button" class="btn-text" (click)="onClearError()">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       EMPTY STATE (nenhuma tarefa)
+       ======================================== -->
+  @if (vm.tasks().length === 0 && !vm.isLoading() && !vm.error()) {
+    <div class="empty-state">
+      <div class="empty-card">
+        <span class="empty-icon">📝</span>
+        <h2 class="empty-title">No tasks yet</h2>
+        <p class="empty-message">Create your first task to get started with your cognitive-friendly task board.</p>
+        <button type="button" class="btn-primary" (click)="onOpenCreateModal()">
+          <span class="icon">➕</span>
+          Create First Task
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       KANBAN BOARD (3 colunas)
+       ======================================== -->
+  @if (vm.tasks().length > 0 && !vm.isLoading()) {
+    <div class="kanban-board">
+      <!-- Coluna TODO -->
+      <div class="kanban-column column-todo">
+        <div class="column-header">
+          <h3 class="column-title">
+            📋 To Do
+            <span class="column-count">({{ vm.taskCounts().TODO }})</span>
+          </h3>
+        </div>
+        <div class="column-body" data-status="TODO">
+          <!-- TODO task_24: usar <app-kanban-column> -->
+          <!-- TODO task_25: iterar <app-task-card> para cada task -->
+          @if (vm.tasksByStatus().TODO.length === 0) {
+            <p class="placeholder-text">Drop tasks here...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().TODO; track task.id) {
+              <div class="task-placeholder">{{ task.title }}</div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Coluna DOING -->
+      <div class="kanban-column column-doing">
+        <div class="column-header">
+          <h3 class="column-title">
+            🚀 Doing
+            <span class="column-count">({{ vm.taskCounts().DOING }})</span>
+            @if (!vm.canAddToDoing()) {
+              <span class="wip-warning">⚠️ WIP Limit</span>
+            }
+          </h3>
+        </div>
+        <div class="column-body" data-status="DOING">
+          @if (vm.tasksByStatus().DOING.length === 0) {
+            <p class="placeholder-text">Drop tasks here...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().DOING; track task.id) {
+              <div class="task-placeholder">{{ task.title }}</div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Coluna DONE -->
+      <div class="kanban-column column-done">
+        <div class="column-header">
+          <h3 class="column-title">
+            ✅ Done
+            <span class="column-count">({{ vm.taskCounts().DONE }})</span>
+          </h3>
+        </div>
+        <div class="column-body" data-status="DONE">
+          @if (vm.tasksByStatus().DONE.length === 0) {
+            <p class="placeholder-text">Drop tasks here...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().DONE; track task.id) {
+              <div class="task-placeholder">{{ task.title }}</div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       MODAL DE CRIAR TAREFA (simplificado)
+       ======================================== -->
+  @if (vm.uiState().isCreatingTask) {
+    <div
+      class="modal-overlay"
+      (click)="onCloseCreateModal()"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+    >
+      <div
+        class="modal-card"
+        (click)="$event.stopPropagation()"
+        role="document"
+        tabindex="0"
+      >
+        <header class="modal-header">
+          <h2 class="modal-title">Create New Task</h2>
+          <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Close modal">
+            ✕
+          </button>
+        </header>
+
+        <form #createForm="ngForm" (ngSubmit)="onCreateTask(taskTitle.value, taskDescription.value); taskTitle.value=''; taskDescription.value=''">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="task-title" class="form-label">Title *</label>
+              <input
+                id="task-title"
+                #taskTitle
+                type="text"
+                class="form-input"
+                placeholder="e.g., Review documentation"
+                required
+                maxlength="200"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group" [style.display]="vm.contentMode() === 'detailed' ? 'block' : 'none'">
+              <label for="task-description" class="form-label">Description</label>
+              <textarea
+                id="task-description"
+                #taskDescription
+                class="form-textarea"
+                placeholder="Add more details about this task..."
+                rows="3"
+                maxlength="2000"
+              ></textarea>
+            </div>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="onCloseCreateModal()">
+              Cancel
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="createForm.invalid">
+              <span class="icon">➕</span>
+              Create Task
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+</div>

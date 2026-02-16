@@ -3,7 +3,7 @@ import { ModuleFederationConfig } from '@nx/module-federation';
 const config: ModuleFederationConfig = {
   name: 'mfe-tasks',
   exposes: {
-    './Routes': './src/app/remote-entry/entry.routes.ts'
+    './Routes': 'apps/mfe-tasks/src/app/remote-entry/entry.routes.ts'
   },
 };
 

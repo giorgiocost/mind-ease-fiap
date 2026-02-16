@@ -4,7 +4,6 @@ import {
   output,
   computed,
   signal,
-  HostListener,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,6 +11,7 @@ import { CommonModule } from '@angular/common';
 export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type IconPosition = 'left' | 'right';
+export type ButtonType = 'button' | 'submit' | 'reset';
 
 @Component({
   selector: 'ui-button',
@@ -22,16 +22,13 @@ export type IconPosition = 'left' | 'right';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'hostClasses()',
-    '[attr.disabled]': 'isDisabled() ? true : null',
-    '[attr.aria-busy]': 'loading()',
-    '[attr.role]': '"button"',
-    '[attr.tabindex]': 'isDisabled() ? -1 : 0',
   },
 })
 export class ButtonComponent {
   // Inputs (Signal-based)
   variant = input<ButtonVariant>('primary');
   size = input<ButtonSize>('md');
+  type = input<ButtonType>('button');
   loading = input<boolean>(false);
   disabled = input<boolean>(false);
   icon = input<string | null>(null);
@@ -62,10 +59,14 @@ export class ButtonComponent {
   iconClass = computed(() => (this.icon() ? `icon-${this.icon()}` : ''));
 
   // Click handler with debounce
-  @HostListener('click', ['$event'])
-  @HostListener('keydown.enter', ['$event'])
-  @HostListener('keydown.space', ['$event'])
   handleClick(event: Event): void {
+    // For submit buttons, allow default form submission behavior
+    if (this.type() === 'submit') {
+      this.clicked.emit(event);
+      return;
+    }
+
+    // For other button types, handle debounce
     if (this.isDisabled()) {
       event.preventDefault();
       event.stopPropagation();
