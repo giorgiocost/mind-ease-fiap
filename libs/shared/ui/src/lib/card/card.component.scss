@@ -1,17 +1,17 @@
-@import '../styles/tokens';
-@import '../styles/mixins';
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
 
 :host {
   display: flex;
   flex-direction: column;
-  
+
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
-  
-  transition: 
+
+  transition:
     box-shadow var(--transition-base),
     transform var(--transition-base);
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -41,16 +41,16 @@
 // Clickable
 :host(.card-clickable) {
   cursor: pointer;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-xl);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     &:hover {
       transform: none;
