@@ -15,11 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@shared/ui": ["libs/shared/ui/src/index.ts"],
-      "@shared/a11y": ["libs/shared/a11y/src/index.ts"],
-      "@shared/data-access": ["libs/shared/data-access/src/index.ts"],
-      "@shared/state": ["libs/shared/state/src/index.ts"],
-      "@shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@shared/ui": ["libs/shared/ui/src"],
+      "@shared/a11y": ["libs/shared/a11y/src"],
+      "@shared/data-access": ["libs/shared/data-access/src"],
+      "@shared/state": ["libs/shared/state/src"],
+      "@shared/utils": ["libs/shared/utils/src"],
       "@shared/stores/*": ["libs/shared/state/src/lib/stores/*"],
       "@shared/guards/*": ["libs/shared/data-access/src/lib/guards/*"],
       "@shared/interceptors/*": [

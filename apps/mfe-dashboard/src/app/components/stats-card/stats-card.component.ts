@@ -29,7 +29,16 @@ export class StatsCardComponent {
   // Computed
   cardVariant = computed(() => {
     const variant = this.variant();
-    return variant === 'info' ? 'outlined' : variant;
+    switch (variant) {
+      case 'info':
+        return 'outlined';
+      case 'success':
+      case 'warning':
+      case 'danger':
+        return 'elevated';
+      default:
+        return 'elevated';
+    }
   });
 
   // Actions
