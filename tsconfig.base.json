@@ -39,7 +39,8 @@
         "apps/mfe-profile/src/app/remote-entry/entry.routes.ts"
       ],
       "@shared/http": ["libs/shared/http/src/index.ts"],
-      "@shared/guards": ["libs/shared/guards/src/index.ts"]
+      "@shared/guards": ["libs/shared/guards/src/index.ts"],
+      "mfeTasks/Routes": ["mfeTasks/src/app/remote-entry/entry.routes.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
