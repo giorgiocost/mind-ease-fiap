@@ -1,8 +1,10 @@
 // apps/mfe-dashboard/src/app/dashboard/dashboard.component.ts
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthStore, PreferencesStore } from '@shared/state';
 import { CardComponent } from '@shared/ui';
+import { StatsCardComponent } from '../components/stats-card/stats-card.component';
 
 interface DashboardStats {
   pendingTasks: number;
@@ -14,11 +16,12 @@ interface DashboardStats {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CardComponent],
+  imports: [CommonModule, CardComponent, StatsCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  private router = inject(Router);
   private authStore = inject(AuthStore);
   private prefsStore = inject(PreferencesStore);
 
@@ -73,5 +76,13 @@ export class DashboardComponent implements OnInit {
     if (hours === 0) return `${mins}min`;
     if (mins === 0) return `${hours}h`;
     return `${hours}h ${mins}min`;
+  }
+
+  navigateToTasks() {
+    this.router.navigate(['/tasks']);
+  }
+
+  navigateToPomodoro() {
+    this.router.navigate(['/tasks/pomodoro']);
   }
 }

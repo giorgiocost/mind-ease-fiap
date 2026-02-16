@@ -110,12 +110,18 @@ describe('DashboardComponent', () => {
       expect(component.stats()?.pendingTasks).toBe(12);
     });
 
-    it('should show skeleton loaders while loading', () => {
-      component.loading.set(true);
+it('should show stats cards when not loading', () => {
+      component.stats.set({
+        pendingTasks: 12,
+        completedToday: 5,
+        focusTimeToday: 90,
+        weeklyProductivity: 85
+      });
+      component.loading.set(false);
       fixture.detectChanges();
 
-      const skeletons = fixture.nativeElement.querySelectorAll('.skeleton-card');
-      expect(skeletons.length).toBe(3);
+      const statsCards = fixture.nativeElement.querySelectorAll('app-stats-card');
+      expect(statsCards.length).toBe(3);
     });
 
     it('should not show skeleton loaders after loading', async () => {

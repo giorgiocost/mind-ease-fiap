@@ -8,57 +8,34 @@
 
   <!-- Stats Cards Grid -->
   <section class="stats-grid">
-    @if (loading()) {
-      <!-- Skeleton Loaders -->
-      @for (item of [1, 2, 3]; track item) {
-        <div class="skeleton-card">
-          <div class="skeleton-icon"></div>
-          <div class="skeleton-content">
-            <div class="skeleton-line skeleton-label"></div>
-            <div class="skeleton-line skeleton-value"></div>
-          </div>
-        </div>
-      }
-    } @else if (stats()) {
-      <!-- Pending Tasks Card -->
-      <ui-card class="stat-card">
-        <div class="stat-content">
-          <div class="stat-icon pending-icon">
-            <span class="emoji">📋</span>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Tarefas Pendentes</span>
-            <span class="stat-value">{{ stats()!.pendingTasks }}</span>
-          </div>
-        </div>
-      </ui-card>
+    <app-stats-card
+      icon="📋"
+      label="Tarefas Pendentes"
+      [value]="stats()?.pendingTasks || 0"
+      variant="info"
+      [loading]="loading()"
+      (clicked)="navigateToTasks()">
+    </app-stats-card>
 
-      <!-- Completed Today Card -->
-      <ui-card class="stat-card">
-        <div class="stat-content">
-          <div class="stat-icon success-icon">
-            <span class="emoji">✅</span>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Concluídas Hoje</span>
-            <span class="stat-value">{{ stats()!.completedToday }}</span>
-          </div>
-        </div>
-      </ui-card>
+    <app-stats-card
+      icon="✅"
+      label="Concluídas Hoje"
+      [value]="stats()?.completedToday || 0"
+      variant="success"
+      [loading]="loading()"
+      trend="up"
+      trendValue="+2"
+      (clicked)="navigateToTasks()">
+    </app-stats-card>
 
-      <!-- Focus Time Card -->
-      <ui-card class="stat-card">
-        <div class="stat-content">
-          <div class="stat-icon primary-icon">
-            <span class="emoji">⏱️</span>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Tempo de Foco</span>
-            <span class="stat-value">{{ formatFocusTime(stats()!.focusTimeToday) }}</span>
-          </div>
-        </div>
-      </ui-card>
-    }
+    <app-stats-card
+      icon="⏱️"
+      label="Foco Hoje"
+      [value]="formatFocusTime(stats()?.focusTimeToday || 0)"
+      variant="warning"
+      [loading]="loading()"
+      (clicked)="navigateToPomodoro()">
+    </app-stats-card>
   </section>
 
   <!-- Content Grid: Activity + Preferences -->
