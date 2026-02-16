@@ -9,3 +9,6 @@ export * from './lib/card/card-body.component';
 export * from './lib/card/card-footer.component';
 export * from './lib/modal/modal.component';
 export * from './lib/modal/modal.service';
+
+// Services
+export * from './lib/services/preferences-ui.service';
