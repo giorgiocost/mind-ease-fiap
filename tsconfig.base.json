@@ -32,8 +32,13 @@
       "mfe-dashboard/Routes": [
         "apps/mfe-dashboard/src/app/remote-entry/entry.routes.ts"
       ],
-      "mfe-tasks/Routes": ["apps/mfe-tasks/src/app/remote-entry/entry.routes.ts"],
-      "mfe-profile/Routes": ["apps/mfe-profile/src/app/remote-entry/entry.routes.ts"]
+      "mfe-tasks/Routes": [
+        "apps/mfe-tasks/src/app/remote-entry/entry.routes.ts"
+      ],
+      "mfe-profile/Routes": [
+        "apps/mfe-profile/src/app/remote-entry/entry.routes.ts"
+      ],
+      "@shared/http": ["libs/shared/http/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
