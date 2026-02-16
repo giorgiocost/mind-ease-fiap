@@ -1,0 +1,31 @@
+<!-- apps/host-shell/src/app/sidebar/sidebar.component.html -->
+<nav
+  class="sidebar"
+  role="navigation"
+  [class.collapsed]="collapsed()"
+  [attr.data-ui-density]="uiDensity()">
+
+  <ul class="menu" role="list">
+    @for (item of menuItems; track item.id) {
+      <li class="menu-item">
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.id === 'dashboard' }"
+          class="menu-link"
+          [attr.aria-label]="item.label">
+
+          <span class="menu-icon">{{ item.icon }}</span>
+
+          @if (!collapsed()) {
+            <span class="menu-label">{{ item.label }}</span>
+          }
+
+          @if (item.badge && item.badge > 0 && !collapsed()) {
+            <span class="menu-badge">{{ item.badge }}</span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

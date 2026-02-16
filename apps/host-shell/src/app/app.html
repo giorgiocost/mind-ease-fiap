@@ -1,28 +1,9 @@
-<div class="app-container">
-  <!-- Navigation Bar -->
-  <nav class="main-nav">
-    <h1 class="logo">MindEase</h1>
-    <ul class="nav-links">
-      <li>
-        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
-          📊 Dashboard
-        </a>
-      </li>
-      <li>
-        <a routerLink="/tasks" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
-          ✅ Tasks
-        </a>
-      </li>
-      <li>
-        <a routerLink="/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
-          👤 Profile
-        </a>
-      </li>
-    </ul>
-  </nav>
+<app-layout>
+  <!-- Header with sidebar toggle -->
+  <app-header header (toggleSidebar)="handleToggleSidebar()"></app-header>
 
-  <!-- Main Content Area (remotes load here) -->
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
-</div>
+  <!-- Sidebar with navigation menu -->
+  <app-sidebar sidebar [collapsed]="sidebarCollapsed()"></app-sidebar>
+
+  <!-- Main content is rendered via router-outlet in LayoutComponent -->
+</app-layout>

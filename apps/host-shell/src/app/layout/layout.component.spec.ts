@@ -112,10 +112,10 @@ it('should hide sidebar when focus mode is active', async () => {
       });
       component.checkMobile();
       fixture.detectChanges();
-      
+
       // Initially sidebar should be hidden
       expect(component.sidebarVisible()).toBe(false);
-      
+
       // Open mobile menu
       component.mobileMenuOpen.set(true);
       fixture.detectChanges();
@@ -293,7 +293,7 @@ it('should hide sidebar when focus mode is active', async () => {
       });
       component.checkMobile();
       fixture.detectChanges();
-      
+
       // Open mobile menu
       component.mobileMenuOpen.set(true);
       fixture.detectChanges();
@@ -319,7 +319,7 @@ it('should hide sidebar when focus mode is active', async () => {
       });
       component.checkMobile();
       fixture.detectChanges();
-      
+
       const compiled = fixture.nativeElement as HTMLElement;
       const sidebar = compiled.querySelector('.layout__sidebar');
       expect(sidebar).toBeTruthy();
@@ -351,7 +351,7 @@ it('should hide sidebar when focus mode is active', async () => {
       });
       component.checkMobile();
       fixture.detectChanges();
-      
+
       // Open mobile menu
       component.mobileMenuOpen.set(true);
       fixture.detectChanges();
@@ -369,7 +369,7 @@ it('should hide sidebar when focus mode is active', async () => {
       });
       component.checkMobile();
       fixture.detectChanges();
-      
+
       // Open mobile menu
       component.mobileMenuOpen.set(true);
       fixture.detectChanges();
