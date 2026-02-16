@@ -1,33 +1,379 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import {
+  Task,
+  TasksResponse,
+  CreateTaskDto,
+  UpdateTaskDto,
+  MoveTaskDto
+} from '../models/task.model';
 
-export interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: 'todo' | 'doing' | 'done';
-  createdAt: string;
-}
+// Environment configuration
+const environment = {
+  apiUrl: 'http://localhost:3333/api/v1'
+};
 
-@Injectable()
+/**
+ * Store reativo para gerenciamento de estado das Tasks.
+ * Usa Angular Signals para reatividade e sincronização com backend.
+ *
+ * @example
+ * ```typescript
+ * export class TasksComponent {
+ *   private tasksStore = inject(TasksStore);
+ *
+ *   tasks = this.tasksStore.tasks;
+ *   loading = this.tasksStore.loading;
+ *
+ *   async ngOnInit() {
+ *     await this.tasksStore.loadTasks();
+ *   }
+ * }
+ * ```
+ */
+@Injectable({
+  providedIn: 'root'
+})
 export class TasksStore {
+  private http = inject(HttpClient);
+
+  // ============================================
+  // STATE (Private Writable Signals)
+  // ============================================
+
+  /** Lista completa de tasks */
   private _tasks = signal<Task[]>([]);
-  private _loading = signal(false);
 
-  readonly allTasks = this._tasks.asReadonly();
-  readonly loading = this._loading.asReadonly();
+  /** Indicador de loading para operações assíncronas */
+  private _loading = signal<boolean>(false);
 
-  async loadTasks() {
+  /** Mensagem de erro (se houver) */
+  private _error = signal<string | null>(null);
+
+  /** Filtro de status atual (null = todos) */
+  private _statusFilter = signal<'TODO' | 'DOING' | 'DONE' | null>(null);
+
+  /** Termo de busca */
+  private _searchTerm = signal<string>('');
+
+  // ============================================
+  // SELECTORS (Public Readonly Signals)
+  // ============================================
+
+  /** Tasks (readonly) */
+  tasks = this._tasks.asReadonly();
+
+  /** Loading state (readonly) */
+  loading = this._loading.asReadonly();
+
+  /** Error message (readonly) */
+  error = this._error.asReadonly();
+
+  // ============================================
+  // COMPUTED SIGNALS (Derived State)
+  // ============================================
+
+  /** Tasks filtradas por status */
+  filteredTasks = computed(() => {
+    const tasks = this._tasks();
+    const filter = this._statusFilter();
+    const search = this._searchTerm().toLowerCase();
+
+    let result = tasks;
+
+    // Aplicar filtro de status
+    if (filter) {
+      result = result.filter(t => t.status === filter);
+    }
+
+    // Aplicar busca
+    if (search) {
+      result = result.filter(t =>
+        t.title.toLowerCase().includes(search) ||
+        t.description?.toLowerCase().includes(search)
+      );
+    }
+
+    return result;
+  });
+
+  /** Tasks TODO */
+  todoTasks = computed(() =>
+    this._tasks().filter(t => t.status === 'TODO').sort((a, b) => a.position - b.position)
+  );
+
+  /** Tasks DOING */
+  doingTasks = computed(() =>
+    this._tasks().filter(t => t.status === 'DOING').sort((a, b) => a.position - b.position)
+  );
+
+  /** Tasks DONE */
+  doneTasks = computed(() =>
+    this._tasks().filter(t => t.status === 'DONE').sort((a, b) => a.position - b.position)
+  );
+
+  /** Total de tasks */
+  totalTasks = computed(() => this._tasks().length);
+
+  /** Estatísticas */
+  stats = computed(() => {
+    const tasks = this._tasks();
+    return {
+      total: tasks.length,
+      todo: tasks.filter(t => t.status === 'TODO').length,
+      doing: tasks.filter(t => t.status === 'DOING').length,
+      done: tasks.filter(t => t.status === 'DONE').length,
+      completionRate: tasks.length > 0
+        ? Math.round((tasks.filter(t => t.status === 'DONE').length / tasks.length) * 100)
+        : 0
+    };
+  });
+
+  // ============================================
+  // ACTIONS (Async Methods)
+  // ============================================
+
+  /**
+   * Carrega todas as tasks do backend.
+   *
+   * @param filters - Filtros opcionais (status, page, limit, etc)
+   */
+  async loadTasks(filters?: {
+    status?: 'TODO' | 'DOING' | 'DONE';
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    order?: 'asc' | 'desc';
+    search?: string;
+  }): Promise<void> {
     this._loading.set(true);
+    this._error.set(null);
 
-    // Mock API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Construir query params
+      let params = new HttpParams();
+      if (filters?.status) params = params.set('status', filters.status);
+      if (filters?.page) params = params.set('page', filters.page.toString());
+      if (filters?.limit) params = params.set('limit', filters.limit.toString());
+      if (filters?.sortBy) params = params.set('sortBy', filters.sortBy);
+      if (filters?.order) params = params.set('order', filters.order);
+      if (filters?.search) params = params.set('search', filters.search);
 
-    this._tasks.set([
-      { id: '1', title: 'Task 1', status: 'todo', createdAt: new Date().toISOString() },
-      { id: '2', title: 'Task 2', status: 'doing', createdAt: new Date().toISOString() },
-      { id: '3', title: 'Task 3', status: 'done', createdAt: new Date().toISOString() }
-    ]);
+      // Request
+      const response = await firstValueFrom(
+        this.http.get<TasksResponse>(`${environment.apiUrl}/tasks`, { params })
+      );
 
-    this._loading.set(false);
+      this._tasks.set(response.data);
+    } catch (error: any) {
+      this._error.set(error.message || 'Erro ao carregar tarefas');
+      console.error('TasksStore.loadTasks error:', error);
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Cria nova task.
+   *
+   * @param dto - Dados da task
+   * @returns Task criada
+   */
+  async createTask(dto: CreateTaskDto): Promise<Task | null> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const newTask = await firstValueFrom(
+        this.http.post<Task>(`${environment.apiUrl}/tasks`, dto)
+      );
+
+      // Adicionar task ao estado (optimistic update)
+      this._tasks.update(tasks => [...tasks, newTask]);
+
+      return newTask;
+    } catch (error: any) {
+      this._error.set(error.message || 'Erro ao criar tarefa');
+      console.error('TasksStore.createTask error:', error);
+      return null;
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Atualiza task existente (partial update).
+   *
+   * @param id - ID da task
+   * @param dto - Dados a atualizar
+   */
+  async updateTask(id: string, dto: UpdateTaskDto): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const updated = await firstValueFrom(
+        this.http.patch<Task>(`${environment.apiUrl}/tasks/${id}`, dto)
+      );
+
+      // Atualizar task no estado
+      this._tasks.update(tasks =>
+        tasks.map(t => t.id === id ? updated : t)
+      );
+    } catch (error: any) {
+      this._error.set(error.message || 'Erro ao atualizar tarefa');
+      console.error('TasksStore.updateTask error:', error);
+      throw error; // Re-throw para component handling
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Move task entre colunas do Kanban (drag & drop).
+   *
+   * @param id - ID da task
+   * @param toStatus - Status de destino
+   * @param position - Posição na nova coluna (opcional)
+   */
+  async moveTask(
+    id: string,
+    toStatus: 'TODO' | 'DOING' | 'DONE',
+    position?: number
+  ): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    // Optimistic update (imediato)
+    const previousTasks = this._tasks();
+    this._tasks.update(tasks =>
+      tasks.map(t =>
+        t.id === id
+          ? { ...t, status: toStatus, updatedAt: new Date().toISOString() }
+          : t
+      )
+    );
+
+    try {
+      const response = await firstValueFrom(
+        this.http.post<{ task: Task }>(`${environment.apiUrl}/tasks/${id}/move`, {
+          toStatus,
+          position
+        })
+      );
+
+      // Reload para sincronizar positions corretas
+      await this.loadTasks();
+    } catch (error: any) {
+      // Revert optimistic update em caso de erro
+      this._tasks.set(previousTasks);
+      this._error.set(error.message || 'Erro ao mover tarefa');
+      console.error('TasksStore.moveTask error:', error);
+      throw error;
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Deleta task.
+   *
+   * @param id - ID da task
+   */
+  async deleteTask(id: string): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    // Optimistic update
+    const previousTasks = this._tasks();
+    this._tasks.update(tasks => tasks.filter(t => t.id !== id));
+
+    try {
+      await firstValueFrom(
+        this.http.delete(`${environment.apiUrl}/tasks/${id}`)
+      );
+    } catch (error: any) {
+      // Revert optimistic update
+      this._tasks.set(previousTasks);
+      this._error.set(error.message || 'Erro ao deletar tarefa');
+      console.error('TasksStore.deleteTask error:', error);
+      throw error;
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Busca task por ID (se não estiver no cache, faz request).
+   *
+   * @param id - ID da task
+   * @returns Task encontrada ou null
+   */
+  async getTaskById(id: string): Promise<Task | null> {
+    // Verificar cache primeiro
+    const cached = this._tasks().find(t => t.id === id);
+    if (cached) return cached;
+
+    // Se não encontrou, buscar no backend
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const task = await firstValueFrom(
+        this.http.get<Task>(`${environment.apiUrl}/tasks/${id}`, {
+          params: new HttpParams()
+            .set('includeChecklist', 'true')
+            .set('includeNotes', 'true')
+        })
+      );
+
+      // Adicionar ao cache
+      this._tasks.update(tasks => {
+        const exists = tasks.some(t => t.id === id);
+        return exists ? tasks : [...tasks, task];
+      });
+
+      return task;
+    } catch (error: any) {
+      this._error.set(error.message || 'Erro ao buscar tarefa');
+      console.error('TasksStore.getTaskById error:', error);
+      return null;
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  // ============================================
+  // FILTER ACTIONS
+  // ============================================
+
+  /**
+   * Define filtro de status.
+   */
+  setStatusFilter(status: 'TODO' | 'DOING' | 'DONE' | null): void {
+    this._statusFilter.set(status);
+  }
+
+  /**
+   * Define termo de busca.
+   */
+  setSearchTerm(term: string): void {
+    this._searchTerm.set(term);
+  }
+
+  /**
+   * Limpa todos os filtros.
+   */
+  clearFilters(): void {
+    this._statusFilter.set(null);
+    this._searchTerm.set('');
+  }
+
+  /**
+   * Limpa erro.
+   */
+  clearError(): void {
+    this._error.set(null);
   }
 }
