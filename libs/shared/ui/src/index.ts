@@ -10,5 +10,8 @@ export * from './lib/card/card-footer.component';
 export * from './lib/modal/modal.component';
 export * from './lib/modal/modal.service';
 
+// Directives
+export * from './lib/directives/click-outside.directive';
+
 // Services
 export * from './lib/services/preferences-ui.service';

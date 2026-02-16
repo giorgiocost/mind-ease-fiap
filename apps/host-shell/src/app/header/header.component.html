@@ -1,0 +1,78 @@
+<!-- apps/host-shell/src/app/header/header.component.html -->
+<div class="header">
+  <!-- Left Section -->
+  <div class="header-left">
+    <button
+      class="sidebar-toggle"
+      (click)="handleToggleSidebar()"
+      aria-label="Toggle sidebar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+        <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
+        <line x1="3" y1="18" x2="21" y2="18" stroke-width="2"/>
+      </svg>
+    </button>
+
+    <a class="logo" routerLink="/dashboard">
+      <span class="logo-icon">🧠</span>
+      <span class="logo-text">MindEase</span>
+    </a>
+  </div>
+
+  <!-- Right Section -->
+  <div class="header-right">
+    <!-- Notifications -->
+    <button class="notifications" aria-label="Notifications">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      @if (notificationsCount > 0) {
+        <span class="badge">{{ notificationsCount }}</span>
+      }
+    </button>
+
+    <!-- User Dropdown -->
+    <div class="user-dropdown-container">
+      <button
+        class="user-button"
+        (click)="toggleDropdown()"
+        [attr.aria-expanded]="dropdownOpen"
+        aria-haspopup="true">
+        <div class="avatar">{{ userInitials() }}</div>
+        <span class="user-name">{{ user()?.name }}</span>
+        <svg
+          class="dropdown-icon"
+          [class.open]="dropdownOpen"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="currentColor">
+          <path d="M4 6l4 4 4-4"/>
+        </svg>
+      </button>
+
+      @if (dropdownOpen) {
+        <div class="dropdown-menu" (clickOutside)="closeDropdown()">
+          <button class="dropdown-item" (click)="navigateToProfile()">
+            <span class="icon">👤</span>
+            Meu Perfil
+          </button>
+          <button class="dropdown-item" (click)="navigateToPreferences()">
+            <span class="icon">⚙️</span>
+            Preferências
+          </button>
+          <button class="dropdown-item" (click)="navigateToLibrary()">
+            <span class="icon">📚</span>
+            Biblioteca
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" (click)="handleLogout()">
+            <span class="icon">🚪</span>
+            Sair
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
