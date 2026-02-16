@@ -2,6 +2,11 @@ import { Route } from '@angular/router';
 import { authGuard } from '@shared/guards';
 
 export const appRoutes: Route[] = [
+  {
+    path: 'mfeDashboard',
+    loadChildren: () =>
+      import('mfeDashboard/Routes').then((m) => m!.remoteRoutes),
+  },
   // Default redirect
   {
     path: '',
@@ -31,8 +36,7 @@ export const appRoutes: Route[] = [
   {
     path: 'tasks',
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('mfe-tasks/Routes').then((m) => m!.remoteRoutes),
+    loadChildren: () => import('mfe-tasks/Routes').then((m) => m!.remoteRoutes),
   },
   {
     path: 'profile',
@@ -47,7 +51,7 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./button-demo/button-demo.component').then(
-        (m) => m.ButtonDemoComponent
+        (m) => m.ButtonDemoComponent,
       ),
   },
   {
@@ -55,7 +59,7 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./input-demo/input-demo.component').then(
-        (m) => m.InputDemoComponent
+        (m) => m.InputDemoComponent,
       ),
   },
   {
@@ -63,7 +67,7 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./card-demo/card-demo.component').then(
-        (m) => m.CardDemoComponent
+        (m) => m.CardDemoComponent,
       ),
   },
   {
@@ -71,7 +75,7 @@ export const appRoutes: Route[] = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./modal-demo/modal-demo.component').then(
-        (m) => m.ModalDemoComponent
+        (m) => m.ModalDemoComponent,
       ),
   },
 
@@ -79,6 +83,8 @@ export const appRoutes: Route[] = [
   {
     path: '**',
     loadComponent: () =>
-      import('./not-found/not-found.component').then((m) => m.NotFoundComponent),
+      import('./not-found/not-found.component').then(
+        (m) => m.NotFoundComponent,
+      ),
   },
 ];

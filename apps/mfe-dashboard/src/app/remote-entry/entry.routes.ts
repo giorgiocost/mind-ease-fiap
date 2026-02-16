@@ -1,4 +1,9 @@
 import { Route } from '@angular/router';
-import { RemoteEntry } from './entry';
 
-export const remoteRoutes: Route[] = [{ path: '', component: RemoteEntry }];
+export const remoteRoutes: Route[] = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./entry.component').then(m => m.RemoteEntryComponent)
+  }
+];
