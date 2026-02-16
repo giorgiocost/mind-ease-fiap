@@ -2,8 +2,9 @@
 
 **Status:** ✅ Accepted  
 **Date:** 2026-02-15  
+**Updated:** 2026-02-16  
 **Deciders:** Architecture Team, UX Team  
-**Related:** Task 03, [Cognitive Accessibility Personas](../product/accessibility-cognitive.md)
+**Related:** [ADR-002: MVVM + Signals](adr-002-mvvm-signals-architecture.md), Task 03, Task 09, Task 10, [Cognitive Accessibility Personas](../product/accessibility-cognitive.md)
 
 ---
 
@@ -31,7 +32,9 @@ MindEase targets users with neurodivergent conditions (ADHD, autism, dyslexia, b
 
 ## Decision
 
-We will implement **7 cognitive accessibility tokens** that control the UI at runtime via **CSS custom properties** set through **`data-*` attributes on the `<html>` element**.
+We will implement **7 cognitive accessibility tokens** that control the UI at runtime via **CSS custom properties** set through **`data-*` attributes on the `<body>` element**.
+
+> **Note:** Initially planned for `<html>`, but implemented on `<body>` for better DOM manipulation compatibility with Angular services (DOCUMENT.body).
 
 ### The 7 Tokens
 
@@ -50,7 +53,7 @@ We will implement **7 cognitive accessibility tokens** that control the UI at ru
 **1. Data Attributes (not CSS classes)**
 ```html
 <!-- Semantic, easier to read, explicit state -->
-<html data-ui-density="simple" data-focus-mode="true">
+<body data-ui-density="simple" data-focus-mode="true">
 ```
 
 **Why not classes?**
@@ -102,24 +105,54 @@ We will implement **7 cognitive accessibility tokens** that control the UI at ru
 
 **In Angular Service (`PreferencesUiService`):**
 ```typescript
-applyPreferences(prefs: UserPreferences): void {
-  const html = document.documentElement;
+// libs/shared/ui/src/lib/services/preferences-ui.service.ts
+@Injectable({ providedIn: 'root' })
+export class PreferencesUiService {
+  private document = inject(DOCUMENT);
+  private prefsStore = inject(PreferencesStore);
+  private body: HTMLElement | null = null;
   
-  html.setAttribute('data-ui-density', prefs.uiDensity);
-  html.setAttribute('data-focus-mode', String(prefs.focusMode));
-  html.setAttribute('data-content-mode', prefs.contentMode);
-  html.setAttribute('data-contrast', prefs.contrast);
-  html.setAttribute('data-font-scale', String(prefs.fontScale));
-  html.setAttribute('data-spacing-scale', String(prefs.spacingScale));
-  html.setAttribute('data-motion', prefs.motion);
+  constructor() {
+    this.body = this.document.body;
+    
+    // React to preference changes automatically
+    effect(() => {
+      const prefs = this.prefsStore.preferences();
+      this.applyPreferences(prefs);
+    });
+  }
+  
+  private applyPreferences(prefs: CognitivePreferences): void {
+    if (!this.body) return;
+    
+    // Apply data attributes
+    this.body.setAttribute('data-ui-density', prefs.uiDensity);
+    this.body.setAttribute('data-focus-mode', String(prefs.focusMode));
+    this.body.setAttribute('data-content-mode', prefs.contentMode);
+    this.body.setAttribute('data-contrast', prefs.contrast);
+    this.body.setAttribute('data-font-scale', String(prefs.fontScale));
+    this.body.setAttribute('data-spacing-scale', String(prefs.spacingScale));
+    this.body.setAttribute('data-motion', prefs.motion);
+    
+    // Apply CSS custom properties
+    this.body.style.setProperty('--font-scale', String(prefs.fontScale));
+    this.body.style.setProperty('--spacing-scale', String(prefs.spacingScale));
+    
+    // Apply body classes for easier CSS targeting
+    this.body.classList.remove('density-simple', 'density-medium', 'density-full');
+    this.body.classList.add(`density-${prefs.uiDensity}`);
+    // ... (see Task 10 for full implementation)
+  }
 }
 ```
 
 **On App Initialization:**
-1. Load user preferences from `PreferencesStore` (NgRx Signals)
-2. Apply via `PreferencesUiService.applyPreferences()`
+1. Load user preferences from `PreferencesStore` (Angular Signals, ADR-002)
+2. `PreferencesUiService` automatically applies via `effect()` (reactive)
 3. Browser re-renders with new CSS custom property values
 4. No component code changes needed — **automatic cascade**
+5. Preferences sync to backend API (optimistic updates, Task 09)
+6. LocalStorage cache for offline support
 
 ---
 
@@ -151,9 +184,9 @@ applyPreferences(prefs: UserPreferences): void {
 
 ## Alternatives Considered
 
-### Alternative 1: CSS Classes on `<html>`
+### Alternative 1: CSS Classes on `<body>`
 ```html
-<html class="density-simple focus-mode-on contrast-high">
+<body class="density-simple focus-mode-on contrast-high">
 ```
 
 **Why rejected:**
@@ -226,6 +259,12 @@ This pattern is **battle-tested** in design systems like:
 - [x] Documentation complete with usage examples
 - [x] Build passes (SCSS compiles without errors)
 
+**Implementation Status (as of 2026-02-16):**
+- [x] Task 03: Design Tokens (SCSS)
+- [x] Task 08: AuthStore with Signals (28 tests)
+- [x] Task 09: PreferencesStore with Signals (29 tests)
+- [x] Task 10: PreferencesUiService applies tokens to DOM (20 tests)
+
 **Future Success Metrics (Phase 3):**
 - User testing with personas (Bruno, Clara, Diana, Elena)
 - A/B test: cognitive tokens vs. no tokens → task completion time reduction
@@ -235,9 +274,19 @@ This pattern is **battle-tested** in design systems like:
 
 ## References
 
+**ADRs:**
+- **[ADR-002: MVVM + Signals Architecture](adr-002-mvvm-signals-architecture.md)** — State management pattern
+
+**Documentation:**
 - **[Cognitive Accessibility Personas](../product/accessibility-cognitive.md)** — User research and personas
 - **[Design Tokens Documentation](../design-system/tokens-documentation.md)** — Full token reference
-- **[Task 03 Spec](../../tasks/task_03_create_design_tokens.md)** — Implementation task
+
+**Tasks:**
+- **[Task 03: Create Design Tokens](../../tasks/task_03_create_design_tokens.md)** — SCSS implementation
+- **[Task 09: Setup Preferences Store](../../tasks/task_09_setup_preferences_store.md)** — State management
+- **[Task 10: Setup Preferences UI Service](../../tasks/task_10_setup_preferences_ui_service.md)** — DOM integration
+
+**Standards:**
 - **[WCAG 2.1 Understanding SC 1.4.8: Visual Presentation](https://www.w3.org/WAI/WCAG21/Understanding/visual-presentation.html)** — Text spacing requirements
 - **[MDN: Using data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)**
 - **[MDN: Using CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)**
@@ -246,4 +295,5 @@ This pattern is **battle-tested** in design systems like:
 
 ## Changelog
 
-- **2026-02-15** — ADR accepted, implemented in Task 03
+- **2026-02-15** — ADR accepted, SCSS tokens implemented (Task 03)
+- **2026-02-16** — Updated with PreferencesStore (Task 09) and PreferencesUiService (Task 10) implementation details, added ADR-002 reference, changed target from `<html>` to `<body>`

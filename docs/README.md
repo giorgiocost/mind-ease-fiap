@@ -64,6 +64,7 @@
 ## 🧠 Decisions (ADRs)
 
 - **[ADR-001: Nx + Module Federation](decisions/adr-001-nx-module-federation.md)**
+- **[ADR-002: MVVM + Signals Architecture](decisions/adr-002-mvvm-signals-architecture.md)**
 - **[ADR-003: Cognitive Accessibility Tokens](decisions/adr-003-tokens-cognitivos.md)**
 - **[ADR-005: Boundaries & Tags](decisions/adr-005-boundaries-and-tags.md)**
 - **[ADR Template](decisions/adr-template.md)**
