@@ -54,20 +54,20 @@ export class TasksViewModel {
   // STORE DATA (readonly signals from stores)
   // ==========================================
 
-  /** All tasks from TasksStore */
-  readonly tasks = this.tasksStore.tasks;
+  /** All tasks from TasksStore (with defensive guard) */
+  readonly tasks = computed(() => this.tasksStore.tasks() ?? []);
 
   /** Loading state from TasksStore */
-  readonly isLoading = this.tasksStore.loading;
+  readonly isLoading = computed(() => this.tasksStore.loading() ?? false);
 
   /** Error state from TasksStore */
-  readonly error = this.tasksStore.error;
+  readonly error = computed(() => this.tasksStore.error() ?? null);
 
   // Cognitive accessibility preferences
   readonly preferences = this.preferencesStore.preferences;
-  readonly uiDensity = computed(() => this.preferences()?.uiDensity || 'medium');
-  readonly focusMode = computed(() => this.preferences()?.focusMode || false);
-  readonly contentMode = computed(() => this.preferences()?.contentMode || 'detailed');
+  readonly uiDensity = computed(() => this.preferencesStore.uiDensity() ?? 'medium');
+  readonly focusMode = computed(() => this.preferencesStore.focusMode() ?? false);
+  readonly contentMode = computed(() => this.preferencesStore.contentMode() ?? 'detailed');
 
   // ==========================================
   // COMPUTED SIGNALS (derived state)
@@ -153,7 +153,6 @@ export class TasksViewModel {
       const error = this.error();
       if (error) {
         console.error('[TasksViewModel] Error:', error);
-        // TODO: Integrate with telemetry service
       }
     });
   }

@@ -44,23 +44,26 @@ export class PreferencesStore {
   readonly synced = this._synced.asReadonly();
 
   // Individual preference signals (for convenience)
-  readonly uiDensity = computed(() => this._preferences().uiDensity);
-  readonly focusMode = computed(() => this._preferences().focusMode);
-  readonly contentMode = computed(() => this._preferences().contentMode);
-  readonly contrast = computed(() => this._preferences().contrast);
-  readonly fontScale = computed(() => this._preferences().fontScale);
-  readonly spacingScale = computed(() => this._preferences().spacingScale);
-  readonly motion = computed(() => this._preferences().motion);
+  // Note: Guard against undefined during initialization
+  readonly uiDensity = computed(() => this._preferences()?.uiDensity ?? DEFAULT_PREFERENCES.uiDensity);
+  readonly focusMode = computed(() => this._preferences()?.focusMode ?? DEFAULT_PREFERENCES.focusMode);
+  readonly contentMode = computed(() => this._preferences()?.contentMode ?? DEFAULT_PREFERENCES.contentMode);
+  readonly contrast = computed(() => this._preferences()?.contrast ?? DEFAULT_PREFERENCES.contrast);
+  readonly fontScale = computed(() => this._preferences()?.fontScale ?? DEFAULT_PREFERENCES.fontScale);
+  readonly spacingScale = computed(() => this._preferences()?.spacingScale ?? DEFAULT_PREFERENCES.spacingScale);
+  readonly motion = computed(() => this._preferences()?.motion ?? DEFAULT_PREFERENCES.motion);
 
   constructor() {
+    // Hydrate from LocalStorage FIRST (before effects run)
+    this.hydrateFromStorage();
+
     // Effect: Persist to LocalStorage on change
     effect(() => {
       const prefs = this._preferences();
-      this.persistToStorage(prefs);
+      if (prefs) {
+        this.persistToStorage(prefs);
+      }
     });
-
-    // Hydrate from LocalStorage on init
-    this.hydrateFromStorage();
 
     // Effect: Load from API when authenticated
     effect(() => {
@@ -85,8 +88,13 @@ export class PreferencesStore {
         )
       );
 
-      this._preferences.set(response.data);
-      this._synced.set(true);
+      // Validate response data exists
+      if (response?.data && typeof response.data === 'object') {
+        this._preferences.set({ ...DEFAULT_PREFERENCES, ...response.data });
+        this._synced.set(true);
+      } else {
+        console.warn('Invalid API response, keeping local preferences');
+      }
     } catch (error: unknown) {
       this._error.set(error instanceof Error ? error.message : 'Failed to load preferences');
       // Keep local preferences on error
@@ -100,7 +108,7 @@ export class PreferencesStore {
    * Local changes are kept even if API sync fails (resilience)
    */
   async updatePreferences(updates: UpdatePreferencesRequest): Promise<void> {
-    const current = this._preferences();
+    const current = this._preferences() ?? DEFAULT_PREFERENCES;
     const updated = { ...current, ...updates };
 
     // Optimistic update
@@ -146,6 +154,11 @@ export class PreferencesStore {
    */
   private persistToStorage(preferences: CognitivePreferences): void {
     try {
+      // Guard against undefined values
+      if (!preferences) {
+        console.warn('Attempted to persist undefined preferences');
+        return;
+      }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
     } catch (error) {
       console.error('Failed to persist preferences:', error);
@@ -159,12 +172,29 @@ export class PreferencesStore {
   private hydrateFromStorage(): void {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) return;
+
+      // Guard against null, empty string, or invalid JSON strings
+      if (!stored || stored === 'undefined' || stored === 'null' || stored.trim() === '') {
+        console.warn('Invalid or missing stored preferences, using defaults');
+        localStorage.removeItem(STORAGE_KEY); // Clean up invalid data
+        return;
+      }
 
       const preferences = JSON.parse(stored);
+
+      // Validate parsed result is an object
+      if (typeof preferences !== 'object' || preferences === null) {
+        console.warn('Parsed preferences is not a valid object, using defaults');
+        localStorage.removeItem(STORAGE_KEY);
+        return;
+      }
+
       this._preferences.set({ ...DEFAULT_PREFERENCES, ...preferences });
     } catch (error) {
       console.error('Failed to hydrate preferences:', error);
+      // Clean up corrupted data and use defaults
+      localStorage.removeItem(STORAGE_KEY);
+      this._preferences.set(DEFAULT_PREFERENCES);
     }
   }
 

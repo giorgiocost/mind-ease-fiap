@@ -1,11 +1,11 @@
 export interface Task {
-  id: string;
-  userId: string;
+  id: string | number; // API returns number, accept both
+  userId?: string; // Optional - API may or may not include this
   title: string;
-  description: string | null;
+  description?: string | null; // Optional to match API flexibility
   status: 'TODO' | 'DOING' | 'DONE';
   position: number;
-  wipLocked: boolean;
+  wipLocked?: boolean; // Optional - API doesn't always include this
   createdAt: string;
   updatedAt: string;
 

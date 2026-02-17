@@ -43,8 +43,7 @@ export class TasksComponent implements OnInit {
   // ==========================================
 
   ngOnInit(): void {
-    // ViewModel already loads tasks via effect, but we can force reload
-    this.vm.loadTasks();
+    // Component initialization - tasks are automatically loaded via effect in ViewModel
   }
 
   // ==========================================

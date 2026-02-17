@@ -91,7 +91,7 @@
   }
 
   <!-- ========================================
-       EMPTY STATE (nenhuma tarefa)
+       EMPTY STATE
        ======================================== -->
   @if (vm.tasks().length === 0 && !vm.isLoading() && !vm.error()) {
     <div class="empty-state">
@@ -108,7 +108,7 @@
   }
 
   <!-- ========================================
-       KANBAN BOARD (3 colunas)
+       KANBAN BOARD
        ======================================== -->
   @if (vm.tasks().length > 0 && !vm.isLoading()) {
     <div class="kanban-board">
@@ -121,13 +121,16 @@
           </h3>
         </div>
         <div class="column-body" data-status="TODO">
-          <!-- TODO task_24: usar <app-kanban-column> -->
-          <!-- TODO task_25: iterar <app-task-card> para cada task -->
           @if (vm.tasksByStatus().TODO.length === 0) {
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().TODO; track task.id) {
-              <div class="task-placeholder">{{ task.title }}</div>
+              <div class="task-card">
+                <h4 class="task-title">{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-description">{{ task.description }}</p>
+                }
+              </div>
             }
           }
         </div>
@@ -149,7 +152,12 @@
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().DOING; track task.id) {
-              <div class="task-placeholder">{{ task.title }}</div>
+              <div class="task-card">
+                <h4 class="task-title">{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-description">{{ task.description }}</p>
+                }
+              </div>
             }
           }
         </div>
@@ -168,7 +176,12 @@
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().DONE; track task.id) {
-              <div class="task-placeholder">{{ task.title }}</div>
+              <div class="task-card task-completed">
+                <h4 class="task-title">{{ task.title }}</h4>
+                @if (task.description) {
+                  <p class="task-description">{{ task.description }}</p>
+                }
+              </div>
             }
           }
         </div>
@@ -177,7 +190,7 @@
   }
 
   <!-- ========================================
-       MODAL DE CRIAR TAREFA (simplificado)
+       MODAL DE CRIAR TAREFA
        ======================================== -->
   @if (vm.uiState().isCreatingTask) {
     <div

@@ -8,6 +8,7 @@ import {
   UpdateTaskDto,
   MoveTaskDto
 } from '../models/task.model';
+import { getErrorMessage } from '../utils/error-handler';
 
 // Environment configuration
 const environment = {
@@ -160,14 +161,24 @@ export class TasksStore {
       if (filters?.order) params = params.set('order', filters.order);
       if (filters?.search) params = params.set('search', filters.search);
 
-      // Request
+      // Request - handle both direct array and wrapped response
       const response = await firstValueFrom(
-        this.http.get<TasksResponse>(`${environment.apiUrl}/tasks`, { params })
+        this.http.get<Task[] | TasksResponse>(`${environment.apiUrl}/tasks`, { params })
       );
 
-      this._tasks.set(response.data);
-    } catch (error: any) {
-      this._error.set(error.message || 'Erro ao carregar tarefas');
+      // Handle direct array response or wrapped response
+      let tasks: Task[];
+      if (Array.isArray(response)) {
+        // Direct array response (current API format)
+        tasks = response;
+      } else {
+        // Wrapped response with data property
+        tasks = Array.isArray(response.data) ? response.data : [];
+      }
+
+      this._tasks.set(tasks);
+    } catch (error: unknown) {
+      this._error.set(getErrorMessage(error) || 'Erro ao carregar tarefas');
       console.error('TasksStore.loadTasks error:', error);
     } finally {
       this._loading.set(false);
@@ -190,11 +201,12 @@ export class TasksStore {
       );
 
       // Adicionar task ao estado (optimistic update)
-      this._tasks.update(tasks => [...tasks, newTask]);
+      // Defensive guard: ensure tasks is always an array
+      this._tasks.update(tasks => [...(tasks || []), newTask]);
 
       return newTask;
-    } catch (error: any) {
-      this._error.set(error.message || 'Erro ao criar tarefa');
+    } catch (error: unknown) {
+      this._error.set(getErrorMessage(error) || 'Erro ao criar tarefa');
       console.error('TasksStore.createTask error:', error);
       return null;
     } finally {
@@ -218,11 +230,12 @@ export class TasksStore {
       );
 
       // Atualizar task no estado
+      // Defensive guard: ensure tasks is always an array
       this._tasks.update(tasks =>
-        tasks.map(t => t.id === id ? updated : t)
+        (tasks || []).map(t => t.id === id ? updated : t)
       );
-    } catch (error: any) {
-      this._error.set(error.message || 'Erro ao atualizar tarefa');
+    } catch (error: unknown) {
+      this._error.set(getErrorMessage(error) || 'Erro ao atualizar tarefa');
       console.error('TasksStore.updateTask error:', error);
       throw error; // Re-throw para component handling
     } finally {
@@ -247,8 +260,9 @@ export class TasksStore {
 
     // Optimistic update (imediato)
     const previousTasks = this._tasks();
+    // Defensive guard: ensure tasks is always an array
     this._tasks.update(tasks =>
-      tasks.map(t =>
+      (tasks || []).map(t =>
         t.id === id
           ? { ...t, status: toStatus, updatedAt: new Date().toISOString() }
           : t
@@ -265,10 +279,11 @@ export class TasksStore {
 
       // Reload para sincronizar positions corretas
       await this.loadTasks();
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Revert optimistic update em caso de erro
-      this._tasks.set(previousTasks);
-      this._error.set(error.message || 'Erro ao mover tarefa');
+      // Defensive guard: ensure we always set an array
+      this._tasks.set(Array.isArray(previousTasks) ? previousTasks : []);
+      this._error.set(getErrorMessage(error) || 'Erro ao mover tarefa');
       console.error('TasksStore.moveTask error:', error);
       throw error;
     } finally {
@@ -287,16 +302,18 @@ export class TasksStore {
 
     // Optimistic update
     const previousTasks = this._tasks();
-    this._tasks.update(tasks => tasks.filter(t => t.id !== id));
+    // Defensive guard: ensure tasks is always an array
+    this._tasks.update(tasks => (tasks || []).filter(t => t.id !== id));
 
     try {
       await firstValueFrom(
         this.http.delete(`${environment.apiUrl}/tasks/${id}`)
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Revert optimistic update
-      this._tasks.set(previousTasks);
-      this._error.set(error.message || 'Erro ao deletar tarefa');
+      // Defensive guard: ensure we always set an array
+      this._tasks.set(Array.isArray(previousTasks) ? previousTasks : []);
+      this._error.set(getErrorMessage(error) || 'Erro ao deletar tarefa');
       console.error('TasksStore.deleteTask error:', error);
       throw error;
     } finally {
@@ -329,14 +346,16 @@ export class TasksStore {
       );
 
       // Adicionar ao cache
+      // Defensive guard: ensure tasks is always an array
       this._tasks.update(tasks => {
-        const exists = tasks.some(t => t.id === id);
-        return exists ? tasks : [...tasks, task];
+        const safeTasks = tasks || [];
+        const exists = safeTasks.some(t => t.id === id);
+        return exists ? safeTasks : [...safeTasks, task];
       });
 
       return task;
-    } catch (error: any) {
-      this._error.set(error.message || 'Erro ao buscar tarefa');
+    } catch (error: unknown) {
+      this._error.set(getErrorMessage(error) || 'Erro ao buscar tarefa');
       console.error('TasksStore.getTaskById error:', error);
       return null;
     } finally {

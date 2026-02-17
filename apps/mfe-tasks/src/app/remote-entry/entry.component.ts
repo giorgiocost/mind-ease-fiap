@@ -24,6 +24,6 @@ export class RemoteEntryComponent implements OnInit {
 
   ngOnInit() {
     // Load tasks when MFE initializes
-    this.tasksStore.loadTasks();
+    // this.tasksStore.loadTasks(); // Commented to avoid duplicate API calls - handled by TasksViewModel
   }
 }
