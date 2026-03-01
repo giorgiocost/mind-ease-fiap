@@ -1,0 +1,91 @@
+@use '../../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+.task-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.task-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.task-title {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.task-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.btn-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-hover);
+  }
+
+  &.danger:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.task-description {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin: 0 0 var(--spacing-sm) 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-progress {
+  margin-bottom: var(--spacing-sm);
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-hover);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.task-meta {
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.created-date,
+.updated-date {
+  opacity: 0.7;
+}

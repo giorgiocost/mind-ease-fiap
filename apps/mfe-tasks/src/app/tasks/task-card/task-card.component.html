@@ -1,0 +1,46 @@
+<!-- Task Card Template -->
+<ui-card variant="outlined" class="task-card">
+  <div card-body>
+    <div class="task-header">
+      <h3 class="task-title">{{ task().title }}</h3>
+      <div class="task-actions">
+        <button class="btn-icon" (click)="handleEdit()" aria-label="Edit">
+          ✏️
+        </button>
+        <button class="btn-icon danger" (click)="handleDelete()" aria-label="Delete">
+          🗑️
+        </button>
+      </div>
+    </div>
+
+    @if (task().description) {
+      <p class="task-description">{{ task().description }}</p>
+    }
+
+    @if (task().subtasks && task().subtasks!.length > 0) {
+      <app-checklist
+        [taskId]="task().id.toString()"
+        [subtasks]="task().subtasks!">
+      </app-checklist>
+    } @else if ((task().checklistItemsCount ?? 0) > 0) {
+      <!-- Fallback: API summary sem subtasks carregadas -->
+      <div class="task-progress">
+        <span class="progress-text">
+          {{ task().checklistCompletedCount || 0 }}/{{ task().checklistItemsCount }} subtarefas
+        </span>
+      </div>
+    } @else {
+      <app-checklist
+        [taskId]="task().id.toString()"
+        [subtasks]="[]">
+      </app-checklist>
+    }
+
+    <div class="task-meta">
+      <span class="created-date">{{ task().createdAt | date:'dd/MM/yyyy' }}</span>
+      @if (task().updatedAt !== task().createdAt) {
+        <span class="updated-date">• Atualizado {{ task().updatedAt | date:'dd/MM/yyyy' }}</span>
+      }
+    </div>
+  </div>
+</ui-card>

@@ -1,0 +1,43 @@
+<!-- Kanban Column Template -->
+<div class="kanban-column" [attr.data-status]="status()">
+  <header class="column-header">
+    <h2 class="column-title">{{ title() }}</h2>
+    <span class="column-badge">{{ tasks().length }}</span>
+  </header>
+
+  <div
+    class="column-content"
+    cdkDropList
+    [cdkDropListData]="tasks()"
+    [cdkDropListConnectedTo]="connectedTo()"
+    [id]="status()"
+    (cdkDropListDropped)="onDrop($event)">
+
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    } @else {
+      @if (tasks().length === 0) {
+        <div class="empty-state">
+          <p>Nenhuma tarefa</p>
+        </div>
+      } @else {
+        @for (task of tasks(); track task.id) {
+          <div cdkDrag [cdkDragData]="task" class="drag-container">
+            <app-task-card [task]="task"></app-task-card>
+
+            <!-- Custom drag placeholder (dashed border in drop zone) -->
+            <div class="task-placeholder" *cdkDragPlaceholder></div>
+
+            <!-- Custom drag preview (floating card while dragging) -->
+            <div class="drag-preview" *cdkDragPreview>
+              <div class="drag-preview__title">{{ task.title }}</div>
+              <div class="drag-preview__status">→ Arraste para mover</div>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

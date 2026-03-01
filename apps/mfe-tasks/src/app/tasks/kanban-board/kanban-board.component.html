@@ -1,0 +1,63 @@
+<!-- Kanban Board Component Template -->
+<div class="kanban-board">
+  <!-- Header -->
+  <header class="kanban-header">
+    <div class="actions-left">
+      <ui-button
+        variant="primary"
+        (clicked)="handleCreateTask()">
+        + Nova Tarefa
+      </ui-button>
+    </div>
+
+    <div class="actions-right">
+      <!-- Filter -->
+      <select
+        class="filter-select"
+        [value]="filter()"
+        (change)="setFilter($any($event.target).value)">
+        <option value="all">Todas</option>
+        <option value="active">Ativas</option>
+        <option value="completed">Concluídas</option>
+      </select>
+
+      <!-- Search -->
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Buscar tarefas..."
+        [value]="searchQuery()"
+        (input)="updateSearch($event)">
+    </div>
+  </header>
+
+  <!-- Kanban Columns (cdkDropListGroup connects all child drop lists) -->
+  <div class="kanban-columns" cdkDropListGroup>
+    <app-kanban-column
+      title="To Do"
+      status="TODO"
+      [tasks]="todoTasks()"
+      [loading]="loading()"
+      [connectedTo]="todoConnected"
+      (taskDropped)="onTaskDropped($event)">
+    </app-kanban-column>
+
+    <app-kanban-column
+      title="Doing"
+      status="DOING"
+      [tasks]="doingTasks()"
+      [loading]="loading()"
+      [connectedTo]="doingConnected"
+      (taskDropped)="onTaskDropped($event)">
+    </app-kanban-column>
+
+    <app-kanban-column
+      title="Done"
+      status="DONE"
+      [tasks]="doneTasks()"
+      [loading]="loading()"
+      [connectedTo]="doneConnected"
+      (taskDropped)="onTaskDropped($event)">
+    </app-kanban-column>
+  </div>
+</div>
