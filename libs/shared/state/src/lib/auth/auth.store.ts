@@ -140,6 +140,16 @@ export class AuthStore {
   }
 
   /**
+   * Update current user's profile fields in memory
+   */
+  updateUser(updates: Partial<Pick<User, 'name' | 'email'>>): void {
+    const current = this._user();
+    if (current) {
+      this._user.set({ ...current, ...updates });
+    }
+  }
+
+  /**
    * Refresh access token using refresh token
    * @returns New access token
    * @throws Error if refresh fails (triggers logout)

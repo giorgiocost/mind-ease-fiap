@@ -1,0 +1,183 @@
+<div class="profile-settings">
+
+  <!-- Header -->
+  <header class="settings-header">
+    <h1>Configurações de Perfil</h1>
+    <p>Gerencie suas informações pessoais e preferências</p>
+  </header>
+
+  <!-- Global error banner -->
+  @if (error()) {
+    <div class="error-banner" role="alert">
+      ⚠️ {{ error() }}
+    </div>
+  }
+
+  <!-- ① User Information -->
+  <section class="settings-section" aria-labelledby="section-profile">
+    <h2 id="section-profile">Informações Pessoais</h2>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+      <div class="form-group">
+        <label for="name">Nome Completo</label>
+        <ui-input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Seu nome completo">
+        </ui-input>
+        @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+          <span class="form-error" role="alert">Nome deve ter pelo menos 3 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <ui-input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu@email.com">
+        </ui-input>
+        @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+          <span class="form-error" role="alert">Email inválido</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="profileForm.invalid || savingProfile()"
+          [attr.aria-busy]="savingProfile()">
+          @if (savingProfile()) { ⏳ Salvando... } @else { 💾 Salvar Alterações }
+        </button>
+
+        @if (profileSaved()) {
+          <span class="success-message" aria-live="polite">✓ Perfil atualizado!</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <!-- ② Change Password -->
+  <section class="settings-section" aria-labelledby="section-password">
+    <h2 id="section-password">Alterar Senha</h2>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+      <div class="form-group">
+        <label for="currentPassword">Senha Atual</label>
+        <ui-input
+          id="currentPassword"
+          type="password"
+          formControlName="currentPassword"
+          placeholder="Digite sua senha atual">
+        </ui-input>
+        @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
+          <span class="form-error" role="alert">Campo obrigatório</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">Nova Senha</label>
+        <ui-input
+          id="newPassword"
+          type="password"
+          formControlName="newPassword"
+          placeholder="Mínimo 8 caracteres">
+        </ui-input>
+        @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+          <span class="form-error" role="alert">Senha deve ter pelo menos 8 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Nova Senha</label>
+        <ui-input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Repita a nova senha">
+        </ui-input>
+        @if (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+          <span class="form-error" role="alert">As senhas não coincidem</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="passwordForm.invalid || changingPassword()"
+          [attr.aria-busy]="changingPassword()">
+          @if (changingPassword()) { ⏳ Alterando... } @else { 🔒 Alterar Senha }
+        </button>
+
+        @if (passwordChanged()) {
+          <span class="success-message" aria-live="polite">✓ Senha alterada!</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <!-- ③ Preferences Summary -->
+  <section class="settings-section" aria-labelledby="section-prefs">
+    <h2 id="section-prefs">Preferências Cognitivas</h2>
+
+    <div class="preferences-summary">
+      <div class="preference-item">
+        <span class="preference-label">Densidade UI</span>
+        <span class="preference-value">{{ preferences().uiDensity }}</span>
+      </div>
+      <div class="preference-item">
+        <span class="preference-label">Modo Foco</span>
+        <span class="preference-value">{{ preferences().focusMode ? 'Ativo' : 'Inativo' }}</span>
+      </div>
+      <div class="preference-item">
+        <span class="preference-label">Contraste</span>
+        <span class="preference-value">{{ preferences().contrast }}</span>
+      </div>
+      <div class="preference-item">
+        <span class="preference-label">Movimento</span>
+        <span class="preference-value">{{ preferences().motion }}</span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="navigateToPreferences()">
+        ⚙️ Editar Preferências
+      </button>
+      <button class="btn-secondary" (click)="resyncPreferences()">
+        🔄 Resync
+      </button>
+    </div>
+  </section>
+
+  <!-- ④ Danger Zone -->
+  <section class="settings-section danger-zone" aria-labelledby="section-danger">
+    <h2 id="section-danger">Zona de Perigo</h2>
+
+    <div class="danger-actions">
+      <div class="danger-item">
+        <div class="danger-info">
+          <h3>Sair da conta</h3>
+          <p>Encerrar a sessão atual no MindEase</p>
+        </div>
+        <button class="btn-danger-outline" (click)="logout()" aria-label="Fazer logout">
+          🚪 Logout
+        </button>
+      </div>
+
+      <div class="danger-item">
+        <div class="danger-info">
+          <h3>Excluir conta</h3>
+          <p>Remove permanentemente sua conta e todos os dados associados</p>
+        </div>
+        <button class="btn-danger" (click)="deleteAccount()" aria-label="Excluir conta permanentemente">
+          🗑️ Excluir Conta
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>
