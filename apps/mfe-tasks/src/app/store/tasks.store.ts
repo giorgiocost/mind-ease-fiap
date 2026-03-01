@@ -6,8 +6,7 @@ import {
   Subtask,
   TasksResponse,
   CreateTaskDto,
-  UpdateTaskDto,
-  MoveTaskDto
+  UpdateTaskDto
 } from '../models/task.model';
 import { getErrorMessage } from '../utils/error-handler';
 
@@ -409,12 +408,16 @@ export class TasksStore {
   async toggleSubtask(taskId: string, subtaskId: string): Promise<void> {
     // Optimistic update local
     const previousTasks = this._tasks();
+    let newCompleted = false;
+
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id !== taskId) return t;
-        const updatedSubtasks = (t.subtasks || []).map(st =>
-          st.id === subtaskId ? { ...st, completed: !st.completed } : st
-        );
+        if (t.id.toString() !== taskId) return t;
+        const updatedSubtasks = (t.subtasks || []).map(st => {
+          if (st.id !== subtaskId) return st;
+          newCompleted = !st.completed;
+          return { ...st, completed: newCompleted };
+        });
         const completedCount = updatedSubtasks.filter(st => st.completed).length;
         return {
           ...t,
@@ -427,8 +430,8 @@ export class TasksStore {
     try {
       await firstValueFrom(
         this.http.patch<void>(
-          `${environment.apiUrl}/${taskId}/subtasks/${subtaskId}/toggle`,
-          {}
+          `${environment.apiUrl}/${taskId}/subtasks/${subtaskId}`,
+          { completed: newCompleted }
         )
       );
     } catch (error: unknown) {
@@ -458,7 +461,7 @@ export class TasksStore {
     const previousTasks = this._tasks();
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id !== taskId) return t;
+        if (t.id.toString() !== taskId) return t;
         const updatedSubtasks = [...(t.subtasks || []), tempSubtask];
         return {
           ...t,
@@ -479,7 +482,7 @@ export class TasksStore {
       // Replace temp ID with the real one from API
       this._tasks.update(tasks =>
         tasks.map(t => {
-          if (t.id !== taskId) return t;
+          if (t.id.toString() !== taskId) return t;
           return {
             ...t,
             subtasks: (t.subtasks || []).map(st =>
@@ -509,7 +512,7 @@ export class TasksStore {
     // Optimistic update local
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id !== taskId) return t;
+        if (t.id.toString() !== taskId) return t;
         const updatedSubtasks = (t.subtasks || []).filter(st => st.id !== subtaskId);
         return {
           ...t,

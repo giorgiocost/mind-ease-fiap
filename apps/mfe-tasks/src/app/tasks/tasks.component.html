@@ -131,12 +131,8 @@
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().TODO; track task.id) {
-              <div class="task-card" cdkDrag [cdkDragData]="task">
-                <h4 class="task-title">{{ task.title }}</h4>
-                @if (task.description) {
-                  <p class="task-description">{{ task.description }}</p>
-                }
-                <!-- Drag placeholder -->
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+                <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
             }
@@ -166,11 +162,8 @@
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().DOING; track task.id) {
-              <div class="task-card" cdkDrag [cdkDragData]="task">
-                <h4 class="task-title">{{ task.title }}</h4>
-                @if (task.description) {
-                  <p class="task-description">{{ task.description }}</p>
-                }
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+                <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
             }
@@ -197,11 +190,8 @@
             <p class="placeholder-text">Drop tasks here...</p>
           } @else {
             @for (task of vm.tasksByStatus().DONE; track task.id) {
-              <div class="task-card task-completed" cdkDrag [cdkDragData]="task">
-                <h4 class="task-title">{{ task.title }}</h4>
-                @if (task.description) {
-                  <p class="task-description">{{ task.description }}</p>
-                }
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+                <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
             }

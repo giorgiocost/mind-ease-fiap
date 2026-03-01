@@ -5,7 +5,9 @@ Preferences:
 
 Tasks:
 - task_moved { taskId, from, to }
-- checklist_step_completed { taskId, itemId }
+- subtask_toggled { taskId, subtaskId, completed: boolean }
+- subtask_added { taskId, subtask: Subtask }
+- subtask_removed { taskId, subtaskId }
 
 Timer:
 - timer_started { preset?: string }

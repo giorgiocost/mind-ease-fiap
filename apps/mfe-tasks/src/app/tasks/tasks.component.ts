@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TasksViewModel } from './tasks.viewmodel';
 import { Task } from '../models/task.model';
+import { TaskCardComponent } from './task-card/task-card.component';
 
 /**
  * TasksComponent - Smart Container (MVVM Pattern)
@@ -30,6 +31,7 @@ import { Task } from '../models/task.model';
     CommonModule,
     FormsModule,
     DragDropModule,
+    TaskCardComponent,
   ],
   providers: [TasksViewModel], // Scoped ViewModel instance
   templateUrl: './tasks.component.html',
