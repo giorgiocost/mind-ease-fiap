@@ -399,6 +399,63 @@
 }
 
 // ==========================================
+// DRAG & DROP
+// ==========================================
+
+// Make task cards draggable
+.task-card[cdkDrag] {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Placeholder shown in the drop zone while dragging
+.drag-placeholder {
+  min-height: 80px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 2px dashed var(--color-primary, #6366f1);
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: var(--spacing-sm);
+  transition: all 200ms ease;
+}
+
+// Items slide out of the way while dragging over them
+.column-body.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Smooth return animation after drop
+.task-card.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Visual feedback when dragging over a column
+.column-body.cdk-drop-list-receiving {
+  background-color: rgba(99, 102, 241, 0.04);
+  outline: 2px dashed rgba(99, 102, 241, 0.3);
+  outline-offset: -4px;
+  border-radius: var(--radius-md, 8px);
+}
+
+// CDK drag preview (floating card while dragging)
+.cdk-drag-preview {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-md, 8px);
+  opacity: 0.92;
+  transform: rotate(2deg);
+}
+
+// Hide original element while it's being dragged
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+// ==========================================
 // MODAL
 // ==========================================
 .modal-overlay {

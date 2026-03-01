@@ -1,7 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TasksViewModel } from './tasks.viewmodel';
+import { Task } from '../models/task.model';
 
 /**
  * TasksComponent - Smart Container (MVVM Pattern)
@@ -27,8 +29,7 @@ import { TasksViewModel } from './tasks.viewmodel';
   imports: [
     CommonModule,
     FormsModule,
-    // TODO task_24: import KanbanColumnComponent
-    // TODO task_25: import TaskCardComponent
+    DragDropModule,
   ],
   providers: [TasksViewModel], // Scoped ViewModel instance
   templateUrl: './tasks.component.html',
@@ -141,5 +142,47 @@ export class TasksComponent implements OnInit {
    */
   async onRefresh(): Promise<void> {
     await this.vm.loadTasks();
+  }
+
+  // ==========================================
+  // DRAG & DROP
+  // ==========================================
+
+  /** Connected drop-list IDs for each column */
+  readonly todoConnected = ['DOING', 'DONE'];
+  readonly doingConnected = ['TODO', 'DONE'];
+  readonly doneConnected = ['TODO', 'DOING'];
+
+  /**
+   * Handle drag & drop between columns.
+   * Same column → reorder locally.
+   * Different column → transfer + persist via ViewModel.moveTask().
+   */
+  async onTaskDropped(event: CdkDragDrop<Task[]>): Promise<void> {
+    const task = event.item.data as Task;
+    const newStatus = event.container.id as 'TODO' | 'DOING' | 'DONE';
+
+    if (event.previousContainer === event.container) {
+      // Reorder within same column
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      // Transfer to new column
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+
+      // Persist status change
+      try {
+        await this.vm.moveTask(String(task.id), newStatus, event.currentIndex);
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : 'Failed to move task';
+        alert(msg);
+        // Reload to restore consistent state
+        await this.vm.loadTasks();
+      }
+    }
   }
 }

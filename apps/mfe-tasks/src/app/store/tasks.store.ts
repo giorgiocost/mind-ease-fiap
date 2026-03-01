@@ -12,7 +12,7 @@ import { getErrorMessage } from '../utils/error-handler';
 
 // Environment configuration
 const environment = {
-  apiUrl: 'http://localhost:3333/api/v1'
+  apiUrl: 'http://localhost:3333/api/v1/tasks'
 };
 
 /**
@@ -163,7 +163,7 @@ export class TasksStore {
 
       // Request - handle both direct array and wrapped response
       const response = await firstValueFrom(
-        this.http.get<Task[] | TasksResponse>(`${environment.apiUrl}/tasks`, { params })
+        this.http.get<Task[] | TasksResponse>(`${environment.apiUrl}`, { params })
       );
 
       // Handle direct array response or wrapped response
@@ -197,7 +197,7 @@ export class TasksStore {
 
     try {
       const newTask = await firstValueFrom(
-        this.http.post<Task>(`${environment.apiUrl}/tasks`, dto)
+        this.http.post<Task>(`${environment.apiUrl}`, dto)
       );
 
       // Adicionar task ao estado (optimistic update)
@@ -226,7 +226,7 @@ export class TasksStore {
 
     try {
       const updated = await firstValueFrom(
-        this.http.patch<Task>(`${environment.apiUrl}/tasks/${id}`, dto)
+        this.http.patch<Task>(`${environment.apiUrl}/${id}`, dto)
       );
 
       // Atualizar task no estado
@@ -244,6 +244,19 @@ export class TasksStore {
   }
 
   /**
+   * Atualiza apenas o status da task.
+   *
+   * @param id - ID da task
+   * @param status - Novo status
+   */
+  async updateTaskStatus(
+    id: string,
+    status: 'TODO' | 'DOING' | 'DONE'
+  ): Promise<void> {
+    await this.updateTask(id, { status });
+  }
+
+  /**
    * Move task entre colunas do Kanban (drag & drop).
    *
    * @param id - ID da task
@@ -255,39 +268,24 @@ export class TasksStore {
     toStatus: 'TODO' | 'DOING' | 'DONE',
     position?: number
   ): Promise<void> {
-    this._loading.set(true);
-    this._error.set(null);
-
-    // Optimistic update (imediato)
-    const previousTasks = this._tasks();
-    // Defensive guard: ensure tasks is always an array
-    this._tasks.update(tasks =>
-      (tasks || []).map(t =>
-        t.id === id
-          ? { ...t, status: toStatus, updatedAt: new Date().toISOString() }
-          : t
-      )
-    );
-
     try {
-      const response = await firstValueFrom(
-        this.http.post<{ task: Task }>(`${environment.apiUrl}/tasks/${id}/move`, {
+      // 1. POST /move para fazer a mudança no backend
+      await firstValueFrom(
+        this.http.post<{ task: Task }>(`${environment.apiUrl}/${id}/move`, {
           toStatus,
           position
         })
       );
 
-      // Reload para sincronizar positions corretas
+      // 2. PATCH /tasks/{id} para atualizar status
+      await this.updateTask(id, { status: toStatus });
+
+      // 3. GET /tasks para recarregar todas as tasks (positions atualizadas)
       await this.loadTasks();
     } catch (error: unknown) {
-      // Revert optimistic update em caso de erro
-      // Defensive guard: ensure we always set an array
-      this._tasks.set(Array.isArray(previousTasks) ? previousTasks : []);
       this._error.set(getErrorMessage(error) || 'Erro ao mover tarefa');
       console.error('TasksStore.moveTask error:', error);
       throw error;
-    } finally {
-      this._loading.set(false);
     }
   }
 
@@ -307,7 +305,7 @@ export class TasksStore {
 
     try {
       await firstValueFrom(
-        this.http.delete(`${environment.apiUrl}/tasks/${id}`)
+        this.http.delete(`${environment.apiUrl}/${id}`)
       );
     } catch (error: unknown) {
       // Revert optimistic update
@@ -338,7 +336,7 @@ export class TasksStore {
 
     try {
       const task = await firstValueFrom(
-        this.http.get<Task>(`${environment.apiUrl}/tasks/${id}`, {
+        this.http.get<Task>(`${environment.apiUrl}/${id}`, {
           params: new HttpParams()
             .set('includeChecklist', 'true')
             .set('includeNotes', 'true')

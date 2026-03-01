@@ -247,4 +247,41 @@ describe('TasksStore', () => {
       expect(store.error()).toBeNull();
     });
   });
+
+  describe('updateTaskStatus', () => {
+    it('deve atualizar o status da task delegando para updateTask', async () => {
+      // Load initial task
+      const initialTask: Task = {
+        id: 'task-1',
+        userId: 'user-1',
+        title: 'Status Test',
+        description: null,
+        status: 'TODO',
+        position: 0,
+        wipLocked: false,
+        createdAt: '2026-02-10T10:00:00.000Z',
+        updatedAt: '2026-02-10T10:00:00.000Z'
+      };
+
+      const loadPromise = store.loadTasks();
+      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
+      await loadPromise;
+
+      expect(store.tasks()[0].status).toBe('TODO');
+
+      // Update status
+      const updatedTask = { ...initialTask, status: 'DOING' as const, updatedAt: '2026-02-10T12:00:00.000Z' };
+      const updatePromise = store.updateTaskStatus('task-1', 'DOING');
+
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1');
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ status: 'DOING' });
+      req.flush(updatedTask);
+
+      await updatePromise;
+
+      expect(store.tasks()[0].status).toBe('DOING');
+    });
+  });
 });
