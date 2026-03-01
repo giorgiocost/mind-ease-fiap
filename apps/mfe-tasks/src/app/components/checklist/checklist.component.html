@@ -1,0 +1,75 @@
+<div class="checklist">
+  <!-- Header + progress bar -->
+  @if (totalCount() > 0) {
+    <div class="checklist-header">
+      <span class="checklist-title">
+        Subtarefas ({{ completedCount() }}/{{ totalCount() }})
+      </span>
+      <span class="checklist-progress-text">{{ progress() }}%</span>
+    </div>
+
+    <div
+      class="progress-bar"
+      role="progressbar"
+      [attr.aria-valuenow]="progress()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-label]="'Progresso: ' + progress() + '%'">
+      <div class="progress-fill" [style.width.%]="progress()"></div>
+    </div>
+  }
+
+  <!-- Subtasks list -->
+  <ul class="subtasks-list" aria-label="Lista de subtarefas">
+    @for (subtask of subtasks(); track subtask.id) {
+      <li class="subtask-item">
+        <label class="subtask-label">
+          <input
+            type="checkbox"
+            class="subtask-checkbox"
+            [checked]="subtask.completed"
+            (change)="toggleSubtask(subtask.id)"
+            [attr.aria-label]="subtask.title">
+          <span class="subtask-text" [class.completed]="subtask.completed">
+            {{ subtask.title }}
+          </span>
+        </label>
+
+        <button
+          class="btn-remove"
+          type="button"
+          (click)="removeSubtask(subtask.id)"
+          [attr.aria-label]="'Remover: ' + subtask.title">
+          ×
+        </button>
+      </li>
+    }
+  </ul>
+
+  <!-- Add form -->
+  @if (isAddingSubtask()) {
+    <div class="add-subtask-form">
+      <input
+        type="text"
+        class="subtask-input"
+        placeholder="Nova subtarefa..."
+        [ngModel]="newSubtaskTitle()"
+        (ngModelChange)="newSubtaskTitle.set($event)"
+        (keyup.enter)="addSubtask()"
+        (keyup.escape)="cancelAddingSubtask()"
+        autofocus
+        aria-label="Título da nova subtarefa">
+      <div class="form-actions">
+        <button type="button" class="btn-confirm" (click)="addSubtask()" aria-label="Confirmar">✓</button>
+        <button type="button" class="btn-cancel" (click)="cancelAddingSubtask()" aria-label="Cancelar">×</button>
+      </div>
+    </div>
+  } @else {
+    <button
+      type="button"
+      class="btn-add-subtask"
+      (click)="startAddingSubtask()">
+      + Adicionar subtarefa
+    </button>
+  }
+</div>

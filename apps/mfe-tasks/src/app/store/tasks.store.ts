@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
   Task,
+  Subtask,
   TasksResponse,
   CreateTaskDto,
   UpdateTaskDto,
@@ -392,5 +393,144 @@ export class TasksStore {
    */
   clearError(): void {
     this._error.set(null);
+  }
+
+  // ============================================
+  // SUBTASK ACTIONS
+  // ============================================
+
+  /**
+   * Toggle (completa/desfaz) uma subtarefa.
+   * Optimistic update + sync com API.
+   *
+   * @param taskId - ID da task pai
+   * @param subtaskId - ID da subtarefa
+   */
+  async toggleSubtask(taskId: string, subtaskId: string): Promise<void> {
+    // Optimistic update local
+    const previousTasks = this._tasks();
+    this._tasks.update(tasks =>
+      tasks.map(t => {
+        if (t.id !== taskId) return t;
+        const updatedSubtasks = (t.subtasks || []).map(st =>
+          st.id === subtaskId ? { ...st, completed: !st.completed } : st
+        );
+        const completedCount = updatedSubtasks.filter(st => st.completed).length;
+        return {
+          ...t,
+          subtasks: updatedSubtasks,
+          checklistCompletedCount: completedCount
+        };
+      })
+    );
+
+    try {
+      await firstValueFrom(
+        this.http.patch<void>(
+          `${environment.apiUrl}/${taskId}/subtasks/${subtaskId}/toggle`,
+          {}
+        )
+      );
+    } catch (error: unknown) {
+      // Revert on error
+      this._tasks.set(previousTasks);
+      this._error.set(getErrorMessage(error) || 'Erro ao atualizar subtarefa');
+      console.error('TasksStore.toggleSubtask error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Adiciona nova subtarefa a uma task.
+   * Optimistic update + sync com API.
+   *
+   * @param taskId - ID da task pai
+   * @param title - Título da subtarefa
+   */
+  async addSubtask(taskId: string, title: string): Promise<void> {
+    const tempSubtask: Subtask = {
+      id: crypto.randomUUID(),
+      title,
+      completed: false
+    };
+
+    // Optimistic update local
+    const previousTasks = this._tasks();
+    this._tasks.update(tasks =>
+      tasks.map(t => {
+        if (t.id !== taskId) return t;
+        const updatedSubtasks = [...(t.subtasks || []), tempSubtask];
+        return {
+          ...t,
+          subtasks: updatedSubtasks,
+          checklistItemsCount: updatedSubtasks.length
+        };
+      })
+    );
+
+    try {
+      const created = await firstValueFrom(
+        this.http.post<Subtask>(
+          `${environment.apiUrl}/${taskId}/subtasks`,
+          { title }
+        )
+      );
+
+      // Replace temp ID with the real one from API
+      this._tasks.update(tasks =>
+        tasks.map(t => {
+          if (t.id !== taskId) return t;
+          return {
+            ...t,
+            subtasks: (t.subtasks || []).map(st =>
+              st.id === tempSubtask.id ? created : st
+            )
+          };
+        })
+      );
+    } catch (error: unknown) {
+      this._tasks.set(previousTasks);
+      this._error.set(getErrorMessage(error) || 'Erro ao adicionar subtarefa');
+      console.error('TasksStore.addSubtask error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove uma subtarefa.
+   * Optimistic update + sync com API.
+   *
+   * @param taskId - ID da task pai
+   * @param subtaskId - ID da subtarefa
+   */
+  async removeSubtask(taskId: string, subtaskId: string): Promise<void> {
+    const previousTasks = this._tasks();
+
+    // Optimistic update local
+    this._tasks.update(tasks =>
+      tasks.map(t => {
+        if (t.id !== taskId) return t;
+        const updatedSubtasks = (t.subtasks || []).filter(st => st.id !== subtaskId);
+        return {
+          ...t,
+          subtasks: updatedSubtasks,
+          checklistItemsCount: updatedSubtasks.length,
+          checklistCompletedCount: updatedSubtasks.filter(st => st.completed).length
+        };
+      })
+    );
+
+    try {
+      await firstValueFrom(
+        this.http.delete<void>(
+          `${environment.apiUrl}/${taskId}/subtasks/${subtaskId}`
+        )
+      );
+    } catch (error: unknown) {
+      this._tasks.set(previousTasks);
+      this._error.set(getErrorMessage(error) || 'Erro ao remover subtarefa');
+      console.error('TasksStore.removeSubtask error:', error);
+      throw error;
+    }
   }
 }

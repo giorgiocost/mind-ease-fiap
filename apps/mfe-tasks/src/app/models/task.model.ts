@@ -1,3 +1,9 @@
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface Task {
   id: string | number; // API returns number, accept both
   userId?: string; // Optional - API may or may not include this
@@ -8,6 +14,9 @@ export interface Task {
   wipLocked?: boolean; // Optional - API doesn't always include this
   createdAt: string;
   updatedAt: string;
+
+  // Subtasks / Checklist items
+  subtasks?: Subtask[];
 
   // Computed fields (do backend)
   checklistItemsCount?: number;
