@@ -22,6 +22,7 @@ import { getReturnUrl, clearReturnUrl } from '@shared/guards';
               id="email"
               [(ngModel)]="email"
               name="email"
+              placeholder="seu@email.com"
               required
               autocomplete="email"
             >
@@ -33,6 +34,7 @@ import { getReturnUrl, clearReturnUrl } from '@shared/guards';
               id="password"
               [(ngModel)]="password"
               name="password"
+              placeholder="Sua senha secreta"
               required
               autocomplete="current-password"
             >
@@ -60,6 +62,7 @@ import { getReturnUrl, clearReturnUrl } from '@shared/guards';
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      width: 100vw;
       background-color: var(--color-background);
       padding: var(--spacing-md);
     }
@@ -92,7 +95,7 @@ import { getReturnUrl, clearReturnUrl } from '@shared/guards';
       input {
         width: 100%;
         padding: var(--spacing-sm);
-        border: 1px solid var(--color-border);
+        border: 1px solid var(--color-border-strong);
         border-radius: var(--radius-md);
         background-color: var(--color-background);
         color: var(--color-text-primary);
@@ -106,9 +109,9 @@ import { getReturnUrl, clearReturnUrl } from '@shared/guards';
     }
 
     .error {
-      color: var(--color-danger);
+      color: var(--color-error);
       padding: var(--spacing-sm);
-      background-color: var(--color-danger-light, #fee);
+      background-color: var(--color-error-light, #fee);
       border-radius: var(--radius-sm);
       margin-bottom: var(--spacing-md);
       font-size: 0.875rem;

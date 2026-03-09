@@ -1,0 +1,300 @@
+<div class="preferences-page">
+  <!-- Header -->
+  <header class="preferences-header">
+    <div class="header-content">
+      <span class="header-icon">🧠</span>
+      <div class="header-text">
+        <h1>Painel Cognitivo</h1>
+        <p>Ajuste a interface para o que seu cérebro precisa agora.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <section class="preferences-content">
+    <!-- Presets Section -->
+    <div class="preferences-card">
+      <div class="card-header">
+        <h2>⚡ Presets Rápidos</h2>
+        <p class="card-description">Aplique uma configuração pré-definida com um clique</p>
+      </div>
+      <div class="presets-grid">
+        <button
+          *ngFor="let preset of presets"
+          [class.loading]="saving()"
+          [class.selected]="selectedPreset() === preset.name"
+          class="preset-button"
+          type="button"
+          (click)="applyPreset(preset)"
+          [disabled]="saving()"
+        >
+          <span class="preset-name">{{ preset.name }}</span>
+          <span class="checkmark" *ngIf="selectedPreset() === preset.name">✓</span>
+          <div *ngIf="saving()" class="loading-spinner"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Complexity and Focus Section -->
+    <div class="preferences-card">
+      <div class="card-header">
+        <h2>⚡ Complexidade e Foco</h2>
+        <p class="card-description">Controle o nível de informações e distrações</p>
+      </div>
+
+      <!-- UI Density -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Densidade da Interface</h3>
+          <p class="preference-help">Quantidade de informações visíveis ao mesmo tempo</p>
+        </div>
+        <div class="button-group" role="radiogroup">
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'simple'"
+            (click)="updateUiDensity('simple')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'simple'"
+          >
+            Simples
+          </button>
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'medium'"
+            (click)="updateUiDensity('medium')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'medium'"
+          >
+            Médio
+          </button>
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'full'"
+            (click)="updateUiDensity('full')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'full'"
+          >
+            Completo
+          </button>
+        </div>
+      </div>
+
+      <!-- Focus Mode -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Modo Foco</h3>
+          <p class="preference-help">Esconde elementos não essenciais para reduzir a carga cognitiva</p>
+        </div>
+        <button
+          class="toggle-button"
+          [class.active]="focusMode()"
+          (click)="toggleFocusMode()"
+          [attr.aria-pressed]="focusMode()">
+          {{ focusMode() ? 'Ativo' : 'Inativo' }}
+        </button>
+      </div>
+
+      <!-- Content Mode -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Modo de Visualização</h3>
+          <p class="preference-help">Escolha entre resumo rápido ou detalhes completos</p>
+        </div>
+        <div class="button-group" role="radiogroup">
+          <button
+            type="button"
+            [class.active]="contentMode() === 'summary'"
+            (click)="updateContentMode('summary')"
+            role="radio"
+            [attr.aria-checked]="contentMode() === 'summary'"
+          >
+            Resumo
+          </button>
+          <button
+            type="button"
+            [class.active]="contentMode() === 'detailed'"
+            (click)="updateContentMode('detailed')"
+            role="radio"
+            [attr.aria-checked]="contentMode() === 'detailed'"
+          >
+            Detalhado
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessibility Section -->
+    <div class="preferences-card">
+      <div class="card-header">
+        <h2>👁️ Acessibilidade Visual</h2>
+        <p class="card-description">Otimize o conforto visual e legibilidade</p>
+      </div>
+
+      <!-- Contrast -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Contraste</h3>
+          <p class="preference-help">Aumente para melhor discernimento de cores</p>
+        </div>
+        <div class="button-group" role="radiogroup">
+          <button
+            type="button"
+            [class.active]="contrast() === 'low'"
+            (click)="updateContrast('low')"
+            role="radio"
+            [attr.aria-checked]="contrast() === 'low'"
+          >
+            Baixo
+          </button>
+          <button
+            type="button"
+            [class.active]="contrast() === 'normal'"
+            (click)="updateContrast('normal')"
+            role="radio"
+            [attr.aria-checked]="contrast() === 'normal'"
+          >
+            Normal
+          </button>
+          <button
+            type="button"
+            [class.active]="contrast() === 'high'"
+            (click)="updateContrast('high')"
+            role="radio"
+            [attr.aria-checked]="contrast() === 'high'"
+          >
+            Alto
+          </button>
+        </div>
+      </div>
+
+      <!-- Font Scale -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Tamanho da Fonte</h3>
+          <p class="preference-help">Ajuste o tamanho do texto para melhor leitura</p>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-labels-top">
+            <span class="slider-label-start">Pequeno</span>
+            <span class="slider-value">{{ fontScale() }}x</span>
+            <span class="slider-label-end">Grande</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label-side slider-label-start">Pequeno</span>
+            <div class="slider-track-wrapper">
+              <span class="slider-value-desktop">{{ fontScale() }}x</span>
+              <input
+                type="range"
+                min="0.9"
+                max="1.4"
+                step="0.1"
+                [value]="fontScale()"
+                (change)="updateFontScale($event)"
+                class="slider"
+                aria-label="Escala de fonte"
+              />
+            </div>
+            <span class="slider-label-side slider-label-end">Grande</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacing -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Espaçamento</h3>
+          <p class="preference-help">Crie mais espaço entre elementos para reduzir confusão</p>
+        </div>
+        <div class="slider-wrapper">
+          <div class="slider-labels-top">
+            <span class="slider-label-start">Apertado</span>
+            <span class="slider-value">{{ spacingScale() }}x</span>
+            <span class="slider-label-end">Relaxado</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label-side slider-label-start">Apertado</span>
+            <div class="slider-track-wrapper">
+              <span class="slider-value-desktop">{{ spacingScale() }}x</span>
+              <input
+                type="range"
+                min="0.9"
+                max="1.4"
+                step="0.1"
+                [value]="spacingScale()"
+                (change)="updateSpacingScale($event)"
+                class="slider"
+                aria-label="Escala de espaçamento"
+              />
+            </div>
+            <span class="slider-label-side slider-label-end">Relaxado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System and Alerts Section -->
+    <div class="preferences-card">
+      <div class="card-header">
+        <h2>🔔 Sistema e Alertas</h2>
+        <p class="card-description">Personalize animações e notificações</p>
+      </div>
+
+      <!-- Motion -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Animações</h3>
+          <p class="preference-help">Habilite ou reduza transições entre estados</p>
+        </div>
+        <div class="button-group" role="radiogroup">
+          <button
+            type="button"
+            [class.active]="motion() === 'off'"
+            (click)="updateMotion('off')"
+            role="radio"
+            [attr.aria-checked]="motion() === 'off'"
+          >
+            Desligadas
+          </button>
+          <button
+            type="button"
+            [class.active]="motion() === 'reduced'"
+            (click)="updateMotion('reduced')"
+            role="radio"
+            [attr.aria-checked]="motion() === 'reduced'"
+          >
+            Reduzidas
+          </button>
+          <button
+            type="button"
+            [class.active]="motion() === 'full'"
+            (click)="updateMotion('full')"
+            role="radio"
+            [attr.aria-checked]="motion() === 'full'"
+          >
+            Completas
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reset Section -->
+    <div class="preferences-card danger-zone">
+      <div class="card-header">
+        <h2>⚠️ Zona de Risco</h2>
+        <p class="card-description">Restaure todas as configurações para os padrões originais</p>
+      </div>
+      <div class="danger-content">
+        <p class="danger-description">Esta ação restaurará todas as suas preferências para os valores padrão da fábrica. Não pode ser desfeita imediatamente.</p>
+        <button
+          class="reset-button"
+          type="button"
+          (click)="resetToDefaults()"
+          [disabled]="saving()"
+          title="Restaurar todas as configurações para os padrões de fábrica"
+        >
+          🔄 Restaurar Padrões
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

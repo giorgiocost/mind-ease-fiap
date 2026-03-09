@@ -246,10 +246,10 @@ describe('ProfileSettingsComponent', () => {
       expect(prefsStore.loadFromApi).toHaveBeenCalled();
     });
 
-    it('should navigate to /dashboard on navigateToPreferences', () => {
+    it('should navigate to /dashboard/preferences on navigateToPreferences', () => {
       const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
       component.navigateToPreferences();
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard'], { fragment: 'preferences' });
+      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard/preferences']);
     });
   });
 

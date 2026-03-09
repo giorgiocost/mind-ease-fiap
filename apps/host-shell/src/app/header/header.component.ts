@@ -1,5 +1,5 @@
-import { Component, computed, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthStore } from '@shared/state';
 import { ClickOutsideDirective } from '@shared/ui';
@@ -18,7 +18,7 @@ import { ClickOutsideDirective } from '@shared/ui';
  * - Sidebar toggle button (emits event to parent)
  * - Logo with navigation to /dashboard
  * - Notifications badge
- * - User dropdown menu (Profile, Preferences, Library, Logout)
+ * - User dropdown menu (Profile, Logout)
  * - User initials avatar
  * - Responsive (hides text on mobile)
  * - Click outside to close dropdown
@@ -69,16 +69,6 @@ export class HeaderComponent {
 
   navigateToProfile() {
     this.router.navigate(['/profile']);
-    this.closeDropdown();
-  }
-
-  navigateToPreferences() {
-    this.router.navigate(['/dashboard/preferences']);
-    this.closeDropdown();
-  }
-
-  navigateToLibrary() {
-    this.router.navigate(['/library']);
     this.closeDropdown();
   }
 

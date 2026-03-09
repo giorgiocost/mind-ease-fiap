@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TasksStore } from './tasks.store';
-import { Task } from '../models/task.model';
+import { Task, Subtask } from '../models/task.model';
 
 describe('TasksStore', () => {
   let store: TasksStore;
@@ -184,6 +184,114 @@ describe('TasksStore', () => {
       await deletePromise;
 
       expect(store.tasks().length).toBe(0);
+    });
+
+    it('deve deletar task mesmo com id numerico no estado e id string no metodo', async () => {
+      const initialTask: Task = {
+        id: 1,
+        userId: 'user-1',
+        title: 'Task Numeric ID',
+        description: null,
+        status: 'TODO',
+        position: 0,
+        wipLocked: false,
+        createdAt: '2026-02-10T10:00:00.000Z',
+        updatedAt: '2026-02-10T10:00:00.000Z'
+      };
+
+      const loadPromise = store.loadTasks();
+      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      loadReq.flush({
+        data: [initialTask],
+        meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
+      });
+      await loadPromise;
+
+      expect(store.tasks().length).toBe(1);
+
+      const deletePromise = store.deleteTask('1');
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/1');
+      expect(req.request.method).toBe('DELETE');
+      req.flush({});
+      await deletePromise;
+
+      expect(store.tasks().length).toBe(0);
+    });
+  });
+
+  describe('subtask actions', () => {
+    const taskWithSubtasks: Task = {
+      id: 'task-1',
+      userId: 'user-1',
+      title: 'Task with subtasks',
+      description: null,
+      status: 'TODO',
+      position: 0,
+      wipLocked: false,
+      createdAt: '2026-02-10T10:00:00.000Z',
+      updatedAt: '2026-02-10T10:00:00.000Z',
+      subtasks: [
+        { id: 'sub-1', title: 'Sub 1', completed: false },
+        { id: 'sub-2', title: 'Sub 2', completed: true }
+      ],
+      checklistItemsCount: 2,
+      checklistCompletedCount: 1
+    };
+
+    beforeEach(async () => {
+      const loadPromise = store.loadTasks();
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      req.flush({
+        data: [taskWithSubtasks],
+        meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
+      });
+      await loadPromise;
+    });
+
+    it('deve atualizar subtarefa com optimistic update e confirmar no backend', async () => {
+      const updatePromise = store.updateSubtask('task-1', 'sub-1', { title: 'Sub 1 editada', completed: true });
+
+      // optimistic update
+      expect(store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.title).toBe('Sub 1 editada');
+      expect(store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.completed).toBe(true);
+      expect(store.tasks()[0].checklistCompletedCount).toBe(2);
+
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks/sub-1');
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ title: 'Sub 1 editada', completed: true });
+      req.flush({});
+
+      await updatePromise;
+    });
+
+    it('deve fazer rollback no updateSubtask em caso de erro', async () => {
+      const previousTitle = store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.title;
+
+      const updatePromise = store.updateSubtask('task-1', 'sub-1', { title: 'Falha' });
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks/sub-1');
+      req.error(new ProgressEvent('Network error'));
+
+      await expect(updatePromise).rejects.toBeTruthy();
+      expect(store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.title).toBe(previousTitle);
+    });
+
+    it('deve retornar subtarefa criada no addSubtask', async () => {
+      const addPromise = store.addSubtask('task-1', 'Nova subtask');
+
+      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ title: 'Nova subtask' });
+
+      const created: Subtask = {
+        id: 'sub-3',
+        title: 'Nova subtask',
+        completed: false
+      };
+      req.flush(created);
+
+      const result = await addPromise;
+      expect(result).toEqual(created);
+      expect(store.tasks()[0].subtasks?.some(s => s.id === 'sub-3')).toBe(true);
     });
   });
 

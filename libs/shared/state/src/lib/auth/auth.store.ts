@@ -300,6 +300,38 @@ export class AuthStore {
       errorMessage = error.error?.message || error.message;
     }
 
+    // translate common backend messages to Portuguese
+    errorMessage = this.translateError(errorMessage);
+
     return throwError(() => new Error(errorMessage));
+  }
+
+  /**
+   * Map known English error texts from API to Portuguese.
+   * Leaves unknown messages untouched so they can still be logged.
+   */
+  private translateError(msg: string): string {
+    const map: Record<string, string> = {
+      'User not found': 'Usuário não encontrado',
+      'email and password are required': 'Email e senha são obrigatórios',
+      'Email already exists': 'Email já existe',
+      'Invalid credentials': 'Credenciais inválidas',
+      // add more mappings as the backend returns other messages
+    };
+
+    // try exact match first
+    if (map[msg]) {
+      return map[msg];
+    }
+
+    // some messages may be lower/upper or contain additional context
+    const lower = msg.toLowerCase();
+    for (const [eng, pt] of Object.entries(map)) {
+      if (lower.includes(eng.toLowerCase())) {
+        return pt;
+      }
+    }
+
+    return msg; // fallback
   }
 }

@@ -161,26 +161,6 @@ describe('HeaderComponent', () => {
       expect(component.dropdownOpen).toBe(false);
     });
 
-    it('should navigate to preferences and close dropdown', () => {
-      const navigateSpy = vi.spyOn(router, 'navigate');
-      component.dropdownOpen = true;
-
-      component.navigateToPreferences();
-
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard/preferences']);
-      expect(component.dropdownOpen).toBe(false);
-    });
-
-    it('should navigate to library and close dropdown', () => {
-      const navigateSpy = vi.spyOn(router, 'navigate');
-      component.dropdownOpen = true;
-
-      component.navigateToLibrary();
-
-      expect(navigateSpy).toHaveBeenCalledWith(['/library']);
-      expect(component.dropdownOpen).toBe(false);
-    });
-
     it('should navigate to dashboard when logo is clicked', () => {
       const logo = fixture.nativeElement.querySelector('.logo');
       expect(logo.getAttribute('href')).toBe('/dashboard');

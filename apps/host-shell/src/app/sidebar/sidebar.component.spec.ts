@@ -1,10 +1,9 @@
 // apps/host-shell/src/app/sidebar/sidebar.component.spec.ts
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SidebarComponent } from './sidebar.component';
-import { PreferencesStore } from '@shared/state';
 import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { PreferencesStore } from '@shared/state';
+import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -42,41 +41,44 @@ describe('SidebarComponent', () => {
       expect(component.collapsed()).toBe(false);
     });
 
-    it('should have 4 menu items', () => {
-      expect(component.menuItems.length).toBe(4);
+    it('should have 5 menu items', () => {
+      expect(component.menuItems.length).toBe(5);
     });
   });
 
   describe('Menu Items', () => {
     it('should render all menu items', () => {
       const menuLinks = fixture.nativeElement.querySelectorAll('.menu-link');
-      expect(menuLinks.length).toBe(4);
+      expect(menuLinks.length).toBe(5);
     });
 
     it('should render menu item icons', () => {
       const menuIcons = fixture.nativeElement.querySelectorAll('.menu-icon');
-      expect(menuIcons.length).toBe(4);
+      expect(menuIcons.length).toBe(5);
       expect(menuIcons[0].textContent.trim()).toBe('🏠');
       expect(menuIcons[1].textContent.trim()).toBe('✅');
-      expect(menuIcons[2].textContent.trim()).toBe('👤');
-      expect(menuIcons[3].textContent.trim()).toBe('📚');
+      expect(menuIcons[2].textContent.trim()).toBe('⏱️');
+      expect(menuIcons[3].textContent.trim()).toBe('⚙️');
+      expect(menuIcons[4].textContent.trim()).toBe('👤');
     });
 
     it('should render menu item labels when not collapsed', () => {
       const menuLabels = fixture.nativeElement.querySelectorAll('.menu-label');
-      expect(menuLabels.length).toBe(4);
+      expect(menuLabels.length).toBe(5);
       expect(menuLabels[0].textContent.trim()).toBe('Dashboard');
       expect(menuLabels[1].textContent.trim()).toBe('Tarefas');
-      expect(menuLabels[2].textContent.trim()).toBe('Perfil');
-      expect(menuLabels[3].textContent.trim()).toBe('Biblioteca');
+      expect(menuLabels[2].textContent.trim()).toBe('Pomodoro');
+      expect(menuLabels[3].textContent.trim()).toBe('Configurações');
+      expect(menuLabels[4].textContent.trim()).toBe('Perfil');
     });
 
     it('should have correct routes for all menu items', () => {
       const menuLinks = fixture.nativeElement.querySelectorAll('.menu-link');
       expect(menuLinks[0].getAttribute('href')).toBe('/dashboard');
       expect(menuLinks[1].getAttribute('href')).toBe('/tasks');
-      expect(menuLinks[2].getAttribute('href')).toBe('/profile');
-      expect(menuLinks[3].getAttribute('href')).toBe('/library');
+      expect(menuLinks[2].getAttribute('href')).toBe('/tasks/pomodoro');
+      expect(menuLinks[3].getAttribute('href')).toBe('/dashboard/preferences');
+      expect(menuLinks[4].getAttribute('href')).toBe('/profile');
     });
   });
 
@@ -175,7 +177,7 @@ describe('SidebarComponent', () => {
   describe('Router Integration', () => {
     it('should have routerLink on all menu items', () => {
       const menuLinks = fixture.nativeElement.querySelectorAll('.menu-link');
-      expect(menuLinks.length).toBe(4);
+      expect(menuLinks.length).toBe(5);
       // All menu links should have href attributes (routerLink adds these)
       menuLinks.forEach((link: HTMLElement) => {
         expect(link.hasAttribute('href')).toBe(true);
@@ -198,7 +200,7 @@ describe('SidebarComponent', () => {
   describe('Accessibility', () => {
     it('should have aria-label on all menu links', () => {
       const menuLinks = fixture.nativeElement.querySelectorAll('.menu-link[aria-label]');
-      expect(menuLinks.length).toBe(4);
+      expect(menuLinks.length).toBe(5);
     });
 
     it('should have navigation role on nav element', () => {

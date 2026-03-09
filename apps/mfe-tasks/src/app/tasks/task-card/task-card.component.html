@@ -44,3 +44,106 @@
     </div>
   </div>
 </ui-card>
+
+@if (isEditModalOpen()) {
+  <div
+    class="modal-overlay"
+    (click)="closeEditModal()"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+  >
+    <div
+      class="modal-card"
+      (click)="$event.stopPropagation()"
+      role="document"
+      tabindex="0"
+    >
+      <header class="modal-header">
+        <h2 class="modal-title">Editar Tarefa</h2>
+        <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Fechar modal">
+          ✕
+        </button>
+      </header>
+
+      <form #editForm="ngForm" (ngSubmit)="saveEdit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-task-title" class="form-label">Titulo</label>
+            <input
+              id="edit-task-title"
+              type="text"
+              class="form-input"
+              [ngModel]="editTitle()"
+              (ngModelChange)="editTitle.set($event)"
+              name="editTaskTitle"
+              required
+              maxlength="200"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-task-description" class="form-label">Descricao</label>
+            <textarea
+              id="edit-task-description"
+              class="form-textarea"
+              [ngModel]="editDescription()"
+              (ngModelChange)="editDescription.set($event)"
+              name="editTaskDescription"
+              rows="3"
+              maxlength="2000"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <div class="subtasks-header">
+              <label class="form-label">Subtarefas</label>
+              <button type="button" class="btn-secondary" (click)="addEditableSubtask()">
+                + Adicionar
+              </button>
+            </div>
+
+            <div class="subtasks-editor">
+              @for (subtask of editSubtasks(); track subtask.id) {
+                <div class="subtask-row">
+                  <input
+                    type="checkbox"
+                    class="subtask-checkbox"
+                    [name]="'subtaskDone' + subtask.id"
+                    [(ngModel)]="subtask.completed"
+                  />
+                  <input
+                    type="text"
+                    class="form-input subtask-input"
+                    [name]="'subtaskTitle' + subtask.id"
+                    [(ngModel)]="subtask.title"
+                    maxlength="120"
+                    placeholder="Titulo da subtarefa"
+                  />
+                  <button
+                    type="button"
+                    class="btn-icon danger"
+                    (click)="removeEditableSubtask(subtask.id)"
+                    aria-label="Remover subtarefa"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeEditModal()" [disabled]="isSaving()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="editForm.invalid || isSaving()">
+            {{ isSaving() ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
+}

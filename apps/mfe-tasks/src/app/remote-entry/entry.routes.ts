@@ -12,14 +12,14 @@ export const remoteRoutes: Route[] = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('../tasks/tasks.component').then(m => m.TasksComponent),
-        title: 'My Tasks | MindEase'
+        title: 'MindEase'
       },
       {
         path: 'pomodoro',
         canActivate: [authGuard],
         loadComponent: () =>
           import('../pomodoro/pomodoro.component').then(m => m.PomodoroComponent),
-        title: 'Pomodoro Timer | MindEase'
+        title: 'MindEase'
       }
     ]
   }

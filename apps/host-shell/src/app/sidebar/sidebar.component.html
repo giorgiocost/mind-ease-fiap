@@ -11,7 +11,7 @@
         <a
           [routerLink]="item.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: item.id === 'dashboard' }"
+          [routerLinkActiveOptions]="{ exact: item.id === 'dashboard' || item.id === 'tasks' || item.id === 'preferences' }"
           class="menu-link"
           [attr.aria-label]="item.label">
 

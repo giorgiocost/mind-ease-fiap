@@ -1,30 +1,32 @@
-// apps/mfe-dashboard/src/app/components/preferences-panel/preferences-panel.component.ts
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { PreferencesStore, CognitivePreferences, DEFAULT_PREFERENCES } from '@shared/state';
-import { ButtonComponent } from '@shared/ui';
+import { FormsModule } from '@angular/forms';
 
 interface PreferencesPreset {
   name: string;
   preferences: CognitivePreferences;
 }
 
+/**
+ * 🎛️ PreferencesComponent
+ *
+ * Full-page preferences settings for cognitive accessibility and UI customization.
+ */
 @Component({
-  selector: 'app-preferences-panel',
+  selector: 'app-preferences',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent],
-  templateUrl: './preferences-panel.component.html',
-  styleUrls: ['./preferences-panel.component.scss']
+  imports: [CommonModule, FormsModule],
+  templateUrl: './preferences.component.html',
+  styleUrl: './preferences.component.scss'
 })
-export class PreferencesPanelComponent {
+export class PreferencesComponent {
   private prefsStore = inject(PreferencesStore);
 
   // State
   saving = signal(false);
 
   // Computed (two-way binding with store)
-  preferences = computed(() => this.prefsStore.preferences());
   uiDensity = computed(() => this.prefsStore.uiDensity());
   focusMode = computed(() => this.prefsStore.focusMode());
   contentMode = computed(() => this.prefsStore.contentMode());
@@ -32,6 +34,44 @@ export class PreferencesPanelComponent {
   fontScale = computed(() => this.prefsStore.fontScale());
   spacingScale = computed(() => this.prefsStore.spacingScale());
   motion = computed(() => this.prefsStore.motion());
+
+  // Compute selected preset based on current preferences
+  selectedPreset = computed(() => {
+    const current = {
+      uiDensity: this.uiDensity(),
+      focusMode: this.focusMode(),
+      contentMode: this.contentMode(),
+      contrast: this.contrast(),
+      fontScale: this.fontScale(),
+      spacingScale: this.spacingScale(),
+      motion: this.motion()
+    };
+
+    // Check which preset matches the current state
+    for (const preset of this.presets) {
+      if (this.preferencesMatch(current, preset.preferences)) {
+        return preset.name;
+      }
+    }
+
+    return null; // No preset matches (custom settings)
+  });
+
+  // Helper method to compare preferences
+  private preferencesMatch(current: CognitivePreferences, target: CognitivePreferences): boolean {
+    // Normalize numeric values to handle string/number comparison issues from localStorage
+    const normalizeNumber = (val: any): number => typeof val === 'string' ? parseFloat(val) : val;
+
+    return (
+      current.uiDensity === target.uiDensity &&
+      current.focusMode === target.focusMode &&
+      current.contentMode === target.contentMode &&
+      current.contrast === target.contrast &&
+      normalizeNumber(current.fontScale) === normalizeNumber(target.fontScale) &&
+      normalizeNumber(current.spacingScale) === normalizeNumber(target.spacingScale) &&
+      current.motion === target.motion
+    );
+  }
 
   // Presets
   presets: PreferencesPreset[] = [
@@ -108,7 +148,7 @@ export class PreferencesPanelComponent {
   async resetToDefaults() {
     this.saving.set(true);
     try {
-      await this.prefsStore.resetToDefaults();
+      await this.prefsStore.updatePreferences(DEFAULT_PREFERENCES);
     } finally {
       this.saving.set(false);
     }

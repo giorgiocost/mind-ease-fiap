@@ -10,7 +10,7 @@
   <header class="tasks-header">
     <div class="header-left">
       <h1 class="page-title">
-        <span class="title-text">My Tasks</span>
+        <span class="title-text">Suas Tarefas</span>
         @if (vm.tasks().length > 0) {
           <span class="task-count">({{ vm.tasks().length }})</span>
         }
@@ -23,7 +23,7 @@
         <div class="search-box">
           <input
             type="text"
-            placeholder="Search tasks..."
+            placeholder="Pesquisar tarefas..."
             [value]="vm.uiState().filterText"
             (input)="onFilterChange($any($event.target).value)"
             class="search-input"
@@ -32,18 +32,16 @@
         </div>
       }
 
-      <!-- Botão Refresh -->
-      @if (vm.uiDensity() === 'full') {
-        <button
-          type="button"
-          class="btn-icon btn-refresh"
-          (click)="onRefresh()"
-          [disabled]="vm.isLoading()"
-          aria-label="Refresh tasks"
-        >
-          <span class="icon">🔄</span>
-        </button>
-      }
+      <!-- Botão Sync -->
+      <button
+        type="button"
+        class="btn-icon btn-refresh"
+        (click)="onRefresh()"
+        [disabled]="vm.isLoading()"
+        aria-label="Sync tasks"
+      >
+        <span class="icon">🔄</span>
+      </button>
 
       <!-- Botão Criar -->
       <button
@@ -53,7 +51,7 @@
         [disabled]="vm.isLoading()"
       >
         <span class="icon">➕</span>
-        <span class="label">New Task</span>
+        <span class="label">Nova Tarefa</span>
       </button>
     </div>
   </header>
@@ -97,11 +95,11 @@
     <div class="empty-state">
       <div class="empty-card">
         <span class="empty-icon">📝</span>
-        <h2 class="empty-title">No tasks yet</h2>
-        <p class="empty-message">Create your first task to get started with your cognitive-friendly task board.</p>
+        <h2 class="empty-title">Sem tarefas ainda</h2>
+        <p class="empty-message">Crie sua primeira tarefa para começar a usar seu quadro de tarefas amigável à cognição.</p>
         <button type="button" class="btn-primary" (click)="onOpenCreateModal()">
           <span class="icon">➕</span>
-          Create First Task
+          Criar Primeira Tarefa
         </button>
       </div>
     </div>
@@ -116,7 +114,7 @@
       <div class="kanban-column column-todo">
         <div class="column-header">
           <h3 class="column-title">
-            📋 To Do
+            📋 Para Fazer
             <span class="column-count">({{ vm.taskCounts().TODO }})</span>
           </h3>
         </div>
@@ -128,7 +126,7 @@
           [cdkDropListConnectedTo]="todoConnected"
           (cdkDropListDropped)="onTaskDropped($event)">
           @if (vm.tasksByStatus().TODO.length === 0) {
-            <p class="placeholder-text">Drop tasks here...</p>
+            <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().TODO; track task.id) {
               <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
@@ -144,7 +142,7 @@
       <div class="kanban-column column-doing">
         <div class="column-header">
           <h3 class="column-title">
-            🚀 Doing
+            🚀 Fazendo
             <span class="column-count">({{ vm.taskCounts().DOING }})</span>
             @if (!vm.canAddToDoing()) {
               <span class="wip-warning">⚠️ WIP Limit</span>
@@ -159,7 +157,7 @@
           [cdkDropListConnectedTo]="doingConnected"
           (cdkDropListDropped)="onTaskDropped($event)">
           @if (vm.tasksByStatus().DOING.length === 0) {
-            <p class="placeholder-text">Drop tasks here...</p>
+            <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().DOING; track task.id) {
               <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
@@ -175,7 +173,7 @@
       <div class="kanban-column column-done">
         <div class="column-header">
           <h3 class="column-title">
-            ✅ Done
+            ✅ Concluído
             <span class="column-count">({{ vm.taskCounts().DONE }})</span>
           </h3>
         </div>
@@ -187,7 +185,7 @@
           [cdkDropListConnectedTo]="doneConnected"
           (cdkDropListDropped)="onTaskDropped($event)">
           @if (vm.tasksByStatus().DONE.length === 0) {
-            <p class="placeholder-text">Drop tasks here...</p>
+            <p class="placeholder-text">Movas as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().DONE; track task.id) {
               <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
@@ -219,7 +217,7 @@
         tabindex="0"
       >
         <header class="modal-header">
-          <h2 class="modal-title">Create New Task</h2>
+          <h2 class="modal-title">Nova Tarefa</h2>
           <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Close modal">
             ✕
           </button>
@@ -228,13 +226,13 @@
         <form #createForm="ngForm" (ngSubmit)="onCreateTask(taskTitle.value, taskDescription.value); taskTitle.value=''; taskDescription.value=''">
           <div class="modal-body">
             <div class="form-group">
-              <label for="task-title" class="form-label">Title *</label>
+              <label for="task-title" class="form-label">Título</label>
               <input
                 id="task-title"
                 #taskTitle
                 type="text"
                 class="form-input"
-                placeholder="e.g., Review documentation"
+                placeholder="O que precisa ser feito?"
                 required
                 maxlength="200"
                 autocomplete="off"
@@ -242,12 +240,12 @@
             </div>
 
             <div class="form-group" [style.display]="vm.contentMode() === 'detailed' ? 'block' : 'none'">
-              <label for="task-description" class="form-label">Description</label>
+              <label for="task-description" class="form-label">Descrição</label>
               <textarea
                 id="task-description"
                 #taskDescription
                 class="form-textarea"
-                placeholder="Add more details about this task..."
+                placeholder="Adicione mais detalhes sobre esta tarefa (opcional)"
                 rows="3"
                 maxlength="2000"
               ></textarea>
@@ -256,11 +254,11 @@
 
           <footer class="modal-footer">
             <button type="button" class="btn-secondary" (click)="onCloseCreateModal()">
-              Cancel
+              Cancelar
             </button>
             <button type="submit" class="btn-primary" [disabled]="createForm.invalid">
               <span class="icon">➕</span>
-              Create Task
+              Criar
             </button>
           </footer>
         </form>

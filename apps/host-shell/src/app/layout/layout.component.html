@@ -1,11 +1,13 @@
 <div [ngClass]="getLayoutClasses()" [attr.data-mobile]="isMobile()">
   <!-- Header Area -->
-  <header class="layout__header">
-    <ng-content select="[header]"></ng-content>
-  </header>
+  @if (showShell()) {
+    <header class="layout__header">
+      <ng-content select="[header]"></ng-content>
+    </header>
+  }
 
   <!-- Sidebar Area -->
-  @if (sidebarVisible()) {
+  @if (showShell() && sidebarVisible()) {
     <aside class="layout__sidebar" [class.collapsed]="sidebarCollapsed()">
       <ng-content select="[sidebar]"></ng-content>
     </aside>

@@ -1,17 +1,17 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  PLATFORM_ID,
-  effect,
-} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import {
+    Component,
+    OnInit,
+    PLATFORM_ID,
+    computed,
+    effect,
+    inject,
+    signal,
+} from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { PreferencesStore } from '@shared/state';
 import { fromEvent } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 
 /**
  * 📐 LayoutComponent
@@ -51,6 +51,9 @@ export class LayoutComponent implements OnInit {
   readonly mobileMenuOpen = signal<boolean>(false);
   readonly isMobile = signal<boolean>(false);
 
+  // whether the current route is an auth page (/login or /register)
+  readonly isAuthPage = signal<boolean>(false);
+
   // Computed signals from PreferencesStore
   readonly focusMode = computed(() => this.#preferencesStore.focusMode());
 
@@ -74,11 +77,34 @@ export class LayoutComponent implements OnInit {
     return true; // Show on desktop
   });
 
+  // Determine whether header/sidebar should render at all
+  readonly showShell = computed(() => !this.isAuthPage());
+
   constructor() {
     // Check for mobile on initialization
     if (isPlatformBrowser(this.#platformId)) {
       this.checkMobile();
     }
+
+    // Watch router events to determine if we're on an auth page
+    const router = inject(Router);
+    // set initial value synchronously to avoid flash on reload
+    if (isPlatformBrowser(this.#platformId)) {
+      const path = window.location.pathname || '';
+      this.isAuthPage.set(path.startsWith('/login') || path.startsWith('/register'));
+    } else {
+      const initialUrl = router.url || '';
+      this.isAuthPage.set(initialUrl.startsWith('/login') || initialUrl.startsWith('/register'));
+    }
+
+    router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+      )
+      .subscribe(e => {
+        const url = e.urlAfterRedirects || e.url;
+        this.isAuthPage.set(url.startsWith('/login') || url.startsWith('/register'));
+      });
 
     // Effect to close mobile menu when switching to desktop
     effect(() => {
@@ -151,6 +177,7 @@ export class LayoutComponent implements OnInit {
       'focus-mode': this.focusMode(),
       'mobile': this.isMobile(),
       'mobile-menu-open': this.mobileMenuOpen(),
+      'auth-page': !this.showShell(),
     };
   }
 }

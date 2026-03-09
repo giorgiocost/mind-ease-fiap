@@ -1,12 +1,12 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
-  Validators,
   ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore, PreferencesStore } from '@shared/state';
@@ -45,6 +45,46 @@ export class ProfileSettingsComponent implements OnInit {
   // ── Selectors ─────────────────────────────────────────────
   readonly user = this.authStore.user;
   readonly preferences = this.preferencesStore.preferences;
+
+  // ── Labels for preferences (Português) ───────────────────────
+  uiDensityLabel(density?: string): string {
+    switch (density) {
+      case 'simple':
+        return 'Simples';
+      case 'medium':
+        return 'Médio';
+      case 'full':
+        return 'Completo';
+      default:
+        return '';
+    }
+  }
+
+  contrastLabel(contrast?: string): string {
+    switch (contrast) {
+      case 'low':
+        return 'Baixo';
+      case 'normal':
+        return 'Normal';
+      case 'high':
+        return 'Alto';
+      default:
+        return '';
+    }
+  }
+
+  motionLabel(motion?: string): string {
+    switch (motion) {
+      case 'full':
+        return 'Completo';
+      case 'reduced':
+        return 'Reduzido';
+      case 'off':
+        return 'Desligado';
+      default:
+        return '';
+    }
+  }
 
   // ── Lifecycle ─────────────────────────────────────────────
   ngOnInit(): void {
@@ -85,6 +125,8 @@ export class ProfileSettingsComponent implements OnInit {
       const { name, email } = this.profileForm.value as { name: string; email: string };
       await new Promise(resolve => setTimeout(resolve, 800)); // mock API
       this.authStore.updateUser({ name, email });
+      // refresh the page to force header update (simple workaround)
+      window.location.reload();
       this.profileSaved.set(true);
       setTimeout(() => this.profileSaved.set(false), 3000);
     } catch (err: unknown) {
@@ -120,7 +162,7 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   navigateToPreferences(): void {
-    this.router.navigate(['/dashboard'], { fragment: 'preferences' });
+    this.router.navigate(['/dashboard/preferences']);
   }
 
   // ── Danger zone ───────────────────────────────────────────

@@ -59,6 +59,18 @@ $mobile-breakpoint: 768px;
     background-color: var(--color-bg-primary);
   }
 
+  // When rendering auth page we don't need any padding or sidebar grid
+  &.auth-page {
+    display: block;
+    grid-template-areas: none;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+
+    &__main {
+      padding: 0;
+    }
+  }
+
   // Overlay for mobile menu
   &__overlay {
     position: fixed;

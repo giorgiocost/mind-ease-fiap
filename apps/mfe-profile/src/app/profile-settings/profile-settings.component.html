@@ -2,8 +2,20 @@
 
   <!-- Header -->
   <header class="settings-header">
-    <h1>Configurações de Perfil</h1>
-    <p>Gerencie suas informações pessoais e preferências</p>
+    <div class="header-avatar">
+      <div class="avatar-circle">
+        <span class="avatar-initials">{{ user()?.name?.charAt(0)?.toUpperCase() || '?' }}</span>
+      </div>
+      <div class="header-badge">
+        <span class="badge-icon">✓</span>
+        <span class="badge-text">Ativo</span>
+      </div>
+    </div>
+    <div class="header-info">
+      <h1>{{ user()?.name || 'Usuário' }}</h1>
+      <p class="header-email">{{ user()?.email || 'email@exemplo.com' }}</p>
+      <p class="header-subtitle">Gerencie suas informações pessoais e visualize suas preferências cognitivas</p>
+    </div>
   </header>
 
   <!-- Global error banner -->
@@ -121,35 +133,65 @@
   </section>
 
   <!-- ③ Preferences Summary -->
-  <section class="settings-section" aria-labelledby="section-prefs">
-    <h2 id="section-prefs">Preferências Cognitivas</h2>
-
-    <div class="preferences-summary">
-      <div class="preference-item">
-        <span class="preference-label">Densidade UI</span>
-        <span class="preference-value">{{ preferences().uiDensity }}</span>
+  <section class="settings-section preferences-showcase" aria-labelledby="section-prefs">
+    <div class="section-header">
+      <div>
+        <h2 id="section-prefs">🧠 Preferências Cognitivas</h2>
+        <p class="section-description">Suas configurações personalizadas para melhor experiência</p>
       </div>
-      <div class="preference-item">
-        <span class="preference-label">Modo Foco</span>
-        <span class="preference-value">{{ preferences().focusMode ? 'Ativo' : 'Inativo' }}</span>
-      </div>
-      <div class="preference-item">
-        <span class="preference-label">Contraste</span>
-        <span class="preference-value">{{ preferences().contrast }}</span>
-      </div>
-      <div class="preference-item">
-        <span class="preference-label">Movimento</span>
-        <span class="preference-value">{{ preferences().motion }}</span>
-      </div>
+      <button class="btn-link" (click)="navigateToPreferences()" aria-label="Editar preferências">
+        ✏️ Editar
+      </button>
     </div>
 
-    <div class="form-actions">
-      <button class="btn-secondary" (click)="navigateToPreferences()">
-        ⚙️ Editar Preferências
-      </button>
-      <button class="btn-secondary" (click)="resyncPreferences()">
-        🔄 Resync
-      </button>
+    <div class="preferences-grid">
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().uiDensity === 'simple'">📐</div>
+        <div class="pref-content">
+          <span class="pref-label">Densidade UI</span>
+          <span class="pref-value">{{ uiDensityLabel(preferences().uiDensity) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card" [class.pref-highlighted]="preferences().focusMode">
+        <div class="pref-icon" [class.pref-active]="preferences().focusMode">🎯</div>
+        <div class="pref-content">
+          <span class="pref-label">Modo Foco</span>
+          <span class="pref-value">{{ preferences().focusMode ? 'Ativo' : 'Inativo' }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().contrast === 'high'">🌓</div>
+        <div class="pref-content">
+          <span class="pref-label">Contraste</span>
+          <span class="pref-value">{{ contrastLabel(preferences().contrast) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().motion === 'reduced'">🎬</div>
+        <div class="pref-content">
+          <span class="pref-label">Movimento</span>
+          <span class="pref-value">{{ motionLabel(preferences().motion) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon">🔤</div>
+        <div class="pref-content">
+          <span class="pref-label">Escala de Fonte</span>
+          <span class="pref-value">{{ preferences().fontScale }}x</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon">📏</div>
+        <div class="pref-content">
+          <span class="pref-label">Espaçamento</span>
+          <span class="pref-value">{{ preferences().spacingScale }}x</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -164,7 +206,7 @@
           <p>Encerrar a sessão atual no MindEase</p>
         </div>
         <button class="btn-danger-outline" (click)="logout()" aria-label="Fazer logout">
-          🚪 Logout
+          🚪 Sair
         </button>
       </div>
 

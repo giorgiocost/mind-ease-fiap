@@ -39,6 +39,11 @@ const environment = {
 export class TasksStore {
   private http = inject(HttpClient);
 
+  // API can return numeric ids while UI methods often pass string ids.
+  private sameTaskId(a: string | number, b: string | number): boolean {
+    return String(a) === String(b);
+  }
+
   // ============================================
   // STATE (Private Writable Signals)
   // ============================================
@@ -232,7 +237,7 @@ export class TasksStore {
       // Atualizar task no estado
       // Defensive guard: ensure tasks is always an array
       this._tasks.update(tasks =>
-        (tasks || []).map(t => t.id === id ? updated : t)
+        (tasks || []).map(t => this.sameTaskId(t.id, id) ? updated : t)
       );
     } catch (error: unknown) {
       this._error.set(getErrorMessage(error) || 'Erro ao atualizar tarefa');
@@ -301,7 +306,7 @@ export class TasksStore {
     // Optimistic update
     const previousTasks = this._tasks();
     // Defensive guard: ensure tasks is always an array
-    this._tasks.update(tasks => (tasks || []).filter(t => t.id !== id));
+    this._tasks.update(tasks => (tasks || []).filter(t => !this.sameTaskId(t.id, id)));
 
     try {
       await firstValueFrom(
@@ -327,7 +332,7 @@ export class TasksStore {
    */
   async getTaskById(id: string): Promise<Task | null> {
     // Verificar cache primeiro
-    const cached = this._tasks().find(t => t.id === id);
+    const cached = this._tasks().find(t => this.sameTaskId(t.id, id));
     if (cached) return cached;
 
     // Se não encontrou, buscar no backend
@@ -347,7 +352,7 @@ export class TasksStore {
       // Defensive guard: ensure tasks is always an array
       this._tasks.update(tasks => {
         const safeTasks = tasks || [];
-        const exists = safeTasks.some(t => t.id === id);
+        const exists = safeTasks.some(t => this.sameTaskId(t.id, id));
         return exists ? safeTasks : [...safeTasks, task];
       });
 
@@ -412,7 +417,7 @@ export class TasksStore {
 
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id.toString() !== taskId) return t;
+        if (!this.sameTaskId(t.id, taskId)) return t;
         const updatedSubtasks = (t.subtasks || []).map(st => {
           if (st.id !== subtaskId) return st;
           newCompleted = !st.completed;
@@ -450,7 +455,7 @@ export class TasksStore {
    * @param taskId - ID da task pai
    * @param title - Título da subtarefa
    */
-  async addSubtask(taskId: string, title: string): Promise<void> {
+  async addSubtask(taskId: string, title: string): Promise<Subtask | null> {
     const tempSubtask: Subtask = {
       id: crypto.randomUUID(),
       title,
@@ -461,7 +466,7 @@ export class TasksStore {
     const previousTasks = this._tasks();
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id.toString() !== taskId) return t;
+        if (!this.sameTaskId(t.id, taskId)) return t;
         const updatedSubtasks = [...(t.subtasks || []), tempSubtask];
         return {
           ...t,
@@ -482,7 +487,7 @@ export class TasksStore {
       // Replace temp ID with the real one from API
       this._tasks.update(tasks =>
         tasks.map(t => {
-          if (t.id.toString() !== taskId) return t;
+          if (!this.sameTaskId(t.id, taskId)) return t;
           return {
             ...t,
             subtasks: (t.subtasks || []).map(st =>
@@ -491,10 +496,64 @@ export class TasksStore {
           };
         })
       );
+
+      return created;
     } catch (error: unknown) {
       this._tasks.set(previousTasks);
       this._error.set(getErrorMessage(error) || 'Erro ao adicionar subtarefa');
       console.error('TasksStore.addSubtask error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Atualiza subtarefa existente (título e/ou status concluído).
+   * Optimistic update + sync com API.
+   */
+  async updateSubtask(
+    taskId: string,
+    subtaskId: string,
+    updates: { title?: string; completed?: boolean }
+  ): Promise<void> {
+    if (updates.title === undefined && updates.completed === undefined) {
+      return;
+    }
+
+    const previousTasks = this._tasks();
+
+    // Optimistic update local
+    this._tasks.update(tasks =>
+      tasks.map(t => {
+        if (!this.sameTaskId(t.id, taskId)) return t;
+
+        const updatedSubtasks = (t.subtasks || []).map(st => {
+          if (st.id !== subtaskId) return st;
+          return {
+            ...st,
+            ...(updates.title !== undefined ? { title: updates.title } : {}),
+            ...(updates.completed !== undefined ? { completed: updates.completed } : {})
+          };
+        });
+
+        return {
+          ...t,
+          subtasks: updatedSubtasks,
+          checklistCompletedCount: updatedSubtasks.filter(st => st.completed).length
+        };
+      })
+    );
+
+    try {
+      await firstValueFrom(
+        this.http.patch<void>(
+          `${environment.apiUrl}/${taskId}/subtasks/${subtaskId}`,
+          updates
+        )
+      );
+    } catch (error: unknown) {
+      this._tasks.set(previousTasks);
+      this._error.set(getErrorMessage(error) || 'Erro ao atualizar subtarefa');
+      console.error('TasksStore.updateSubtask error:', error);
       throw error;
     }
   }
@@ -512,7 +571,7 @@ export class TasksStore {
     // Optimistic update local
     this._tasks.update(tasks =>
       tasks.map(t => {
-        if (t.id.toString() !== taskId) return t;
+        if (!this.sameTaskId(t.id, taskId)) return t;
         const updatedSubtasks = (t.subtasks || []).filter(st => st.id !== subtaskId);
         return {
           ...t,

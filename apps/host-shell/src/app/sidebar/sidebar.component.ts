@@ -1,5 +1,5 @@
-import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PreferencesStore } from '@shared/state';
 
@@ -60,16 +60,22 @@ export class SidebarComponent {
       route: '/tasks'
     },
     {
+      id: 'pomodoro',
+      label: 'Pomodoro',
+      icon: '⏱️',
+      route: '/tasks/pomodoro'
+    },
+    {
+      id: 'preferences',
+      label: 'Configurações',
+      icon: '⚙️',
+      route: '/dashboard/preferences'
+    },
+    {
       id: 'profile',
       label: 'Perfil',
       icon: '👤',
       route: '/profile'
-    },
-    {
-      id: 'library',
-      label: 'Biblioteca',
-      icon: '📚',
-      route: '/library'
     }
   ];
 

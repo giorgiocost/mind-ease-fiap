@@ -13,7 +13,7 @@ import { ButtonComponent } from '@shared/ui';
     <div class="auth-page">
       <div class="auth-card">
         <h1>Registrar</h1>
-        <form (ngSubmit)="handleRegister()">
+        <form #registerForm="ngForm" (ngSubmit)="handleRegister()">
           <div class="form-group">
             <label for="name">Nome</label>
             <input
@@ -21,9 +21,17 @@ import { ButtonComponent } from '@shared/ui';
               id="name"
               [(ngModel)]="name"
               name="name"
+              placeholder="Ex: Maria Silva"
               required
+              minlength="3"
+              #nameModel="ngModel"
               autocomplete="name"
             >
+            @if (nameModel.invalid && nameModel.touched) {
+              <span class="form-error" role="alert">
+                Nome deve ter pelo menos 3 caracteres
+              </span>
+            }
           </div>
           <div class="form-group">
             <label for="email">Email</label>
@@ -32,9 +40,17 @@ import { ButtonComponent } from '@shared/ui';
               id="email"
               [(ngModel)]="email"
               name="email"
+              placeholder="nome@exemplo.com"
               required
+              email
+              #emailModel="ngModel"
               autocomplete="email"
             >
+            @if (emailModel.invalid && emailModel.touched) {
+              <span class="form-error" role="alert">
+                Email inválido
+              </span>
+            }
           </div>
           <div class="form-group">
             <label for="password">Senha</label>
@@ -43,16 +59,24 @@ import { ButtonComponent } from '@shared/ui';
               id="password"
               [(ngModel)]="password"
               name="password"
+              placeholder="Crie uma senha segura"
               required
+              minlength="8"
+              #passwordModel="ngModel"
               autocomplete="new-password"
             >
+            @if (passwordModel.invalid && passwordModel.touched) {
+              <span class="form-error" role="alert">
+                Senha deve ter pelo menos 8 caracteres
+              </span>
+            }
           </div>
 
           @if (error()) {
             <div class="error">{{ error() }}</div>
           }
 
-          <ui-button type="submit" variant="primary" [loading]="loading()">
+          <ui-button type="submit" variant="primary" [loading]="loading()" [disabled]="registerForm?.invalid || false">
             Registrar
           </ui-button>
         </form>
@@ -70,6 +94,7 @@ import { ButtonComponent } from '@shared/ui';
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      width: 100vw;
       background-color: var(--color-background);
       padding: var(--spacing-md);
     }
@@ -102,7 +127,7 @@ import { ButtonComponent } from '@shared/ui';
       input {
         width: 100%;
         padding: var(--spacing-sm);
-        border: 1px solid var(--color-border);
+        border: 1px solid var(--color-border-strong);
         border-radius: var(--radius-md);
         background-color: var(--color-background);
         color: var(--color-text-primary);
@@ -116,12 +141,18 @@ import { ButtonComponent } from '@shared/ui';
     }
 
     .error {
-      color: var(--color-danger);
+      color: var(--color-error);
       padding: var(--spacing-sm);
-      background-color: var(--color-danger-light, #fee);
-      border-radius: var(--radius-sm);
+      background-color: var(--color-error-light, #fee);
       margin-bottom: var(--spacing-md);
       font-size: 0.875rem;
+    }
+
+    .form-error {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--color-error);
+      margin-top: var(--spacing-xs);
     }
 
     ui-button {
