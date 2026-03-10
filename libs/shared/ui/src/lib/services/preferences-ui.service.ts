@@ -12,18 +12,20 @@
  * Based on ADR-002 (MVVM + Signals) and ADR-003 (Cognitive Tokens)
  */
 
-import { Injectable, effect, inject, DOCUMENT } from '@angular/core';
-import { PreferencesStore } from '@shared/state';
+import { DOCUMENT, Injectable, effect, inject } from '@angular/core';
 import type { CognitivePreferences } from '@shared/state';
+import { PreferencesStore } from '@shared/state';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesUiService {
   private document = inject(DOCUMENT);
   private prefsStore = inject(PreferencesStore);
   private body: HTMLElement | null = null;
+  private htmlEl: HTMLElement | null = null;
 
   constructor() {
     this.body = this.document.body;
+    this.htmlEl = this.document.documentElement;
 
     // Effect: Apply preferences to DOM when they change
     effect(() => {
@@ -46,9 +48,20 @@ export class PreferencesUiService {
     this.body.setAttribute('data-focus-mode', String(prefs.focusMode));
     this.body.setAttribute('data-content-mode', prefs.contentMode);
     this.body.setAttribute('data-contrast', prefs.contrast);
-    this.body.setAttribute('data-font-scale', String(prefs.fontScale));
-    this.body.setAttribute('data-spacing-scale', String(prefs.spacingScale));
     this.body.setAttribute('data-motion', prefs.motion);
+
+    // font-scale is applied to <html> so all rem values scale globally.
+    // We use TWO mechanisms for maximum reliability:
+    //  1. data-font-scale attribute → CSS rule [data-font-scale='N'] { font-size: N% }
+    //  2. Inline style → font-size set directly via JS (highest possible specificity,
+    //     bypasses cascade/loading-order issues between host and remote MFE bundles).
+    // NOT on <body> — that would compound (html 120% × body 120% = 144%).
+    if (this.htmlEl) {
+      this.htmlEl.setAttribute('data-font-scale', String(prefs.fontScale));
+      this.htmlEl.setAttribute('data-spacing-scale', String(prefs.spacingScale));
+      // Direct DOM: always wins over any CSS rule, guarantees immediate effect.
+      this.htmlEl.style.setProperty('font-size', `${Math.round(prefs.fontScale * 100)}%`);
+    }
 
     // Apply CSS custom properties
     this.body.style.setProperty('--font-scale', String(prefs.fontScale));

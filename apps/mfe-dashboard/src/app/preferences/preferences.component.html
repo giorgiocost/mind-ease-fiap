@@ -42,48 +42,11 @@
         <p class="card-description">Controle o nível de informações e distrações</p>
       </div>
 
-      <!-- UI Density -->
-      <div class="preference-row">
-        <div class="preference-label">
-          <h3>Densidade da Interface</h3>
-          <p class="preference-help">Quantidade de informações visíveis ao mesmo tempo</p>
-        </div>
-        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
-          <button
-            type="button"
-            [class.active]="uiDensity() === 'simple'"
-            (click)="updateUiDensity('simple')"
-            role="radio"
-            [attr.aria-checked]="uiDensity() === 'simple'"
-          >
-            Simples
-          </button>
-          <button
-            type="button"
-            [class.active]="uiDensity() === 'medium'"
-            (click)="updateUiDensity('medium')"
-            role="radio"
-            [attr.aria-checked]="uiDensity() === 'medium'"
-          >
-            Médio
-          </button>
-          <button
-            type="button"
-            [class.active]="uiDensity() === 'full'"
-            (click)="updateUiDensity('full')"
-            role="radio"
-            [attr.aria-checked]="uiDensity() === 'full'"
-          >
-            Completo
-          </button>
-        </div>
-      </div>
-
       <!-- Focus Mode -->
       <div class="preference-row">
         <div class="preference-label">
           <h3>Modo Foco</h3>
-          <p class="preference-help">Esconde elementos não essenciais para reduzir a carga cognitiva</p>
+          <p class="preference-help">Oculta elementos não essenciais para ajudar na concentração</p>
         </div>
         <button
           class="toggle-button"
@@ -130,11 +93,48 @@
         <p class="card-description">Otimize o conforto visual e legibilidade</p>
       </div>
 
+      <!-- UI Density -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Densidade da Interface</h3>
+          <p class="preference-help">Define o nível de compactação dos elementos da interface</p>
+        </div>
+        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'simple'"
+            (click)="updateUiDensity('simple')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'simple'"
+          >
+            Simples
+          </button>
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'medium'"
+            (click)="updateUiDensity('medium')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'medium'"
+          >
+            Médio
+          </button>
+          <button
+            type="button"
+            [class.active]="uiDensity() === 'full'"
+            (click)="updateUiDensity('full')"
+            role="radio"
+            [attr.aria-checked]="uiDensity() === 'full'"
+          >
+            Completo
+          </button>
+        </div>
+      </div>
+
       <!-- Contrast -->
       <div class="preference-row">
         <div class="preference-label">
           <h3>Contraste</h3>
-          <p class="preference-help">Aumente para melhor discernimento de cores</p>
+          <p class="preference-help">Ajuste para melhorar a diferenciação de cores</p>
         </div>
         <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button
@@ -171,7 +171,7 @@
       <div class="preference-row">
         <div class="preference-label">
           <h3>Tamanho da Fonte</h3>
-          <p class="preference-help">Ajuste o tamanho do texto para melhor leitura</p>
+          <p class="preference-help">Ajuste o tamanho do texto para facilitar a leitura</p>
         </div>
         <div class="slider-wrapper">
           <div class="slider-labels-top">
@@ -189,7 +189,7 @@
                 max="1.4"
                 step="0.1"
                 [value]="fontScale()"
-                (change)="updateFontScale($event)"
+                (input)="updateFontScale($event)"
                 class="slider"
                 aria-label="Escala de fonte"
               />
@@ -221,7 +221,7 @@
                 max="1.4"
                 step="0.1"
                 [value]="spacingScale()"
-                (change)="updateSpacingScale($event)"
+                (input)="updateSpacingScale($event)"
                 class="slider"
                 aria-label="Escala de espaçamento"
               />
@@ -243,7 +243,7 @@
       <div class="preference-row">
         <div class="preference-label">
           <h3>Animações</h3>
-          <p class="preference-help">Habilite ou reduza transições entre estados</p>
+          <p class="preference-help">Controle as animações e transições da interface</p>
         </div>
         <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button

@@ -75,7 +75,7 @@ $mobile-breakpoint: 768px;
     grid-area: main;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: var(--spacing-lg);
+    padding: var(--density-padding, var(--spacing-lg));
     background-color: var(--color-bg-primary);
   }
 

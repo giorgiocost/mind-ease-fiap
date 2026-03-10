@@ -82,12 +82,6 @@ export class SidebarComponent {
   // Menu items
   menuItems: MenuItem[] = [
     {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: '🏠',
-      route: '/dashboard'
-    },
-    {
       id: 'tasks',
       label: 'Tarefas',
       icon: '✅',

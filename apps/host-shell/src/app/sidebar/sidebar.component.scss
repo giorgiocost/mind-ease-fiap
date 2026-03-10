@@ -5,7 +5,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
+  padding: var(--density-padding, var(--spacing-md));
 
   &.collapsed {
     padding: var(--spacing-sm);
@@ -18,7 +18,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--density-gap, var(--spacing-xs));
 }
 
 .menu-item {
@@ -29,12 +29,12 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--density-padding, var(--spacing-sm)) var(--density-padding, var(--spacing-md));
   text-decoration: none;
   color: var(--color-text-secondary);
-  border-radius: var(--radius-md);
+  border-radius: var(--density-radius, var(--radius-md));
   transition: background-color 0.2s, color 0.2s;
-  font-size: 0.875rem;
+  font-size: var(--density-font-size, var(--font-size-sm));
   font-weight: 500;
   position: relative;
 
@@ -97,16 +97,8 @@
   font-weight: 600;
 }
 
-// UI Density variants
-[data-ui-density='simple'] .menu-link {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 0.8125rem;
-}
-
-[data-ui-density='full'] .menu-link {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 0.9375rem;
-}
+// UI Density — handled via CSS custom properties (--density-*) cascaded from body
+// [data-ui-density] selectors here are non-functional (body is outside component scope)
 
 // Focus mode (hide sidebar via LayoutComponent, but styles ready)
 [data-focus-mode='true'] .sidebar {
@@ -116,12 +108,19 @@
 // Motion preferences
 [data-motion='reduced'] .menu-link,
 [data-motion='reduced'] .menu-icon {
-  transition: none;
+  // transform (slide icon) removed; colour hover transitions kept via global rule
+  transition: background-color 150ms, color 150ms;
 }
 
 [data-motion='off'] .menu-link,
 [data-motion='off'] .menu-icon {
   transition: none !important;
+}
+
+// Hover colour changes must not occur in off mode
+[data-motion='off'] .menu-link:hover {
+  background-color: transparent !important;
+  color: var(--color-text-secondary) !important;
 }
 
 // Contrast variants

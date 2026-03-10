@@ -21,21 +21,25 @@
 :host(.card-flat) {
   border: 1px solid var(--color-neutral-200);
   box-shadow: none;
+  --_card-shadow: none;
 }
 
 :host(.card-outlined) {
   border: 1px solid var(--color-neutral-300);
   box-shadow: var(--shadow-sm);
+  --_card-shadow: var(--shadow-sm);
 }
 
 :host(.card-elevated) {
   border: 1px solid var(--color-neutral-200);
   box-shadow: var(--shadow-md);
+  --_card-shadow: var(--shadow-md);
 }
 
 :host(.card-raised) {
   border: 1px solid var(--color-neutral-200);
   box-shadow: var(--shadow-lg);
+  --_card-shadow: var(--shadow-lg);
 }
 
 // Clickable
@@ -91,6 +95,15 @@
 // High contrast mode
 [data-contrast="high"] :host {
   border-width: 2px;
+}
+
+// Motion: off — hover must not change the card's appearance at all
+:host-context([data-motion='off']):host(.card-clickable) {
+  &:hover {
+    transform: none !important;
+    // Restore the variant's rest shadow (defined via --_card-shadow per variant above)
+    box-shadow: var(--_card-shadow, none) !important;
+  }
 }
 
 // Cognitive spacing scale

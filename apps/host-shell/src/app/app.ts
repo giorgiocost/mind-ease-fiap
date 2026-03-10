@@ -1,5 +1,6 @@
-import { Component, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PreferencesUiService } from '@shared/ui';
 import { HeaderComponent } from './header/header.component';
 import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -11,6 +12,10 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   styleUrl: './app.scss',
 })
 export class App {
+  // Instantiates PreferencesUiService so its effect() runs and applies
+  // data-ui-density / data-contrast etc. to <body> from the start
+  private readonly _prefsUi = inject(PreferencesUiService);
+
   protected title = 'MindEase - Cognitive Accessibility Platform';
 
   @ViewChild(LayoutComponent) layout!: LayoutComponent;

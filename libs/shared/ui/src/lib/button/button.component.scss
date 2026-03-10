@@ -198,6 +198,30 @@
   flex-shrink: 0;
 }
 
+// ==================== Motion: off — suppress all hover visual changes ====================
+:host-context([data-motion='off']) {
+  &.button-primary:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: none;
+  }
+
+  &.button-secondary:hover:not(.button-disabled):not(.button-loading) {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  &.button-danger:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-error);
+    border-color: var(--color-error);
+    box-shadow: none;
+  }
+
+  &.button-ghost:hover:not(.button-disabled):not(.button-loading) {
+    background-color: transparent;
+  }
+}
+
 // ==================== Cognitive Accessibility ====================
 :host {
   @include cognitive-spacing;

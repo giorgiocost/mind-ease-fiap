@@ -125,3 +125,11 @@
   padding: var(--spacing-xl);
   gap: var(--spacing-xl);
 }
+
+// Motion: off — suppress hover visual changes
+[data-motion='off'] {
+  .filter-select:hover,
+  .search-input:hover {
+    border-color: var(--color-border) !important;
+  }
+}
