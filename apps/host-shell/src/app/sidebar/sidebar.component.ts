@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, computed, ElementRef, HostListener, inject, input } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { PreferencesStore } from '@shared/state';
 
 /**
@@ -41,9 +41,43 @@ export interface MenuItem {
 })
 export class SidebarComponent {
   private prefsStore = inject(PreferencesStore);
+  private elementRef = inject(ElementRef);
 
   // Inputs
   collapsed = input(false);
+
+  // Keyboard navigation for menu items (ArrowUp/ArrowDown, Home/End)
+  @HostListener('keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent): void {
+    const links = this.elementRef.nativeElement.querySelectorAll('.menu-link') as NodeListOf<HTMLElement>;
+    if (links.length === 0) return;
+
+    const currentIndex = Array.from(links).findIndex(link => link === document.activeElement);
+    let nextIndex: number | null = null;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        nextIndex = currentIndex < links.length - 1 ? currentIndex + 1 : 0;
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : links.length - 1;
+        break;
+      case 'Home':
+        event.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        event.preventDefault();
+        nextIndex = links.length - 1;
+        break;
+    }
+
+    if (nextIndex !== null) {
+      links[nextIndex].focus();
+    }
+  }
 
   // Menu items
   menuItems: MenuItem[] = [
@@ -79,6 +113,12 @@ export class SidebarComponent {
     }
   ];
 
+  private router = inject(Router);
+
   // Computed
   uiDensity = computed(() => this.prefsStore.uiDensity());
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
 }

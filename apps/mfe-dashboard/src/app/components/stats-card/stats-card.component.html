@@ -1,9 +1,10 @@
 <!-- apps/mfe-dashboard/src/app/components/stats-card/stats-card.component.html -->
 <ui-card
   [variant]="cardVariant()"
-  [class.clickable]="clickable()"
+  [clickable]="clickable()"
   [class.loading]="loading()"
-  (click)="handleClick()">
+  (click)="handleClick()"
+  [attr.aria-label]="label() + ': ' + value()">
 
   <div card-body>
     @if (loading()) {

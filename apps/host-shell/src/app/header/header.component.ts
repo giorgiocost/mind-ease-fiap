@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthStore } from '@shared/state';
 import { ClickOutsideDirective } from '@shared/ui';
@@ -33,6 +33,7 @@ import { ClickOutsideDirective } from '@shared/ui';
 export class HeaderComponent {
   private authStore = inject(AuthStore);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   // Outputs
   toggleSidebar = output<void>();
@@ -53,6 +54,35 @@ export class HeaderComponent {
     }
     return user.name[0].toUpperCase();
   });
+
+  // Keyboard navigation for dropdown (Escape closes, Arrow keys navigate items)
+  @HostListener('keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent): void {
+    if (!this.dropdownOpen) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeDropdown();
+      return;
+    }
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const items = this.elementRef.nativeElement.querySelectorAll('[role="menuitem"]') as NodeListOf<HTMLElement>;
+      if (items.length === 0) return;
+
+      const currentIndex = Array.from(items).findIndex(item => item === document.activeElement);
+      let nextIndex: number;
+
+      if (event.key === 'ArrowDown') {
+        nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+      } else {
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+      }
+
+      items[nextIndex].focus();
+    }
+  }
 
   // Actions
   handleToggleSidebar() {

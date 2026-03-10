@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './header/header.component';
+import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
@@ -13,6 +13,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 export class App {
   protected title = 'MindEase - Cognitive Accessibility Platform';
 
+  @ViewChild(LayoutComponent) layout!: LayoutComponent;
+
   // Sidebar state
   readonly sidebarCollapsed = signal<boolean>(false);
 
@@ -20,6 +22,10 @@ export class App {
    * Handle sidebar toggle event from header
    */
   handleToggleSidebar(): void {
-    this.sidebarCollapsed.update((collapsed) => !collapsed);
+    if (this.layout?.isMobile()) {
+      this.layout.toggleMobileMenu();
+    } else {
+      this.sidebarCollapsed.update((collapsed) => !collapsed);
+    }
   }
 }

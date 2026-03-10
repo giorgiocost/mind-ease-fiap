@@ -1,11 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TasksStore } from '../../store/tasks.store';
 import { ButtonComponent } from '@shared/ui';
-import { KanbanColumnComponent } from '../kanban-column/kanban-column.component';
 import { Task } from '../../models/task.model';
+import { TasksStore } from '../../store/tasks.store';
+import { KanbanColumnComponent } from '../kanban-column/kanban-column.component';
 
 export type TaskFilter = 'all' | 'active' | 'completed';
 
@@ -72,6 +72,11 @@ export class KanbanBoardComponent {
 
   setFilter(filter: TaskFilter) {
     this.filter.set(filter);
+  }
+
+  onFilterChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value as TaskFilter;
+    this.setFilter(value);
   }
 
   updateSearch(event: Event) {

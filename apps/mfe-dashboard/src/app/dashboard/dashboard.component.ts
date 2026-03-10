@@ -1,6 +1,6 @@
 // apps/mfe-dashboard/src/app/dashboard/dashboard.component.ts
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthStore, PreferencesStore } from '@shared/state';
 import { CardComponent } from '@shared/ui';
@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
   // State
   stats = signal<DashboardStats | null>(null);
   loading = signal(true);
+  error = signal<string | null>(null);
 
   // Computed
   user = computed(() => this.authStore.user());
@@ -50,6 +51,7 @@ export class DashboardComponent implements OnInit {
 
   async loadDashboardData() {
     this.loading.set(true);
+    this.error.set(null);
 
     try {
       // TODO: Replace with real API call (task_22: TasksStore integration)
@@ -62,8 +64,9 @@ export class DashboardComponent implements OnInit {
         focusTimeToday: 90, // 1h30min
         weeklyProductivity: 85
       });
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Falha ao carregar dados do dashboard';
+      this.error.set(message);
     } finally {
       this.loading.set(false);
     }

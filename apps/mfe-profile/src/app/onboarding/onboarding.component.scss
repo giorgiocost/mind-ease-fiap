@@ -40,8 +40,8 @@
   font-weight: 700;
   font-size: 0.9rem;
   background: var(--color-surface, #fff);
-  color: var(--color-on-surface-variant, #6b7280);
-  border: 2px solid var(--color-outline, #d1d5db);
+  color: var(--color-on-surface-variant, #4B5563);
+  border: 2px solid var(--color-outline, #767D8A);
   transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 
   .step.active & {
@@ -63,7 +63,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-on-surface-variant, #9ca3af);
+  color: var(--color-on-surface-variant, #4B5563);   // WCAG 4.5:1 vs white
 
   .step.active & {
     color: var(--color-primary, #6366f1);
@@ -79,7 +79,7 @@
   flex: 1;
   max-width: 80px;
   height: 2px;
-  background: var(--color-outline, #e5e7eb);
+  background: var(--color-outline, #767D8A);   // WCAG 3:1 connector
   transition: background 0.3s ease;
 
   &.completed {
@@ -154,7 +154,7 @@ h1 {
 
 .feature-card {
   background: var(--color-surface-variant, #f9fafb);
-  border: 1px solid var(--color-outline-variant, #e5e7eb);
+  border: 1px solid var(--color-outline-variant, #9CA3AF);
   border-radius: 12px;
   padding: 1.25rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -216,7 +216,7 @@ p {
 .option-button {
   flex: 1;
   padding: 1rem 0.75rem;
-  border: 2px solid var(--color-outline, #e5e7eb);
+  border: 2px solid var(--color-outline, #767D8A);
   background: var(--color-surface, #fff);
   border-radius: 10px;
   cursor: pointer;
@@ -254,7 +254,7 @@ p {
 
 .option-desc {
   font-size: 0.7rem;
-  color: var(--color-on-surface-variant, #9ca3af);
+  color: var(--color-on-surface-variant, #6B7280);   // WCAG 4.5:1 vs white
 }
 
 .toggle-button {
@@ -324,7 +324,7 @@ p {
 
 .tour-card {
   background: var(--color-surface-variant, #f9fafb);
-  border: 1px solid var(--color-outline-variant, #e5e7eb);
+  border: 1px solid var(--color-outline-variant, #9CA3AF);
   border-radius: 12px;
   padding: 1.5rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -349,7 +349,7 @@ p {
   justify-content: space-between;
   align-items: center;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--color-outline-variant, #e5e7eb);
+  border-top: 1px solid var(--color-outline-variant, #9CA3AF);
 }
 
 .actions-right {

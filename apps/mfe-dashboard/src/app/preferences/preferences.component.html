@@ -48,7 +48,7 @@
           <h3>Densidade da Interface</h3>
           <p class="preference-help">Quantidade de informações visíveis ao mesmo tempo</p>
         </div>
-        <div class="button-group" role="radiogroup">
+        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="uiDensity() === 'simple'"
@@ -100,7 +100,7 @@
           <h3>Modo de Visualização</h3>
           <p class="preference-help">Escolha entre resumo rápido ou detalhes completos</p>
         </div>
-        <div class="button-group" role="radiogroup">
+        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="contentMode() === 'summary'"
@@ -136,7 +136,7 @@
           <h3>Contraste</h3>
           <p class="preference-help">Aumente para melhor discernimento de cores</p>
         </div>
-        <div class="button-group" role="radiogroup">
+        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="contrast() === 'low'"
@@ -245,7 +245,7 @@
           <h3>Animações</h3>
           <p class="preference-help">Habilite ou reduza transições entre estados</p>
         </div>
-        <div class="button-group" role="radiogroup">
+        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="motion() === 'off'"

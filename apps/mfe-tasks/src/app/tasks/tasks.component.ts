@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { TasksViewModel } from './tasks.viewmodel';
 import { Task } from '../models/task.model';
 import { TaskCardComponent } from './task-card/task-card.component';
+import { TasksViewModel } from './tasks.viewmodel';
 
 /**
  * TasksComponent - Smart Container (MVVM Pattern)
@@ -112,10 +112,11 @@ export class TasksComponent implements OnInit {
   /**
    * Handle search/filter change
    *
-   * @param text - Filter text
+   * @param event - Input event
    */
-  onFilterChange(text: string): void {
-    this.vm.setFilterText(text);
+  onFilterChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.vm.setFilterText(value);
   }
 
   /**

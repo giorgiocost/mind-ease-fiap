@@ -1,7 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PreferencesStore, CognitivePreferences, DEFAULT_PREFERENCES } from '@shared/state';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CognitivePreferences, DEFAULT_PREFERENCES, PreferencesStore } from '@shared/state';
 
 interface PreferencesPreset {
   name: string;
@@ -60,7 +60,7 @@ export class PreferencesComponent {
   // Helper method to compare preferences
   private preferencesMatch(current: CognitivePreferences, target: CognitivePreferences): boolean {
     // Normalize numeric values to handle string/number comparison issues from localStorage
-    const normalizeNumber = (val: any): number => typeof val === 'string' ? parseFloat(val) : val;
+    const normalizeNumber = (val: string | number): number => typeof val === 'string' ? parseFloat(val) : val;
 
     return (
       current.uiDensity === target.uiDensity &&
@@ -151,6 +151,27 @@ export class PreferencesComponent {
       await this.prefsStore.updatePreferences(DEFAULT_PREFERENCES);
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  handleRadioKeydown(event: KeyboardEvent): void {
+    const group = (event.currentTarget as HTMLElement);
+    const buttons = Array.from(group.querySelectorAll<HTMLElement>('button[role="radio"]'));
+    const currentIndex = buttons.indexOf(event.target as HTMLElement);
+    if (currentIndex === -1) return;
+
+    let nextIndex: number | null = null;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      nextIndex = (currentIndex + 1) % buttons.length;
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+    }
+
+    if (nextIndex !== null) {
+      buttons[nextIndex].focus();
+      buttons[nextIndex].click();
     }
   }
 }

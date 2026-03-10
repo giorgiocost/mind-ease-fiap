@@ -6,8 +6,18 @@
     <p class="subtitle">Aqui está sua visão geral de produtividade</p>
   </header>
 
+  <!-- Error State -->
+  @if (error()) {
+    <div class="dashboard-error" role="alert" aria-live="assertive">
+      <span aria-hidden="true">⚠️</span>
+      <p>{{ error() }}</p>
+      <button (click)="loadDashboardData()" aria-label="Tentar carregar novamente">Tentar novamente</button>
+    </div>
+  }
+
   <!-- Stats Cards Grid -->
-  <section class="stats-grid">
+  @if (!error()) {
+  <section class="stats-grid" aria-label="Estatísticas de produtividade">
     <app-stats-card
       icon="📋"
       label="Tarefas Pendentes"
@@ -37,6 +47,7 @@
       (clicked)="navigateToPomodoro()">
     </app-stats-card>
   </section>
+  }
 
   <!-- Activity Section -->
   <section class="activity-section">

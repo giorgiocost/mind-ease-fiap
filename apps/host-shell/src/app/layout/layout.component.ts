@@ -104,6 +104,7 @@ export class LayoutComponent implements OnInit {
       .subscribe(e => {
         const url = e.urlAfterRedirects || e.url;
         this.isAuthPage.set(url.startsWith('/login') || url.startsWith('/register'));
+        this.closeMobileMenu();
       });
 
     // Effect to close mobile menu when switching to desktop

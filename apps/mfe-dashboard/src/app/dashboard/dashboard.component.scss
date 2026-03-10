@@ -33,6 +33,37 @@
   margin-bottom: var(--spacing-xl);
 }
 
+// Error State
+.dashboard-error {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-error, #dc2626);
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: var(--spacing-xl);
+
+  p {
+    color: var(--text-color-primary);
+    margin: var(--spacing-sm) 0;
+  }
+
+  button {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm, 4px);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
 // Content Grid
 .activity-section {
   .card-header {

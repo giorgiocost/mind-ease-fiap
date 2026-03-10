@@ -1,10 +1,10 @@
-import { Component, input, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, HostListener, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CardComponent } from '@shared/ui';
-import { TasksStore } from '../../store/tasks.store';
-import { Task, Subtask } from '../../models/task.model';
 import { ChecklistComponent } from '../../components/checklist/checklist.component';
+import { Subtask, Task } from '../../models/task.model';
+import { TasksStore } from '../../store/tasks.store';
 
 interface EditableSubtask {
   id: string;
@@ -22,6 +22,7 @@ interface EditableSubtask {
 })
 export class TaskCardComponent {
   private tasksStore = inject(TasksStore);
+  private elementRef = inject(ElementRef);
 
   task = input.required<Task>();
   isEditModalOpen = signal(false);
@@ -32,6 +33,50 @@ export class TaskCardComponent {
 
   private originalSubtasks: EditableSubtask[] = [];
   private tempSubtaskCounter = 0;
+  private previousFocus: HTMLElement | null = null;
+
+  @HostListener('keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent): void {
+    if (!this.isEditModalOpen()) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeEditModal();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this.trapFocus(event);
+    }
+  }
+
+  private trapFocus(event: KeyboardEvent): void {
+    const modal = this.elementRef.nativeElement.querySelector('.modal-card') as HTMLElement;
+    if (!modal) return;
+
+    const focusable = modal.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  private focusModal(): void {
+    setTimeout(() => {
+      const firstInput = this.elementRef.nativeElement.querySelector('.modal-card input') as HTMLElement;
+      if (firstInput) firstInput.focus();
+    });
+  }
 
   private toEditableSubtasks(subtasks?: Subtask[]): EditableSubtask[] {
     return (subtasks || []).map(st => ({
@@ -44,6 +89,20 @@ export class TaskCardComponent {
   async handleDelete() {
     if (confirm('Deseja realmente excluir esta tarefa?')) {
       await this.tasksStore.deleteTask(String(this.task().id));
+    }
+  }
+
+  async handleMove(event: Event): Promise<void> {
+    const select = event.target as HTMLSelectElement;
+    const newStatus = select.value as 'TODO' | 'DOING' | 'DONE';
+    if (newStatus === this.task().status) return;
+
+    try {
+      await this.tasksStore.updateTask(String(this.task().id), { status: newStatus });
+      await this.tasksStore.loadTasks();
+    } catch (error) {
+      console.error('Failed to move task:', error);
+      select.value = this.task().status;
     }
   }
 
@@ -60,7 +119,9 @@ export class TaskCardComponent {
       this.originalSubtasks = subtasks.map(st => ({ ...st }));
       this.editSubtasks.set(subtasks);
 
+      this.previousFocus = document.activeElement as HTMLElement;
       this.isEditModalOpen.set(true);
+      this.focusModal();
     } catch (error) {
       console.error('Failed to open edit modal:', error);
       alert('Nao foi possivel carregar os dados da tarefa para edicao.');
@@ -70,6 +131,8 @@ export class TaskCardComponent {
   closeEditModal(): void {
     if (this.isSaving()) return;
     this.isEditModalOpen.set(false);
+    this.previousFocus?.focus();
+    this.previousFocus = null;
   }
 
   addEditableSubtask(): void {

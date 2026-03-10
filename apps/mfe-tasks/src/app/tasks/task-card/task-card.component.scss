@@ -1,6 +1,7 @@
 @use '../../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
 
 .task-card {
+  overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
@@ -13,22 +14,44 @@
   display: flex;
   align-items: start;
   justify-content: space-between;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   margin-bottom: var(--spacing-xs);
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .task-title {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   font-size: 0.9375rem;
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
   line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .task-actions {
   display: flex;
+  flex-shrink: 0;
   gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.move-select {
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border: 1px solid var(--color-border, #767D8A);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-surface, #fff);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 1px;
+  }
 }
 
 .btn-icon {
@@ -46,6 +69,11 @@
 
   &:hover {
     background-color: var(--color-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 1px;
   }
 
   &.danger:hover {
@@ -88,7 +116,7 @@
 
 .created-date,
 .updated-date {
-  opacity: 0.7;
+  // opacity removed — text-secondary already passes WCAG 4.5:1
 }
 
 .modal-overlay {

@@ -2,6 +2,7 @@
 <nav
   class="sidebar"
   role="navigation"
+  aria-label="Menu principal"
   [class.collapsed]="collapsed()"
   [attr.data-ui-density]="uiDensity()">
 
@@ -13,16 +14,17 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: item.id === 'dashboard' || item.id === 'tasks' || item.id === 'preferences' }"
           class="menu-link"
-          [attr.aria-label]="item.label">
+          [attr.aria-label]="collapsed() ? item.label : null"
+          [attr.aria-current]="isActive(item.route) ? 'page' : null">
 
-          <span class="menu-icon">{{ item.icon }}</span>
+          <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
 
           @if (!collapsed()) {
             <span class="menu-label">{{ item.label }}</span>
           }
 
           @if (item.badge && item.badge > 0 && !collapsed()) {
-            <span class="menu-badge">{{ item.badge }}</span>
+            <span class="menu-badge" [attr.aria-label]="item.badge + ' notificações'">{{ item.badge }}</span>
           }
         </a>
       </li>

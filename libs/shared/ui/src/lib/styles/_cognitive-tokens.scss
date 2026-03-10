@@ -148,11 +148,11 @@
 //   high   — WCAG AAA compliant (7:1+ for text)
 
 [data-contrast='low'] {
-  --color-text-primary:   #{$color-neutral-600};
-  --color-text-secondary: #{$color-neutral-400};
-  --color-text-tertiary:  #{$color-neutral-300};
-  --color-border-default: #{$color-neutral-200};
-  --color-border-light:   #{$color-neutral-100};
+  --color-text-primary:   #{$color-neutral-600};   // #4B5563 — 7.56:1 ✓
+  --color-text-secondary: #{$color-neutral-500};   // #6B7280 — 4.83:1 ✓
+  --color-text-tertiary:  #{$color-neutral-500};   // #6B7280 — 4.83:1 ✓
+  --color-border-default: #{$color-neutral-400};   // #9CA3AF — softer than normal
+  --color-border-light:   #{$color-neutral-300};   // #D1D5DB — decorative only
   --color-bg-tertiary:    #{$color-neutral-50};
 }
 

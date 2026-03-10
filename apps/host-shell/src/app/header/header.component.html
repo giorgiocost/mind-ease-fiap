@@ -5,7 +5,7 @@
     <button
       class="sidebar-toggle"
       (click)="handleToggleSidebar()"
-      aria-label="Toggle sidebar">
+      aria-label="Alternar barra lateral">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
         <line x1="3" y1="12" x2="21" y2="12" stroke-width="2"/>
@@ -13,8 +13,8 @@
       </svg>
     </button>
 
-    <a class="logo" routerLink="/dashboard">
-      <span class="logo-icon">🧠</span>
+    <a class="logo" routerLink="/dashboard" aria-label="MindEase, ir para o dashboard">
+      <span class="logo-icon" aria-hidden="true">🧠</span>
       <span class="logo-text">MindEase</span>
     </a>
   </div>
@@ -22,7 +22,7 @@
   <!-- Right Section -->
   <div class="header-right">
     <!-- Notifications -->
-    <button class="notifications" aria-label="Notifications">
+    <button class="notifications" aria-label="Notificações, {{ notificationsCount }} novas">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -38,7 +38,8 @@
         class="user-button"
         (click)="toggleDropdown()"
         [attr.aria-expanded]="dropdownOpen"
-        aria-haspopup="true">
+        aria-haspopup="true"
+        aria-label="Menu do usuário">
         <div class="avatar">{{ userInitials() }}</div>
         <span class="user-name">{{ user()?.name }}</span>
         <svg
@@ -53,14 +54,14 @@
       </button>
 
       @if (dropdownOpen) {
-        <div class="dropdown-menu" (clickOutside)="closeDropdown()">
-          <button class="dropdown-item" (click)="navigateToProfile()">
-            <span class="icon">👤</span>
+        <div class="dropdown-menu" role="menu" aria-label="Opções do usuário" (clickOutside)="closeDropdown()">
+          <button class="dropdown-item" role="menuitem" (click)="navigateToProfile()">
+            <span class="icon" aria-hidden="true">👤</span>
             Meu Perfil
           </button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item danger" (click)="handleLogout()">
-            <span class="icon">🚪</span>
+          <div class="dropdown-divider" role="separator"></div>
+          <button class="dropdown-item danger" role="menuitem" (click)="handleLogout()">
+            <span class="icon" aria-hidden="true">🚪</span>
             Sair
           </button>
         </div>

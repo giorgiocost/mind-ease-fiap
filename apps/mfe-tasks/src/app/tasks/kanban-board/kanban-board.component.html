@@ -3,11 +3,16 @@
   <!-- Header -->
   <header class="kanban-header">
     <div class="actions-left">
-      <ui-button
-        variant="primary"
-        (clicked)="handleCreateTask()">
-        + Nova Tarefa
-      </ui-button>
+      <div class="btn-nova-full">
+        <ui-button variant="primary" aria-label="Nova Tarefa" (clicked)="handleCreateTask()">
+          + Nova Tarefa
+        </ui-button>
+      </div>
+      <div class="btn-nova-icon">
+        <ui-button variant="primary" size="sm" aria-label="Nova Tarefa" (clicked)="handleCreateTask()">
+          +
+        </ui-button>
+      </div>
     </div>
 
     <div class="actions-right">
@@ -15,7 +20,8 @@
       <select
         class="filter-select"
         [value]="filter()"
-        (change)="setFilter($any($event.target).value)">
+        (change)="onFilterChange($event)"
+        aria-label="Filtrar tarefas">
         <option value="all">Todas</option>
         <option value="active">Ativas</option>
         <option value="completed">Concluídas</option>

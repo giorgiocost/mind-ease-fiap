@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { clearReturnUrl, getReturnUrl } from '@shared/guards';
 import { AuthStore } from '@shared/state';
 import { ButtonComponent } from '@shared/ui';
-import { getReturnUrl, clearReturnUrl } from '@shared/guards';
 
 @Component({
   selector: 'app-login',
@@ -158,8 +158,9 @@ export class LoginComponent {
       const returnUrl = getReturnUrl() || '/dashboard';
       clearReturnUrl();
       this.router.navigateByUrl(returnUrl);
-    } catch (err: any) {
-      this.error.set(err.message || 'Login failed');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Falha ao realizar login';
+      this.error.set(message);
     } finally {
       this.loading.set(false);
     }

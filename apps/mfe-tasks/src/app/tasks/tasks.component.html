@@ -25,9 +25,9 @@
             type="text"
             placeholder="Pesquisar tarefas..."
             [value]="vm.uiState().filterText"
-            (input)="onFilterChange($any($event.target).value)"
+            (input)="onFilterChange($event)"
             class="search-input"
-            aria-label="Search tasks"
+            aria-label="Pesquisar tarefas"
           />
         </div>
       }
@@ -38,7 +38,7 @@
         class="btn-icon btn-refresh"
         (click)="onRefresh()"
         [disabled]="vm.isLoading()"
-        aria-label="Sync tasks"
+        aria-label="Sincronizar tarefas"
       >
         <span class="icon">🔄</span>
       </button>
@@ -60,11 +60,10 @@
        LOADING STATE
        ======================================== -->
   @if (vm.isLoading()) {
-    <div class="loading-state">
-      <div class="spinner" role="status">
-        <span class="sr-only">Loading tasks...</span>
-      </div>
-      <p class="loading-message">Loading your tasks...</p>
+    <div class="loading-state" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loading-message">Carregando suas tarefas...</p>
+      <span class="sr-only">Carregando tarefas, por favor aguarde</span>
     </div>
   }
 
@@ -72,16 +71,16 @@
        ERROR STATE
        ======================================== -->
   @if (vm.error() && !vm.isLoading()) {
-    <div class="error-state">
+    <div class="error-state" role="alert" aria-live="assertive">
       <div class="error-card">
         <span class="error-icon">⚠️</span>
         <p class="error-message">{{ vm.error() }}</p>
         <div class="error-actions">
           <button type="button" class="btn-secondary" (click)="onRefresh()">
-            Try Again
+            Tentar Novamente
           </button>
           <button type="button" class="btn-text" (click)="onClearError()">
-            Dismiss
+            Dispensar
           </button>
         </div>
       </div>
@@ -109,7 +108,7 @@
        KANBAN BOARD (CDK Drag & Drop)
        ======================================== -->
   @if (vm.tasks().length > 0 && !vm.isLoading()) {
-    <div class="kanban-board" cdkDropListGroup>
+    <div class="kanban-board" cdkDropListGroup role="region" aria-label="Quadro Kanban de tarefas">
       <!-- Coluna TODO -->
       <div class="kanban-column column-todo">
         <div class="column-header">
@@ -218,7 +217,7 @@
       >
         <header class="modal-header">
           <h2 class="modal-title">Nova Tarefa</h2>
-          <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Close modal">
+          <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Fechar modal">
             ✕
           </button>
         </header>

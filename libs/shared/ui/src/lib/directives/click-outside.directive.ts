@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, Output, HostListener, inject } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, inject, Output } from '@angular/core';
 
 /**
  * 🎯 ClickOutsideDirective
@@ -27,6 +27,13 @@ export class ClickOutsideDirective {
     const target = event.target as HTMLElement;
     const clickedInside = this.elementRef.nativeElement.contains(target);
     if (!clickedInside) {
+      this.clickOutside.emit();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.elementRef.nativeElement.contains(document.activeElement)) {
       this.clickOutside.emit();
     }
   }

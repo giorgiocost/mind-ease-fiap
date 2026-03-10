@@ -94,15 +94,16 @@ $color-bg-inverse:   #1F2937;
 // -- Text  --------------------------------------------------------------------
 $color-text-primary:   #111827;
 $color-text-secondary: #4B5563;
-$color-text-tertiary:  #9CA3AF;
+$color-text-tertiary:  #6B7280;
 $color-text-inverse:   #F9FAFB;
 $color-text-link:      #3399FF;
 $color-text-link-hover:#297ACC;
 
 // -- Border -------------------------------------------------------------------
-$color-border-light:  #E5E7EB;
-$color-border-default:#D1D5DB;
-$color-border-strong: #9CA3AF;
+// Values chosen to pass WCAG 1.4.11 Non-text Contrast (3:1 vs white)
+$color-border-light:  #9CA3AF;   // neutral-400  (2.54:1 — decorative separators)
+$color-border-default:#767D8A;   // ~4.0:1 — form controls, component boundaries
+$color-border-strong: #6B7280;   // neutral-500  (4.83:1)
 $color-border-focus:  #3399FF;
 
 // -- Overlay ------------------------------------------------------------------
@@ -350,6 +351,15 @@ $container-xl:   1280px;
   --color-surface:         #{$color-bg-primary};
   --color-surface-variant: #{$color-bg-secondary};
   --color-surface-hover:   #{$color-bg-tertiary};
+
+  // Material-style aliases (used by MFE component fallbacks)
+  --color-outline:            #{$color-border-default};
+  --color-outline-variant:    #{$color-border-light};
+  --color-on-surface:         #{$color-text-primary};
+  --color-on-surface-variant: #{$color-text-tertiary};
+  --color-on-primary:         #FFFFFF;
+  --color-on-secondary:       #FFFFFF;
+  --color-hover:              #{$color-bg-tertiary};
 
   // Border shorthand alias
   --color-border: #{$color-border-default};

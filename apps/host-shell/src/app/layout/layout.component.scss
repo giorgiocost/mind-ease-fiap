@@ -6,6 +6,26 @@ $sidebar-width-expanded: 240px;
 $sidebar-width-collapsed: 64px;
 $mobile-breakpoint: 768px;
 
+// Skip navigation link (WCAG 2.4.1)
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: var(--spacing-sm);
+  z-index: 9999;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-primary-500);
+  color: var(--color-neutral-0);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+
+  &:focus {
+    top: var(--spacing-sm);
+  }
+}
+
 .layout {
   // CSS Grid layout
   display: grid;
@@ -110,6 +130,10 @@ $mobile-breakpoint: 768px;
       'header'
       'main';
     grid-template-columns: 1fr;
+
+    .layout__main {
+      padding: var(--spacing-sm);
+    }
 
     .layout__sidebar {
       position: fixed;
