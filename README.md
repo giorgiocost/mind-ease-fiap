@@ -2,7 +2,11 @@
 
 > Plataforma de acessibilidade cognitiva com Micro-Frontends
 
-## í¿—ï¸ Arquitetura
+[![CI/CD](https://github.com/giorgiocost/mind-ease-fiap/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/giorgiocost/mind-ease-fiap/actions/workflows/ci-cd.yml)
+[![codecov](https://codecov.io/gh/giorgiocost/mind-ease-fiap/branch/main/graph/badge.svg)](https://codecov.io/gh/giorgiocost/mind-ease-fiap)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+## ï¿½ï¿½ï¿½ï¸ Arquitetura
 
 - **Nx Monorepo** (v22+)
 - **Angular 21+** com Standalone Components
@@ -10,7 +14,7 @@
 - **MVVM** com Angular Signals
 - **Clean Architecture** adaptada ao frontend
 
-## í³¦ Estrutura
+## ï¿½ï¿½ï¿½ Estrutura
 
 \`\`\`
 apps/
@@ -31,7 +35,7 @@ libs/
   infrastructure/      â† Adapters
 \`\`\`
 
-## íº€ Quick Start
+## ï¿½ï¿½ï¿½ Quick Start
 
 \`\`\`bash
 # Instalar dependÃªncias (jÃ¡ feito)
@@ -44,7 +48,7 @@ npm start
 npm run build
 \`\`\`
 
-## í³‹ Scripts DisponÃ­veis
+## ï¿½ï¿½ï¿½ Scripts DisponÃ­veis
 
 | Script | DescriÃ§Ã£o |
 |--------|-----------|
@@ -59,7 +63,7 @@ npm run build
 | \`nx graph\` | Visualiza grafo de dependÃªncias |
 | \`nx affected:test\` | Testa apenas o que mudou |
 
-## í·ª Testes
+## ï¿½ï¿½ï¿½ Testes
 
 \`\`\`bash
 # Rodar todos os testes
@@ -72,7 +76,7 @@ nx test --code-coverage
 nx e2e host-shell-e2e
 \`\`\`
 
-## í¾¨ Design System
+## ï¿½ï¿½ï¿½ Design System
 
 Tokens cognitivos disponÃ­veis via \`@shared/a11y\`:
 - \`uiDensity\`: simple | medium | full
@@ -83,16 +87,57 @@ Tokens cognitivos disponÃ­veis via \`@shared/a11y\`:
 - \`spacingScale\`: 0.9 - 1.4
 - \`motion\`: full | reduced | off
 
-## í´— Links Ãšteis
+## âš™ï¸ CI/CD Pipeline
+
+Pipeline automÃ¡tico via **GitHub Actions** (`.github/workflows/ci-cd.yml`).
+
+### Jobs
+
+| Job | Trigger | DescriÃ§Ã£o |
+|-----|---------|-----------|
+| `lint` | push / PR | ESLint em todos os projetos |
+| `test` | apÃ³s lint | Jest unit tests + coverage (Codecov) |
+| `build` | apÃ³s test | Build production de todos os MFEs |
+| `e2e` | apÃ³s build | Playwright E2E (Chromium) |
+| `deploy` | push â†’ main | Deploy production para Vercel |
+| `deploy-preview` | PR | Preview deploy + comentÃ¡rio no PR |
+
+### Triggers
+
+- **Push para `main` ou `develop`** â†’ pipeline completo + deploy (main)
+- **Pull Request** â†’ pipeline completo + preview deploy
+- **`workflow_dispatch`** â†’ trigger manual
+
+### Scripts locais
+
+```bash
+npm run lint:all       # ESLint em todos os projetos
+npm run test:ci        # Jest com coverage (modo CI)
+npm run build:all      # Build production de todos os MFEs
+npm run e2e            # Playwright (todos os browsers)
+npm run e2e:ci         # Playwright (Chromium only â€” rÃ¡pido)
+npm run e2e:smoke      # Smoke suite (@smoke)
+npm run e2e:critical   # Critical flows (@critical)
+```
+
+### Secrets necessÃ¡rios (GitHub â†’ Settings â†’ Secrets)
+
+```
+VERCEL_TOKEN        # vercel.com/account/tokens
+VERCEL_ORG_ID       # Vercel project â†’ Settings â†’ General
+VERCEL_PROJECT_ID   # Vercel project â†’ Settings â†’ General
+```
+
+## ğŸ”— Links Ãšteis
 
 - [Nx Documentation](https://nx.dev)
 - [Angular Documentation](https://angular.io/docs)
 - [Module Federation](https://webpack.js.org/concepts/module-federation/)
 
-## í±¥ Time
+## ï¿½ï¿½ï¿½ Time
 
 Projeto desenvolvido para o Hackathon FIAP Inclusive 2026.
 
-## í³„ LicenÃ§a
+## ï¿½ï¿½ï¿½ LicenÃ§a
 
 MIT
