@@ -5,6 +5,10 @@ const config: ModuleFederationConfig = {
   exposes: {
     './Routes': 'apps/mfe-profile/src/app/remote-entry/entry.routes.ts',
   },
+  additionalShared: [
+    ['@angular/router', { singleton: true, strictVersion: false, requiredVersion: false }],
+    ['@angular/forms', { singleton: true, strictVersion: false, requiredVersion: false }],
+  ],
 };
 
 /**

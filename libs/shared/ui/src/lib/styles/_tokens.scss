@@ -346,6 +346,14 @@ $container-xl:   1280px;
   --color-bg-tertiary:  #{$color-bg-tertiary};
   --color-bg-inverse:   #{$color-bg-inverse};
 
+  // Semantic surface aliases (used by MFE components)
+  --color-surface:         #{$color-bg-primary};
+  --color-surface-variant: #{$color-bg-secondary};
+  --color-surface-hover:   #{$color-bg-tertiary};
+
+  // Border shorthand alias
+  --color-border: #{$color-border-default};
+
   // -- Colors: Text -----------------------------------------------------------
   --color-text-primary:   #{$color-text-primary};
   --color-text-secondary: #{$color-text-secondary};
