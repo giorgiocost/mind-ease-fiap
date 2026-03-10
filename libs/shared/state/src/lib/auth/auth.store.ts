@@ -4,18 +4,18 @@
 // Global authentication state management with Angular Signals
 // Features: login, register, logout, token refresh, LocalStorage persistence
 
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom, catchError, throwError } from 'rxjs';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import {
-  User,
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  RefreshTokenRequest,
-  RefreshTokenResponse,
-  DecodedToken
+    AuthResponse,
+    DecodedToken,
+    LoginRequest,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+    RegisterRequest,
+    User
 } from './auth.models';
 
 const STORAGE_KEY = 'mindease_auth';
@@ -91,6 +91,9 @@ export class AuthStore {
         )
       );
 
+      // Limpa estado do pomodoro para novo usuário
+      localStorage.removeItem('pomodoro-timer-state');
+      localStorage.removeItem('pomodoro-sessions');
       this.setAuthData(response);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Registration failed';
@@ -137,6 +140,9 @@ export class AuthStore {
     this._refreshToken.set(null);
     this._error.set(null);
     this.clearStorage();
+    // Limpa estado do pomodoro ao deslogar
+    localStorage.removeItem('pomodoro-timer-state');
+    localStorage.removeItem('pomodoro-sessions');
   }
 
   /**

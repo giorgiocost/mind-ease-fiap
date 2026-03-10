@@ -101,7 +101,7 @@ describe('OnboardingComponent', () => {
 
       component.ngOnInit();
 
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/tasks']);
     });
   });
 
@@ -158,7 +158,7 @@ describe('OnboardingComponent', () => {
       component.skip();
 
       expect(localStorage.getItem('onboarding-completed')).toBe('true');
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/tasks']);
     });
 
     it('should mark localStorage and navigate on complete', () => {
@@ -167,7 +167,7 @@ describe('OnboardingComponent', () => {
       component.complete();
 
       expect(localStorage.getItem('onboarding-completed')).toBe('true');
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/tasks']);
     });
 
     it('should call complete when nextStep on last step', async () => {

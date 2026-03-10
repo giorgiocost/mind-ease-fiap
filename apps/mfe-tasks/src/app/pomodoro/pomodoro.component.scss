@@ -72,6 +72,42 @@
 // ─────────────────────────────────────────
 // Timer Display
 // ─────────────────────────────────────────
+
+.duration-selector {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.duration-button {
+  border: 1px solid var(--color-border, #d1d5db);
+  background: transparent;
+  border-radius: var(--radius-md, 8px);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--color-text-secondary, #6b7280);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+
+  &.active {
+    background: var(--color-primary, #6366f1);
+    color: #fff;
+    border-color: var(--color-primary, #6366f1);
+    font-weight: 600;
+  }
+
+  &:hover:not(.active) {
+    border-color: var(--color-primary, #6366f1);
+    color: var(--color-primary, #6366f1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 2px;
+  }
+}
+
 .timer-display {
   position: relative;
   width: 280px;

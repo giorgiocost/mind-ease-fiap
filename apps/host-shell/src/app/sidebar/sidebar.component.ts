@@ -14,6 +14,10 @@ export interface MenuItem {
   icon: string;
   route: string;
   badge?: number;
+  /** Se true, este item aparece apenas no modo foco */
+  focusOnly?: boolean;
+  /** Se true, este item recebe destaque de "sair do foco" quando focusMode está ativo */
+  focusExit?: boolean;
 }
 
 /**
@@ -79,8 +83,7 @@ export class SidebarComponent {
     }
   }
 
-  // Menu items
-  menuItems: MenuItem[] = [
+  private allMenuItems: MenuItem[] = [
     {
       id: 'tasks',
       label: 'Tarefas',
@@ -97,7 +100,8 @@ export class SidebarComponent {
       id: 'preferences',
       label: 'Configurações',
       icon: '⚙️',
-      route: '/dashboard/preferences'
+      route: '/dashboard/preferences',
+      focusExit: true
     },
     {
       id: 'profile',
@@ -110,7 +114,21 @@ export class SidebarComponent {
   private router = inject(Router);
 
   // Computed
-  uiDensity = computed(() => this.prefsStore.uiDensity());
+  uiDensity  = computed(() => this.prefsStore.uiDensity());
+  focusMode  = computed(() => this.prefsStore.focusMode());
+
+  /** Sidebar fica sempre colapsada quando em modo foco, independente do input externo */
+  isCollapsed = computed(() => this.collapsed() || this.focusMode());
+
+  /** Em modo foco mostra apenas: Tarefas (kanban), Pomodoro e Configurações (para sair) */
+  menuItems = computed(() => {
+    if (this.focusMode()) {
+      return this.allMenuItems.filter(item =>
+        item.id === 'tasks' || item.id === 'pomodoro' || item.focusExit
+      );
+    }
+    return this.allMenuItems;
+  });
 
   isActive(route: string): boolean {
     return this.router.url === route;

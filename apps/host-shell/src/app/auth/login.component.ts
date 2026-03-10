@@ -155,7 +155,7 @@ export class LoginComponent {
       await this.authStore.login({ email: this.email, password: this.password });
 
       // Redirect to intended URL or default
-      const returnUrl = getReturnUrl() || '/dashboard';
+      const returnUrl = getReturnUrl() || '/tasks';
       clearReturnUrl();
       this.router.navigateByUrl(returnUrl);
     } catch (err: unknown) {

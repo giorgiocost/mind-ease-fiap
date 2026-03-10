@@ -97,6 +97,28 @@
   font-weight: 600;
 }
 
+// Focus mode — destaque no item "Configurações" para desativar o modo foco
+.menu-link.focus-exit {
+  border: 1.5px solid var(--color-primary-400);
+  color: var(--color-primary-600);
+  background-color: color-mix(in srgb, var(--color-primary-100) 60%, transparent);
+
+  .focus-exit-hint {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-primary-500);
+    line-height: 1;
+    margin-bottom: 1px;
+  }
+
+  &:hover {
+    background-color: var(--color-primary-100);
+  }
+}
+
 // UI Density — handled via CSS custom properties (--density-*) cascaded from body
 // [data-ui-density] selectors here are non-functional (body is outside component scope)
 

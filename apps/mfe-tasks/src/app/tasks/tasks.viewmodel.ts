@@ -1,7 +1,7 @@
-import { Injectable, computed, signal, effect, inject } from '@angular/core';
-import { TasksStore } from '../store/tasks.store';
-import { PreferencesStore, AuthStore } from '@shared/state';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { AuthStore, PreferencesStore } from '@shared/state';
 import { Task } from '../models/task.model';
+import { TasksStore } from '../store/tasks.store';
 
 /**
  * Tasks grouped by status (for Kanban columns)
@@ -120,6 +120,25 @@ export class TasksViewModel {
    */
   readonly canAddToDoing = computed(() => {
     return this.taskCounts().DOING < 2; // WIP limit = 2
+  });
+
+  /**
+   * ID da tarefa "ativa" — tarefa mais antiga em DOING;
+   * se não houver DOING, a mais antiga em TODO.
+   */
+  readonly activeTaskId = computed<string | number | null>(() => {
+    const byStatus = this.tasksByStatus();
+    if (byStatus.DOING.length > 0) {
+      return byStatus.DOING.reduce((a, b) =>
+        new Date(a.createdAt) < new Date(b.createdAt) ? a : b
+      ).id;
+    }
+    if (byStatus.TODO.length > 0) {
+      return byStatus.TODO.reduce((a, b) =>
+        new Date(a.createdAt) < new Date(b.createdAt) ? a : b
+      ).id;
+    }
+    return null;
   });
 
   /**

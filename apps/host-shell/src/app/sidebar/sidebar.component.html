@@ -3,27 +3,33 @@
   class="sidebar"
   role="navigation"
   aria-label="Menu principal"
-  [class.collapsed]="collapsed()"
+  [class.collapsed]="isCollapsed()"
   [attr.data-ui-density]="uiDensity()">
 
   <ul class="menu" role="list">
-    @for (item of menuItems; track item.id) {
+    @for (item of menuItems(); track item.id) {
       <li class="menu-item">
         <a
           [routerLink]="item.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: item.id === 'dashboard' || item.id === 'tasks' || item.id === 'preferences' }"
+          [routerLinkActiveOptions]="{ exact: item.id === 'tasks' || item.id === 'preferences' }"
           class="menu-link"
-          [attr.aria-label]="collapsed() ? item.label : null"
+          [class.focus-exit]="focusMode() && item.focusExit"
+          [attr.aria-label]="isCollapsed() ? (focusMode() && item.focusExit ? 'Sair do Modo Foco — ' + item.label : item.label) : null"
           [attr.aria-current]="isActive(item.route) ? 'page' : null">
 
           <span class="menu-icon" aria-hidden="true">{{ item.icon }}</span>
 
-          @if (!collapsed()) {
-            <span class="menu-label">{{ item.label }}</span>
+          @if (!isCollapsed()) {
+            <span class="menu-label">
+              @if (focusMode() && item.focusExit) {
+                <span class="focus-exit-hint">Sair do Foco</span>
+              }
+              {{ item.label }}
+            </span>
           }
 
-          @if (item.badge && item.badge > 0 && !collapsed()) {
+          @if (item.badge && item.badge > 0 && !isCollapsed()) {
             <span class="menu-badge" [attr.aria-label]="item.badge + ' notificações'">{{ item.badge }}</span>
           }
         </a>
