@@ -235,6 +235,7 @@
 }
 
 // ── Motion preferences ────────────────────────────────────────
+// OS-level
 @media (prefers-reduced-motion: reduce) {
   .progress-fill,
   .subtask-item,
@@ -245,3 +246,10 @@
     transition: none;
   }
 }
+
+// reduced: progress bar instant; button hover colour transitions survive via global rule.
+[data-motion='reduced'] {
+  .progress-fill { transition: none; }
+}
+
+// off: global rule handles everything.

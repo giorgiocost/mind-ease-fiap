@@ -53,6 +53,16 @@
     border-radius: 0.375rem;
     font-weight: 500;
     transition: all 0.2s ease-in-out;
+
+    // reduced: allow background/colour hover; remove transform movement
+    [data-motion='reduced'] & {
+      transition: background-color 150ms, color 150ms;
+      &:hover { transform: none; }
+    }
+    // off: global kills transitions; also neutralise transform hover
+    [data-motion='off'] & {
+      &:hover { transform: none; }
+    }
     font-size: 0.9375rem;
 
     &:hover {
@@ -139,5 +149,46 @@
   * {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Contrast preferences
+   ========================================================================== */
+
+[data-contrast='high'] {
+  .main-nav {
+    background: #0F172A; // Darker navy for stronger contrast
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .nav-links a {
+    color: #FFFFFF; // Pure white (was 80% opacity)
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    &.active {
+      background: rgba(255, 255, 255, 0.2);
+      outline: 2px solid rgba(255, 255, 255, 0.6);
+      outline-offset: 2px;
+    }
+  }
+
+  // Main content area: pure white maximises text contrast
+  .content {
+    background: #FFFFFF;
+  }
+}
+
+[data-contrast='low'] {
+  .main-nav {
+    background: #2d3f5a; // Slightly lighter navy — softer
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .nav-links a {
+    color: rgba(255, 255, 255, 0.7);
   }
 }

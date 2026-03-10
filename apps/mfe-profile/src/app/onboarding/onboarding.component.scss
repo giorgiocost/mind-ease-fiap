@@ -1,5 +1,10 @@
 @use '../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
 
+// Propagate spacing-scale preference to all text in this component.
+:host {
+  letter-spacing: var(--letter-spacing-add, 0em);
+}
+
 // ─────────────────────────────────────────
 // Container
 // ─────────────────────────────────────────
@@ -62,7 +67,7 @@
   font-size: 0.72rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: calc(0.05em + var(--letter-spacing-add, 0em));
   color: var(--color-on-surface-variant, #4B5563);   // WCAG 4.5:1 vs white
 
   .step.active & {
@@ -203,7 +208,7 @@ p {
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: calc(0.06em + var(--letter-spacing-add, 0em));
   color: var(--color-on-surface-variant, #6b7280);
   margin-bottom: 0.75rem;
 }
@@ -423,21 +428,40 @@ p {
 }
 
 // ─────────────────────────────────────────
-// Reduced motion
+// Motion preferences
 // ─────────────────────────────────────────
+// OS-level
 @media (prefers-reduced-motion: reduce) {
   .step-welcome,
   .step-preferences,
-  .step-tour {
-    animation: none;
-  }
+  .step-tour { animation: none; }
 
   .step-number,
   .step-connector,
   .feature-card,
   .tour-card,
   .option-button,
-  .toggle-button {
-    transition: none;
+  .toggle-button { transition: none; }
+}
+
+// reduced: kill enter animations; hover colour/border transitions survive via global rule
+[data-motion='reduced'] {
+  .step-welcome,
+  .step-preferences,
+  .step-tour { animation: none; }
+
+  // transform-based hover (translateY) removed; rest handled globally
+  .feature-card,
+  .tour-card {
+    &:hover { transform: none; }
+  }
+}
+
+// off: global rule handles transitions/animations; neutralise transform hovers
+[data-motion='off'] {
+  .feature-card,
+  .tour-card,
+  .option-button {
+    &:hover { transform: none !important; }
   }
 }

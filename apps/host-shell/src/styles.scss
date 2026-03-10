@@ -10,6 +10,19 @@
   padding: 0;
 }
 
+// Browsers apply their own UA stylesheet to form elements and do NOT let them
+// inherit letter-spacing / word-spacing from the document root. This rule
+// restores the standard inheritance so [data-spacing-scale] on <html>
+// propagates to every interactive element as well.
+button,
+input,
+select,
+textarea,
+optgroup {
+  letter-spacing: inherit;
+  word-spacing: inherit;
+}
+
 html {
   font-family: var(--font-family-sans);
   font-size: 100%; // Overridden by data-font-scale token

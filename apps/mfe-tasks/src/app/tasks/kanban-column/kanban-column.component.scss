@@ -24,7 +24,7 @@
   color: var(--color-text);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: calc(0.05em + var(--letter-spacing-add, 0em));
 }
 
 .column-badge {
@@ -177,25 +177,21 @@
 // MOTION PREFERENCES (Acessibilidade Cognitiva)
 // ============================================
 
+// reduced: drag animations removed, hover transitions kept via global rule
 [data-motion='reduced'] {
   .drag-container.cdk-drag-animating,
   .column-content.cdk-drop-list-dragging .drag-container {
     transition-duration: 0ms;
   }
 
-  .drag-preview {
-    transform: none;
-  }
+  .drag-preview { transform: none; }
+  .task-placeholder { transition: none; }
 
-  .task-placeholder {
-    transition: none;
-  }
-
-  .skeleton-card {
-    animation: none;
-  }
+  // shimmer is a continuous loop — kill it
+  .skeleton-card { animation: none; }
 }
 
+// off: total silence; global rule handles *; only extras below
 [data-motion='off'] {
   .drag-container.cdk-drag-animating,
   .column-content.cdk-drop-list-dragging .drag-container,

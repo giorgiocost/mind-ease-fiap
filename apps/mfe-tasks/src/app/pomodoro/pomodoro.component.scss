@@ -137,7 +137,7 @@
   font-size: 0.8rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: calc(0.08em + var(--letter-spacing-add, 0em));
   color: var(--color-on-surface-variant, #6b7280);
 }
 
@@ -233,7 +233,7 @@
   font-weight: 500;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: calc(0.06em + var(--letter-spacing-add, 0em));
   color: var(--color-on-surface-variant, #6b7280);
 }
 
@@ -327,14 +327,32 @@
 }
 
 // ─────────────────────────────────────────
-// Reduced motion
+// Motion preferences
 // ─────────────────────────────────────────
+
+// OS-level reduced-motion (maps to "reduced" behaviour)
 @media (prefers-reduced-motion: reduce) {
+  .progress-ring__fill { transition: stroke-dashoffset 0ms, stroke 0ms; }
+  .btn-control         { transition: none; }
+}
+
+// reduced: keep hover transitions, kill SVG animation and transform effects
+[data-motion='reduced'] {
+  // Progress ring ticks instantly (no animation)
   .progress-ring__fill {
     transition: stroke-dashoffset 0ms, stroke 0ms;
   }
-
+  // Remove transform-bounce on btn press; keep color/bg transitions from global rule
   .btn-control {
-    transition: none;
+    transition: background-color 150ms, color 150ms, box-shadow 150ms;
+    &:active { transform: none; }
+  }
+}
+
+// off: total silence — global rule in _cognitive-tokens handles everything;
+// component only needs to force-remove the SVG transition not covered there.
+[data-motion='off'] {
+  .progress-ring__fill {
+    transition: none !important;
   }
 }

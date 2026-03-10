@@ -30,7 +30,7 @@ $danger: rgb(220, 38, 38);
 .preferences-content { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .preferences-card {
-  background: var(--color-bg-card);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 1rem;
   overflow: hidden;
@@ -351,6 +351,142 @@ $danger: rgb(220, 38, 38);
   .preset-button .preset-name { font-size: 0.875rem; }
 }
 
+// OS-level
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+// reduced: global rule handles animation:none and limits transitions to
+//          colour/opacity; transform hovers (translateY on preset/reset btn)
+//          are neutralised here.
+[data-motion='reduced'] {
+  .preset-button:hover,
+  .reset-button:hover:not(:disabled) {
+    transform: none;
+  }
+  // slider thumb scale-up is a transform — remove it
+  .slider::-webkit-slider-thumb:hover { transform: none; }
+  .slider::-moz-range-thumb:hover     { transform: none; }
+}
+
+// off: global rules remove transitions/animations; explicitly neutralise instant hover changes.
+[data-motion='off'] {
+  .preferences-card:hover {
+    border-color: var(--color-border) !important;
+    box-shadow: none !important;
+  }
+
+  .danger-zone:hover {
+    border-color: rgba($danger, 0.3) !important;
+    box-shadow: none !important;
+  }
+
+  .preset-button:hover:not(:disabled) {
+    border-color: $primary-light !important;
+    background: var(--color-bg-secondary) !important;
+  }
+
+  .button-group button:hover {
+    border-color: $primary-light !important;
+    background: var(--color-bg-secondary) !important;
+  }
+
+  .toggle-button:hover {
+    border-color: rgba(79, 172, 254, 0.2) !important;
+    background: var(--color-bg-secondary) !important;
+  }
+
+  .reset-button:hover:not(:disabled) {
+    background: rgba($danger, 0.1) !important;
+    border-color: $danger !important;
+    color: rgb(185, 28, 28) !important;
+    box-shadow: none !important;
+  }
+
+  .slider::-webkit-slider-thumb:hover { background: rgba(79, 172, 254, 0.95) !important; }
+  .slider::-moz-range-thumb:hover     { background: rgba(79, 172, 254, 0.95) !important; }
+}
+
+// =============================================================================
+// Contrast preferences
+// =============================================================================
+// The $primary / $primary-light SCSS vars compile to rgba(79,172,254,...) at
+// build time and don’t respond to CSS variable overrides.  Override them
+// explicitly for each contrast level.
+
+[data-contrast='high'] {
+  .preferences-page {
+    background: #FFFFFF;
+  }
+
+  .preferences-header .header-content {
+    background: #F0F0F0;
+    border-color: #374151;
+  }
+
+  .preset-button {
+    border-color: #374151;
+
+    &.selected {
+      border-color: #1A6BD4;
+      background: rgba(26, 107, 212, 0.1);
+      box-shadow: 0 0 0 3px rgba(26, 107, 212, 0.2);
+    }
+
+    &:hover:not(:disabled) {
+      border-color: #1A6BD4;
+      background: rgba(26, 107, 212, 0.06);
+    }
+  }
+
+  .button-group button {
+    border-color: #374151;
+
+    &:hover { border-color: #1A6BD4; background: rgba(26, 107, 212, 0.06); }
+    &.active { background: #1A6BD4; border-color: #1A6BD4; }
+  }
+
+  .toggle-button {
+    border-color: #374151;
+
+    &:hover { border-color: #1A6BD4; background: rgba(26, 107, 212, 0.06); }
+    &.active { background: #1A6BD4; border-color: #1A6BD4; }
+  }
+
+  // Slider track becomes a solid contrasting color
+  .slider {
+    background: rgba(26, 107, 212, 0.35);
+
+    &::-webkit-slider-thumb { background: #1A6BD4; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #374151; }
+    &::-moz-range-thumb     { background: #1A6BD4; box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #374151; }
+  }
+
+  .slider-value-desktop,
+  .slider-labels-top .slider-value {
+    background: rgba(26, 107, 212, 0.12);
+    color: #1A6BD4;
+  }
+
+  .reset-button {
+    border-width: 2px;
+    font-weight: 600;
+  }
+}
+
+[data-contrast='low'] {
+  .preferences-page {
+    background: transparent;
+  }
+
+  .preset-button {
+    border-color: rgba(79, 172, 254, 0.1);
+  }
+
+  .button-group button {
+    border-color: rgba(79, 172, 254, 0.1);
+  }
+
+  .toggle-button {
+    border-color: rgba(79, 172, 254, 0.1);
+  }
 }

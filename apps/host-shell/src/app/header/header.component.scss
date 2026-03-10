@@ -1,6 +1,10 @@
 // apps/host-shell/src/app/header/header.component.scss
 @use '../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
 
+:host {
+  width: 100%;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -83,6 +87,9 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background-color 0.2s;
+  // letter-spacing from spacing-scale would push the icon off-centre
+  letter-spacing: 0;
+  word-spacing: 0;
 
   &:hover {
     background-color: var(--color-bg-tertiary);
@@ -119,7 +126,10 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  // Vertical padding is fixed so button height never changes with spacing-scale.
+  // Horizontal padding scales with --spacing-sm (letter-spacing intent).
+  padding-block: 6px;
+  padding-inline: var(--spacing-sm);
   border: 1px solid var(--color-border);
   background-color: transparent;
   border-radius: var(--radius-full);
@@ -148,6 +158,10 @@
   justify-content: center;
   font-weight: 600;
   font-size: 0.875rem;
+  // Prevent letter-spacing from pushing initials off-centre
+  letter-spacing: 0;
+  word-spacing: 0;
+  flex-shrink: 0;
 }
 
 .user-name {
@@ -247,5 +261,12 @@
 
   .dropdown-menu {
     animation: none;
+  }
+}
+
+// reduced: global kills animations; also remove the transform hover on dropdown items
+[data-motion='reduced'] {
+  .dropdown-item:hover {
+    transform: none;
   }
 }

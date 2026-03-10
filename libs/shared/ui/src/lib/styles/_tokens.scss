@@ -347,22 +347,27 @@ $container-xl:   1280px;
   --color-bg-tertiary:  #{$color-bg-tertiary};
   --color-bg-inverse:   #{$color-bg-inverse};
 
-  // Semantic surface aliases (used by MFE components)
-  --color-surface:         #{$color-bg-primary};
-  --color-surface-variant: #{$color-bg-secondary};
-  --color-surface-hover:   #{$color-bg-tertiary};
+  // Semantic surface aliases — use var() so contrast overrides cascade through them
+  --color-surface:         var(--color-bg-primary);
+  --color-surface-variant: var(--color-bg-secondary);
+  --color-surface-hover:   var(--color-bg-tertiary);
 
   // Material-style aliases (used by MFE component fallbacks)
-  --color-outline:            #{$color-border-default};
-  --color-outline-variant:    #{$color-border-light};
-  --color-on-surface:         #{$color-text-primary};
-  --color-on-surface-variant: #{$color-text-tertiary};
+  --color-outline:            var(--color-border-default);
+  --color-outline-variant:    var(--color-border-light);
+  --color-on-surface:         var(--color-text-primary);
+  --color-on-surface-variant: var(--color-text-tertiary);
   --color-on-primary:         #FFFFFF;
   --color-on-secondary:       #FFFFFF;
-  --color-hover:              #{$color-bg-tertiary};
+  --color-hover:              var(--color-bg-tertiary);
 
   // Border shorthand alias
-  --color-border: #{$color-border-default};
+  --color-border: var(--color-border-default);
+
+  // Legacy text aliases (some MFE components omit the --color- prefix)
+  --text-primary:   var(--color-text-primary);
+  --text-secondary: var(--color-text-secondary);
+  --text-tertiary:  var(--color-text-tertiary);
 
   // -- Colors: Text -----------------------------------------------------------
   --color-text-primary:   #{$color-text-primary};
