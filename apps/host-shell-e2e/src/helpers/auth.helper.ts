@@ -51,8 +51,10 @@ export class AuthHelper {
   }
 
   async logout() {
-    await this.page.click('[data-testid="user-menu"]');
-    await this.page.click('button:has-text("Sair")');
+    // .user-button is the avatar/name button in HeaderComponent
+    await this.page.click('button.user-button');
+    // The danger dropdown item is the "Sair" button
+    await this.page.click('button.dropdown-item.danger');
     await this.page.waitForURL('/login');
   }
 

@@ -23,6 +23,8 @@
     "e2e:ui": "npx nx run host-shell-e2e:e2e -- --ui",
     "e2e:headed": "npx nx run host-shell-e2e:e2e -- --headed",
     "e2e:debug": "npx nx run host-shell-e2e:e2e -- --debug",
+    "e2e:critical": "npx nx run host-shell-e2e:e2e -- --grep @critical",
+    "e2e:smoke": "npx nx run host-shell-e2e:e2e -- --grep @smoke",
     "e2e:report": "npx playwright show-report apps/host-shell-e2e/playwright-report"
   },
   "private": true,

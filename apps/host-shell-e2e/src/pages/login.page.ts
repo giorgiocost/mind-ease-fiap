@@ -14,7 +14,8 @@ export class LoginPage {
     this.passwordInput = page.locator('input[type="password"]');
     this.loginButton = page.locator('button:has-text("Entrar")');
     this.registerLink = page.locator('a:has-text("Criar conta")');
-    this.errorMessage = page.locator('.error-message, [role="alert"]').first();
+    // Login component shows errors in .error div
+    this.errorMessage = page.locator('.auth-card .error').first();
   }
 
   async goto() {
