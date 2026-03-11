@@ -13,7 +13,7 @@ export class LoginPage {
     this.emailInput = page.locator('input[type="email"]');
     this.passwordInput = page.locator('input[type="password"]');
     this.loginButton = page.locator('button:has-text("Entrar")');
-    this.registerLink = page.locator('a:has-text("Criar conta")');
+    this.registerLink = page.locator('a:has-text("Registre-se")');
     // Login component shows errors in .error div
     this.errorMessage = page.locator('.auth-card .error').first();
   }

@@ -35,9 +35,9 @@ test.describe('Flow 4: Pomodoro Timer', () => {
     await expect(modeButtons.nth(2)).toContainText('Pausa Longa');
   });
 
-  test('should show the stats area', async ({ authenticatedPage }) => {
-    const statValues = authenticatedPage.locator('.stat-value');
-    await expect(statValues).toHaveCount(3);
+  test('should show the timer controls', async ({ authenticatedPage }) => {
+    await expect(authenticatedPage.locator('.btn-start')).toBeVisible();
+    await expect(authenticatedPage.locator('.btn-reset')).toBeVisible();
   });
 
   // ── Start ──────────────────────────────────────────────────────────────────

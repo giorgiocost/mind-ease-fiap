@@ -87,7 +87,7 @@
       "options": {
         "buildTarget": "host-shell:build",
         "port": 4200,
-        "staticFilePath": "dist/apps/host-shell/browser",
+        "staticFilePath": "dist/apps/host-shell",
         "spa": true
       }
     }

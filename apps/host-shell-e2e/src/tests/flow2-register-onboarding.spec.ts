@@ -14,19 +14,21 @@ import { makeAuthResponse } from '../helpers/mock-data';
 async function stubAllApis(page: Page, extraUser?: { id: string; name: string; email: string }) {
   const authData = makeAuthResponse(extraUser);
 
-  await page.context().route('**/api/v1/auth/register', (route) =>
-    route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify(authData),
-    })
-  );
-
+  // Register catch-all FIRST so it has lower priority (Playwright LIFO)
   await page.context().route('**/api/**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ data: null, message: 'mocked' }),
+    })
+  );
+
+  // Specific register route registered LAST → highest priority
+  await page.context().route('**/api/v1/auth/register', (route) =>
+    route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify(authData),
     })
   );
 }
