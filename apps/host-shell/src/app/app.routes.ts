@@ -5,7 +5,7 @@ export const appRoutes: Route[] = [
   // Default redirect
   {
     path: '',
-    redirectTo: '/dashboard',
+    redirectTo: '/tasks',
     pathMatch: 'full',
   },
 
