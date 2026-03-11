@@ -19,6 +19,7 @@ describe('SidebarComponent', () => {
           useValue: {
             uiDensity: signal('medium'),
             focusMode: signal(false),
+            contentMode: signal('detailed'),
             motion: signal('standard'),
             contrast: signal('normal')
           }
