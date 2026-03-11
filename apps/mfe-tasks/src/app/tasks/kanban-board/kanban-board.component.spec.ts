@@ -30,17 +30,17 @@ function createDropEvent<T>(
   itemData: T
 ): CdkDragDrop<T[]> {
   const isSameContainer = previousContainerId === containerId;
-  const container = { id: containerId, data: containerData } as any;
+  const container = { id: containerId, data: containerData } as unknown as CdkDragDrop<T[]>['container'];
   const previousContainer = isSameContainer
     ? container
-    : ({ id: previousContainerId, data: previousData } as any);
+    : ({ id: previousContainerId, data: previousData } as unknown as CdkDragDrop<T[]>['previousContainer']);
 
   return {
     previousContainer,
     container,
     previousIndex,
     currentIndex,
-    item: { data: itemData } as any,
+    item: { data: itemData } as unknown as CdkDragDrop<T[]>['item'],
     isPointerOverContainer: true,
     distance: { x: 0, y: 0 },
     dropPoint: { x: 0, y: 0 },
@@ -193,7 +193,7 @@ describe('KanbanBoardComponent — Drag & Drop', () => {
 
     it('deve converter id numérico para string ao chamar updateTaskStatus', async () => {
       const todoTasks = [
-        createTask({ id: 42 as any, title: 'Numeric ID', status: 'TODO' }),
+        createTask({ id: 42, title: 'Numeric ID', status: 'TODO' }),
       ];
       const doingTasks: Task[] = [];
 
