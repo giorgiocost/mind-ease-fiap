@@ -103,8 +103,8 @@ describe('App Routes', () => {
 
       await router.navigate(['/']);
 
-      // Default redirect goes to /dashboard, which should not redirect since authenticated
-      expect(location.path()).toBe('/dashboard');
+      // Default redirect goes to /tasks, which should not redirect since authenticated
+      expect(location.path()).toBe('/tasks');
     });
 
     it('should redirect / to /dashboard then to /login when not authenticated', async () => {
@@ -117,7 +117,7 @@ describe('App Routes', () => {
       // Wait for navigation to complete
       await new Promise(resolve => setTimeout(resolve, 10));
 
-      // Default redirect goes to /dashboard, then guard redirects to /login
+      // Default redirect goes to /tasks, then guard redirects to /login
       expect(location.path()).toBe('/login');
     });
   });
