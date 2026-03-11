@@ -83,11 +83,12 @@ describe('LayoutComponent', () => {
       expect(component.sidebarVisible()).toBe(true);
     });
 
-it('should hide sidebar when focus mode is active', async () => {
+    it('should keep sidebar visible when focus mode is active on desktop', async () => {
       await preferencesStore.updatePreferences({ focusMode: true });
       fixture.detectChanges();
 
-      expect(component.sidebarVisible()).toBe(false);
+      expect(component.sidebarVisible()).toBe(true);
+      expect(component.getLayoutClasses()['sidebar-collapsed']).toBe(true);
     });
 
     it('should hide sidebar on mobile when menu is closed', () => {
@@ -325,13 +326,21 @@ it('should hide sidebar when focus mode is active', async () => {
       expect(sidebar).toBeTruthy();
     });
 
-    it('should not render sidebar when in focus mode', async () => {
+    it('should render sidebar and collapse the layout when in focus mode on desktop', async () => {
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 1024,
+      });
+      component.checkMobile();
+
       await preferencesStore.updatePreferences({ focusMode: true });
       fixture.detectChanges();
 
       const compiled = fixture.nativeElement as HTMLElement;
       const sidebar = compiled.querySelector('.layout__sidebar');
-      expect(sidebar).toBeFalsy();
+      expect(sidebar).toBeTruthy();
+      expect(compiled.querySelector('.layout')?.classList.contains('sidebar-collapsed')).toBe(true);
     });
 
     it('should render main content area with router-outlet', () => {
@@ -387,13 +396,21 @@ it('should hide sidebar when focus mode is active', async () => {
 
   describe('PreferencesStore integration', () => {
     it('should react to focus mode changes', async () => {
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 1024,
+      });
+      component.checkMobile();
+
       expect(component.focusMode()).toBe(false);
 
       await preferencesStore.updatePreferences({ focusMode: true });
       fixture.detectChanges();
 
       expect(component.focusMode()).toBe(true);
-      expect(component.sidebarVisible()).toBe(false);
+      expect(component.sidebarVisible()).toBe(true);
+      expect(component.getLayoutClasses()['sidebar-collapsed']).toBe(true);
     });
 
     it('should reflect focus mode in computed signal', async () => {
