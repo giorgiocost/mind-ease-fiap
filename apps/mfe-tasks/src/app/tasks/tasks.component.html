@@ -110,7 +110,7 @@
   @if (vm.tasks().length > 0 && !vm.isLoading()) {
     <div class="kanban-board" cdkDropListGroup role="region" aria-label="Quadro Kanban de tarefas">
       <!-- Coluna TODO -->
-      <div class="kanban-column column-todo">
+      <div class="kanban-column column-todo" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().TODO)">
         <div class="column-header">
           <h3 class="column-title">
             📋 Para Fazer
@@ -128,7 +128,7 @@
             <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().TODO; track task.id) {
-              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
                 <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
@@ -138,7 +138,7 @@
       </div>
 
       <!-- Coluna DOING -->
-      <div class="kanban-column column-doing">
+      <div class="kanban-column column-doing" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().DOING)">
         <div class="column-header">
           <h3 class="column-title">
             🚀 Fazendo
@@ -159,7 +159,7 @@
             <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().DOING; track task.id) {
-              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
                 <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>
@@ -169,7 +169,7 @@
       </div>
 
       <!-- Coluna DONE -->
-      <div class="kanban-column column-done">
+      <div class="kanban-column column-done" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().DONE)">
         <div class="column-header">
           <h3 class="column-title">
             ✅ Concluído
@@ -187,7 +187,7 @@
             <p class="placeholder-text">Movas as tarefas para esta coluna...</p>
           } @else {
             @for (task of vm.tasksByStatus().DONE; track task.id) {
-              <div cdkDrag [cdkDragData]="task" class="drag-wrapper">
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
                 <app-task-card [task]="task"></app-task-card>
                 <div class="drag-placeholder" *cdkDragPlaceholder></div>
               </div>

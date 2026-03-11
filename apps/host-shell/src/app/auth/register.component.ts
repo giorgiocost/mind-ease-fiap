@@ -196,7 +196,7 @@ export class RegisterComponent {
         email: this.email,
         password: this.password
       });
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/tasks']);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Falha ao registrar';
       this.error.set(message);

@@ -156,6 +156,13 @@ export class TasksComponent implements OnInit {
   readonly doingConnected = ['TODO', 'DONE'];
   readonly doneConnected = ['TODO', 'DOING'];
 
+  /** Checks if the active task is in a given column (used for column-dimmed class) */
+  hasActiveInColumn(tasks: Task[]): boolean {
+    const activeId = this.vm.activeTaskId();
+    if (activeId === null) return false;
+    return tasks.some(t => t.id === activeId);
+  }
+
   /**
    * Handle drag & drop between columns.
    * Same column → reorder locally.

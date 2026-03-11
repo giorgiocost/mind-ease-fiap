@@ -104,3 +104,28 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+// ==========================================
+// FOCUS MODE — active task highlight & dimming
+// ==========================================
+.drag-wrapper.card-dimmed {
+  opacity: 0.22 !important;
+  filter: saturate(0.1) blur(1px) !important;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+
+  &:hover {
+    opacity: 0.55 !important;
+    filter: saturate(0.5) blur(0px) !important;
+  }
+}
+
+.kanban-column.column-dimmed {
+  opacity: 0.35 !important;
+  filter: saturate(0.15) brightness(0.95) !important;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+
+  &:hover {
+    opacity: 0.6 !important;
+    filter: saturate(0.5) brightness(1) !important;
+  }
+}

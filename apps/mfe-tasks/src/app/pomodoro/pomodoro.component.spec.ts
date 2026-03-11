@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { PomodoroComponent, TimerMode } from './pomodoro.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PreferencesStore } from '@shared/state';
+import { PomodoroComponent } from './pomodoro.component';
 
 function mockPreferencesStore() {
   return {
@@ -19,6 +19,7 @@ describe('PomodoroComponent', () => {
   beforeEach(async () => {
     // Clear localStorage before each test
     localStorage.removeItem('pomodoro-sessions');
+    localStorage.removeItem('pomodoro-timer-state');
 
     await TestBed.configureTestingModule({
       imports: [PomodoroComponent],
@@ -35,6 +36,7 @@ describe('PomodoroComponent', () => {
   afterEach(() => {
     component.ngOnDestroy();
     localStorage.removeItem('pomodoro-sessions');
+    localStorage.removeItem('pomodoro-timer-state');
   });
 
   // ─────────────────────────────────────────────────────────────

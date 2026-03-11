@@ -1,5 +1,8 @@
 <!-- Kanban Column Template -->
-<div class="kanban-column" [attr.data-status]="status()">
+<div
+  class="kanban-column"
+  [attr.data-status]="status()"
+>
   <header class="column-header">
     <h2 class="column-title">{{ title() }}</h2>
     <span class="column-badge">{{ tasks().length }}</span>
@@ -24,7 +27,10 @@
         </div>
       } @else {
         @for (task of tasks(); track task.id) {
-          <div cdkDrag [cdkDragData]="task" class="drag-container">
+          <div
+            cdkDrag
+            [cdkDragData]="task"
+            class="drag-container">
             <app-task-card [task]="task"></app-task-card>
 
             <!-- Custom drag placeholder (dashed border in drop zone) -->

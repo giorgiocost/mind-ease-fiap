@@ -30,6 +30,22 @@
     </div>
   </header>
 
+  <!-- Work Duration Selector (only visible in work mode when not running) -->
+  @if (mode() === 'work' && !isRunning()) {
+    <div class="duration-selector" role="radiogroup" aria-label="Duração do trabalho">
+      @for (min of workDurationOptions; track min) {
+        <button
+          role="radio"
+          class="duration-button"
+          [class.active]="selectedWorkMinutes() === min"
+          [attr.aria-checked]="selectedWorkMinutes() === min"
+          (click)="setWorkDuration(min)">
+          {{ min }} min
+        </button>
+      }
+    </div>
+  }
+
   <!-- Timer Display -->
   <div
     class="timer-display"
@@ -95,22 +111,6 @@
       aria-label="Reiniciar timer">
       ↻ Reiniciar
     </button>
-  </div>
-
-  <!-- Stats -->
-  <div class="pomodoro-stats" aria-label="Estatísticas de foco">
-    <div class="stat-card">
-      <span class="stat-value" aria-label="Sessões hoje">{{ sessionsToday() }}/{{ dailyGoal }}</span>
-      <span class="stat-label">Sessões hoje</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value" aria-label="Total de sessões">{{ sessionsCompleted() }}</span>
-      <span class="stat-label">Total de sessões</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value" aria-label="Minutos focados">{{ focusedMinutes() }}m</span>
-      <span class="stat-label">Tempo focado</span>
-    </div>
   </div>
 
   <!-- Notification prompt -->

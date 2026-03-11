@@ -22,15 +22,25 @@
   <!-- Right Section -->
   <div class="header-right">
     <!-- Notifications -->
-    <button class="notifications" aria-label="Notificações, {{ notificationsCount }} novas">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-      </svg>
-      @if (notificationsCount > 0) {
-        <span class="badge">{{ notificationsCount }}</span>
+    <div class="notifications-wrapper">
+      <button class="notifications" [class.toast-active]="!!pomodoroNotif.toast()" aria-label="Notificações, {{ notificationsCount }} novas">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        @if (notificationsCount > 0) {
+          <span class="badge">{{ notificationsCount }}</span>
+        }
+      </button>
+
+      <!-- Pomodoro Toast -->
+      @if (pomodoroNotif.toast(); as toast) {
+        <div class="pomodoro-toast" [class.toast-end]="toast.type === 'end'" role="status" aria-live="polite">
+          <span class="toast-icon">{{ toast.icon }}</span>
+          <span class="toast-message">{{ toast.message }}</span>
+        </div>
       }
-    </button>
+    </div>
 
     <!-- User Dropdown -->
     <div class="user-dropdown-container">

@@ -59,22 +59,18 @@ export class LayoutComponent implements OnInit {
 
   // Computed sidebar visibility
   // Sidebar is visible when:
-  // - NOT in focus mode
-  // - AND (NOT mobile OR mobile menu is open)
+  // - NOT on mobile OR mobile menu is open
+  // (focus mode only reduces menu items via sidebar component — sidebar stays visible,
+  //  collapsed to icon-only so the user can still navigate)
   readonly sidebarVisible = computed(() => {
-    const inFocusMode = this.focusMode();
     const mobile = this.isMobile();
     const mobileOpen = this.mobileMenuOpen();
-
-    if (inFocusMode) {
-      return false; // Never show in focus mode
-    }
 
     if (mobile) {
       return mobileOpen; // Show only if mobile menu is open
     }
 
-    return true; // Show on desktop
+    return true; // Always show on desktop; focus mode collapses it (see getLayoutClasses)
   });
 
   // Determine whether header/sidebar should render at all
@@ -174,7 +170,8 @@ export class LayoutComponent implements OnInit {
   getLayoutClasses(): { [key: string]: boolean } {
     return {
       'layout': true,
-      'sidebar-collapsed': this.sidebarCollapsed() && !this.isMobile(),
+      // Collapse sidebar when explicitly collapsed OR when in focus mode
+      'sidebar-collapsed': (this.sidebarCollapsed() && !this.isMobile()) || this.focusMode(),
       'focus-mode': this.focusMode(),
       'mobile': this.isMobile(),
       'mobile-menu-open': this.mobileMenuOpen(),

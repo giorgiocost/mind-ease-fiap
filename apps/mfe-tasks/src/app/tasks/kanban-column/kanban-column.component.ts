@@ -1,8 +1,8 @@
-import { Component, input, output } from '@angular/core';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { TaskCardComponent } from '../task-card/task-card.component';
+import { Component, input, output } from '@angular/core';
 import { Task } from '../../models/task.model';
+import { TaskCardComponent } from '../task-card/task-card.component';
 
 @Component({
   selector: 'app-kanban-column',

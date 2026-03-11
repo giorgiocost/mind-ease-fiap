@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, ElementRef, HostListener, inject, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthStore } from '@shared/state';
+import { AuthStore, PomodoroNotificationService } from '@shared/state';
 import { ClickOutsideDirective } from '@shared/ui';
 
 /**
@@ -34,6 +34,7 @@ export class HeaderComponent {
   private authStore = inject(AuthStore);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
+  readonly pomodoroNotif = inject(PomodoroNotificationService);
 
   // Outputs
   toggleSidebar = output<void>();

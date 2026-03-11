@@ -68,7 +68,7 @@ export class OnboardingComponent implements OnInit {
   // ── Lifecycle ─────────────────────────────────────────────
   ngOnInit(): void {
     if (localStorage.getItem(ONBOARDING_KEY) === 'true') {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/tasks']);
     }
   }
 
@@ -96,12 +96,12 @@ export class OnboardingComponent implements OnInit {
 
   skip(): void {
     this.markAsCompleted();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/tasks']);
   }
 
   complete(): void {
     this.markAsCompleted();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/tasks']);
   }
 
   private markAsCompleted(): void {

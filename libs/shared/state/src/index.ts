@@ -8,3 +8,6 @@ export * from './lib/auth/auth.store';
 export * from './lib/preferences/preferences.models';
 export * from './lib/preferences/preferences.store';
 
+// Pomodoro
+export * from './lib/pomodoro/pomodoro-notification.service';
+

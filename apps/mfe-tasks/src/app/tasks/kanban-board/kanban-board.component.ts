@@ -49,6 +49,9 @@ export class KanbanBoardComponent {
     return this.filterAndSearch(tasks);
   });
 
+  /**
+   * Filtered/searched tasks per column
+   */
   private filterAndSearch(tasks: Task[]) {
     let filtered = tasks;
 

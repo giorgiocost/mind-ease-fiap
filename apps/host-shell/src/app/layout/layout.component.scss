@@ -112,15 +112,12 @@ $mobile-breakpoint: 768px;
     }
   }
 
-  // State: Focus mode (sidebar hidden)
+  // State: Focus mode — sidebar collapses to icons-only (menu items reduced via sidebar component)
   &.focus-mode {
-    grid-template-areas:
-      'header header'
-      'main main';
-    grid-template-columns: 1fr;
+    --sidebar-width: #{$sidebar-width-collapsed};
 
     .layout__sidebar {
-      display: none;
+      width: $sidebar-width-collapsed;
     }
   }
 

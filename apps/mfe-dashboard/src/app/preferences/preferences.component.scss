@@ -490,3 +490,32 @@ $danger: rgb(220, 38, 38);
     border-color: rgba(79, 172, 254, 0.1);
   }
 }
+
+// =============================================================================
+// Focus Mode — embaçar tudo exceto o card de Modo Foco
+// =============================================================================
+// Quando [data-focus-mode='true'] está no <body>, todos os cards de preferências
+// ficam opacos/desfocados, exceto o card que contém o toggle de Modo Foco.
+// Isso guia o usuário a desativar o foco sem distrações.
+
+:host-context([data-focus-mode='true']) {
+  .preferences-card:not(.focus-mode-card) {
+    opacity: 0.2 !important;
+    filter: blur(1.5px) saturate(0.1) !important;
+    pointer-events: none;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+  }
+
+  // O card de Modo Foco fica destacado com borda pulsante
+  .preferences-card.focus-mode-card {
+    border-color: rgba(79, 172, 254, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.25), 0 4px 20px rgba(79, 172, 254, 0.15) !important;
+  }
+
+  // Header e presets grid também ficam embaçados
+  .preferences-header {
+    opacity: 0.2 !important;
+    filter: blur(1.5px) !important;
+    pointer-events: none;
+  }
+}
