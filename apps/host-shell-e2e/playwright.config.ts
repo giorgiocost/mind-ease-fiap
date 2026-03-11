@@ -4,6 +4,7 @@ import { workspaceRoot } from '@nx/devkit';
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+const isCI = !!process.env['CI'];
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -13,9 +14,9 @@ export default defineConfig({
 
   timeout: 30000,
   fullyParallel: true,
-  forbidOnly: !!process.env['CI'],
-  retries: process.env['CI'] ? 2 : 0,
-  workers: process.env['CI'] ? 1 : undefined,
+  forbidOnly: isCI,
+  retries: isCI ? 2 : 0,
+  workers: isCI ? 1 : undefined,
 
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
@@ -30,14 +31,21 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npx nx run host-shell:serve',
-    url: 'http://localhost:4200',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 120000,
-    cwd: workspaceRoot,
-  },
+  /* In CI: serve pre-built artifacts statically; locally: use the dev server */
+  webServer: isCI
+    ? [
+        { command: 'npx http-server dist/apps/host-shell -p 4200 -s --cors -c-1', url: 'http://localhost:4200', reuseExistingServer: false, timeout: 30000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-dashboard -p 4201 --cors -c-1', url: 'http://localhost:4201', reuseExistingServer: false, timeout: 30000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-tasks -p 4202 --cors -c-1', url: 'http://localhost:4202', reuseExistingServer: false, timeout: 30000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-profile -p 4203 --cors -c-1', url: 'http://localhost:4203', reuseExistingServer: false, timeout: 30000, cwd: workspaceRoot },
+      ]
+    : {
+        command: 'npx nx run host-shell:serve',
+        url: 'http://localhost:4200',
+        reuseExistingServer: true,
+        timeout: 120000,
+        cwd: workspaceRoot,
+      },
 
   projects: [
     {
