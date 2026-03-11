@@ -63,6 +63,9 @@ export class PreferencesUiService {
       this.htmlEl.style.setProperty('font-size', `${Math.round(prefs.fontScale * 100)}%`);
     }
 
+    this.body.setAttribute('data-font-scale', String(prefs.fontScale));
+    this.body.setAttribute('data-spacing-scale', String(prefs.spacingScale));
+
     // Apply CSS custom properties
     this.body.style.setProperty('--font-scale', String(prefs.fontScale));
     this.body.style.setProperty('--spacing-scale', String(prefs.spacingScale));

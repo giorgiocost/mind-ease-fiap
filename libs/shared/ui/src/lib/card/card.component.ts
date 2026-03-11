@@ -35,7 +35,8 @@ export class CardComponent {
     return [
       `card-${this.variant()}`,
       `card-density-${this.density()}`,
-      this.clickable() ? 'card-clickable' : ''
+      this.clickable() ? 'card-clickable' : '',
+      this.clickable() ? 'clickable' : ''
     ].filter(Boolean).join(' ');
   });
 }

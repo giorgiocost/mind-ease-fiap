@@ -57,7 +57,6 @@
         (ngModelChange)="newSubtaskTitle.set($event)"
         (keyup.enter)="addSubtask()"
         (keyup.escape)="cancelAddingSubtask()"
-        autofocus
         aria-label="Título da nova subtarefa">
       <div class="form-actions">
         <button type="button" class="btn-confirm" (click)="addSubtask()" aria-label="Confirmar">✓</button>

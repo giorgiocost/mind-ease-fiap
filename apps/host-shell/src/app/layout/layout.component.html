@@ -20,7 +20,7 @@
 
   <!-- Mobile Overlay -->
   @if (isMobile() && mobileMenuOpen()) {
-    <div class="layout__overlay" (click)="closeMobileMenu()"></div>
+    <div class="layout__overlay" tabindex="0" (click)="closeMobileMenu()" (keydown.enter)="closeMobileMenu()" (keydown.space)="closeMobileMenu()"></div>
   }
 
   <!-- Main Content Area -->

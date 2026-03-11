@@ -3,7 +3,7 @@
   "name": "mindease",
   "builds": [
     {
-      "src": "dist/apps/host-shell/browser/**",
+      "src": "dist/apps/host-shell/**",
       "use": "@vercel/static"
     }
   ],

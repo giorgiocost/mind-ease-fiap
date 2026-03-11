@@ -1,14 +1,22 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { PomodoroNotificationService } from './pomodoro-notification.service';
 
 describe('PomodoroNotificationService', () => {
   let service: PomodoroNotificationService;
 
   beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [PomodoroNotificationService],
     });
     service = TestBed.inject(PomodoroNotificationService);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   // ---- creation -------------------------------------------------------
@@ -29,38 +37,38 @@ describe('PomodoroNotificationService', () => {
       expect(service.toast()).toEqual({ message: 'Você iniciou o pomodoro 🍅', icon: '🍅', type: 'start' });
     });
 
-    it('show() auto-hides the toast after 4 000 ms', fakeAsync(() => {
+    it('show() auto-hides the toast after 4 000 ms', () => {
       service.show({ message: 'Test', icon: '✅', type: 'start' });
       expect(service.toast()).not.toBeNull();
 
-      tick(3999);
+      jest.advanceTimersByTime(3999);
       expect(service.toast()).not.toBeNull(); // still visible
 
-      tick(1);
+      jest.advanceTimersByTime(1);
       expect(service.toast()).toBeNull(); // now hidden
-    }));
+    });
 
-    it('show() called twice resets the hide timer', fakeAsync(() => {
+    it('show() called twice resets the hide timer', () => {
       service.show({ message: 'First', icon: '1', type: 'start' });
-      tick(2000); // halfway through
+      jest.advanceTimersByTime(2000); // halfway through
 
       service.show({ message: 'Second', icon: '2', type: 'end' });
       expect(service.toast()?.message).toBe('Second');
 
-      tick(3999);
+      jest.advanceTimersByTime(3999);
       expect(service.toast()).not.toBeNull(); // timer was reset
 
-      tick(1);
+      jest.advanceTimersByTime(1);
       expect(service.toast()).toBeNull();
-    }));
+    });
 
-    it('toast is null after 4 000 ms even when shown twice rapidly', fakeAsync(() => {
+    it('toast is null after 4 000 ms even when shown twice rapidly', () => {
       service.show({ message: 'A', icon: '', type: 'start' });
       service.show({ message: 'B', icon: '', type: 'end' });
 
-      tick(4000);
+      jest.advanceTimersByTime(4000);
       expect(service.toast()).toBeNull();
-    }));
+    });
   });
 
   // ---- auto-start flag ------------------------------------------------

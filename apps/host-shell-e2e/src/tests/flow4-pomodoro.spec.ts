@@ -54,9 +54,7 @@ test.describe('Flow 4: Pomodoro Timer', () => {
     // Wait 1.5s for Angular setInterval to tick at least once
     await authenticatedPage.waitForTimeout(1500);
 
-    // Timer should no longer read 25:00
-    const currentTime = await timerText.textContent();
-    expect(currentTime).not.toBe('25:00');
+    await expect(timerText).not.toHaveText('25:00');
 
     // Pause to avoid interfering with subsequent tests
     await authenticatedPage.click('.btn-pause');
@@ -85,13 +83,11 @@ test.describe('Flow 4: Pomodoro Timer', () => {
     await authenticatedPage.waitForTimeout(1100);
     await authenticatedPage.click('.btn-pause');
 
-    const timeAfterPause = await timerText.textContent();
+    const timeAfterPause = await timerText.innerText();
 
     // Wait another 1.5s — timer must not advance while paused
     await authenticatedPage.waitForTimeout(1500);
-    const timeStillFrozen = await timerText.textContent();
-
-    expect(timeAfterPause).toBe(timeStillFrozen);
+    await expect(timerText).toHaveText(timeAfterPause);
   });
 
   // ── Reset ──────────────────────────────────────────────────────────────────

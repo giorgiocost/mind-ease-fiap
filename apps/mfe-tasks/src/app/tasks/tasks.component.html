@@ -205,16 +205,13 @@
     <div
       class="modal-overlay"
       (click)="onCloseCreateModal()"
+      (keydown.enter)="onCloseCreateModal()"
+      (keydown.space)="onCloseCreateModal()"
       role="dialog"
       aria-modal="true"
-      tabindex="-1"
+      tabindex="0"
     >
-      <div
-        class="modal-card"
-        (click)="$event.stopPropagation()"
-        role="document"
-        tabindex="0"
-      >
+      <div class="modal-card" role="document" tabindex="0">
         <header class="modal-header">
           <h2 class="modal-title">Nova Tarefa</h2>
           <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Fechar modal">

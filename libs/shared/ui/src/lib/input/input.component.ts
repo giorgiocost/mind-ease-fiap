@@ -27,6 +27,8 @@ export type InputValidationState = 'default' | 'error' | 'warning' | 'success';
   }
 })
 export class InputComponent implements ControlValueAccessor {
+  private static nextId = 0;
+
   // Inputs
   type = input<InputType>('text');
   label = input<string>('');
@@ -53,10 +55,15 @@ export class InputComponent implements ControlValueAccessor {
   value = signal<string>('');
   isFocused = signal<boolean>(false);
   showPassword = signal<boolean>(false);
+  cvaDisabled = signal<boolean>(false);
+
+  readonly inputId = `ui-input-${InputComponent.nextId++}`;
+  readonly helperTextId = `input-helper-${this.inputId}`;
+  readonly validationMessageId = `input-validation-${this.inputId}`;
 
   // ControlValueAccessor
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string) => void = (_value) => undefined;
+  private onTouched: () => void = () => undefined;
 
   // Computed
   validationState = computed<InputValidationState>(() => {
@@ -81,18 +88,20 @@ export class InputComponent implements ControlValueAccessor {
     return this.type();
   });
 
+  isDisabled = computed(() => this.disabled() || this.cvaDisabled());
+
   hostClasses = computed(() => {
     return [
       `input-state-${this.validationState()}`,
       this.isFocused() ? 'input-focused' : '',
-      this.disabled() ? 'input-disabled' : ''
+      this.isDisabled() ? 'input-disabled' : ''
     ].filter(Boolean).join(' ');
   });
 
   ariaDescribedBy = computed(() => {
     const ids: string[] = [];
-    if (this.hasHelperText()) ids.push('input-helper');
-    if (this.hasValidationMessage()) ids.push('input-validation');
+    if (this.hasHelperText()) ids.push(this.helperTextId);
+    if (this.hasValidationMessage()) ids.push(this.validationMessageId);
     return ids.length > 0 ? ids.join(' ') : null;
   });
 
@@ -110,7 +119,7 @@ export class InputComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    // Disabled managed by input signal
+    this.cvaDisabled.set(isDisabled);
   }
 
   handleInput(event: Event): void {

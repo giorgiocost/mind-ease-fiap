@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TasksStore } from '../store/tasks.store';
@@ -19,11 +19,6 @@ import { TasksStore } from '../store/tasks.store';
   `],
   providers: [TasksStore] // Provide TasksStore at MFE level
 })
-export class RemoteEntryComponent implements OnInit {
+export class RemoteEntryComponent {
   private tasksStore = inject(TasksStore);
-
-  ngOnInit() {
-    // Load tasks when MFE initializes
-    // this.tasksStore.loadTasks(); // Commented to avoid duplicate API calls - handled by TasksViewModel
-  }
 }

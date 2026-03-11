@@ -64,7 +64,7 @@
       </button>
 
       @if (dropdownOpen) {
-        <div class="dropdown-menu" role="menu" aria-label="Opções do usuário" (clickOutside)="closeDropdown()">
+        <div class="dropdown-menu" role="menu" aria-label="Opções do usuário" (uiClickOutside)="closeDropdown()">
           <button class="dropdown-item" role="menuitem" (click)="navigateToProfile()">
             <span class="icon" aria-hidden="true">👤</span>
             Meu Perfil
