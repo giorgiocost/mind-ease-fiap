@@ -214,12 +214,12 @@ describe('HeaderComponent', () => {
   describe('Accessibility', () => {
     it('should have aria-label for sidebar toggle', () => {
       const button = fixture.nativeElement.querySelector('.sidebar-toggle');
-      expect(button.getAttribute('aria-label')).toBe('Toggle sidebar');
+      expect(button.getAttribute('aria-label')).toBe('Alternar barra lateral');
     });
 
     it('should have aria-label for notifications button', () => {
       const button = fixture.nativeElement.querySelector('.notifications');
-      expect(button.getAttribute('aria-label')).toBe('Notifications');
+      expect(button.getAttribute('aria-label')).toBe('Notificações, 3 novas');
     });
 
     it('should have aria-expanded for user button', () => {
