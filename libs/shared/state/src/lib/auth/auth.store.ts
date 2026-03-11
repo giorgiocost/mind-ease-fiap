@@ -20,11 +20,22 @@ import {
 
 const STORAGE_KEY = 'mindease_auth';
 const API_URL = '/api/v1'; // Update with environment config
+const AUTH_SYNC_EVENT = 'mindease-auth-sync';
+
+interface AuthSyncDetail {
+  sourceId: string;
+  authData: {
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+  } | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private readonly syncSourceId = `auth-store-${Math.random().toString(36).slice(2)}`;
 
   // Private writable signals
   private readonly _user = signal<User | null>(null);
@@ -69,6 +80,10 @@ export class AuthStore {
 
     // Hydrate from LocalStorage on init
     this.hydrateFromStorage();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener(AUTH_SYNC_EVENT, this.handleAuthSync as EventListener);
+    }
   }
 
   // =============================================================================
@@ -135,14 +150,11 @@ export class AuthStore {
    * Clears state and LocalStorage
    */
   logout(): void {
-    this._user.set(null);
-    this._accessToken.set(null);
-    this._refreshToken.set(null);
-    this._error.set(null);
-    this.clearStorage();
+    this.clearAuthState();
     // Limpa estado do pomodoro ao deslogar
     localStorage.removeItem('pomodoro-timer-state');
     localStorage.removeItem('pomodoro-sessions');
+    this.broadcastAuthState(null);
   }
 
   /**
@@ -150,9 +162,21 @@ export class AuthStore {
    */
   updateUser(updates: Partial<Pick<User, 'name' | 'email'>>): void {
     const current = this._user();
-    if (current) {
-      this._user.set({ ...current, ...updates });
+    const accessToken = this._accessToken();
+    const refreshToken = this._refreshToken();
+
+    if (!current || !accessToken || !refreshToken) {
+      return;
     }
+
+    const authData = {
+      user: { ...current, ...updates },
+      accessToken,
+      refreshToken
+    };
+
+    this.applyAuthState(authData);
+    this.broadcastAuthState(authData);
   }
 
   /**
@@ -177,6 +201,15 @@ export class AuthStore {
       );
 
       this._accessToken.set(response.accessToken);
+      const user = this._user();
+      const refreshToken = this._refreshToken();
+      if (user && refreshToken) {
+        this.broadcastAuthState({
+          user,
+          accessToken: response.accessToken,
+          refreshToken
+        });
+      }
       return response.accessToken;
     } catch (error) {
       // Refresh failed, logout user
@@ -213,10 +246,58 @@ export class AuthStore {
    * @param response - AuthResponse from API
    */
   private setAuthData(response: AuthResponse): void {
-    this._user.set(response.user);
-    this._accessToken.set(response.accessToken);
-    this._refreshToken.set(response.refreshToken);
+    this.applyAuthState({
+      user: response.user,
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken
+    });
+    this.broadcastAuthState({
+      user: response.user,
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken
+    });
   }
+
+  private applyAuthState(authData: { user: User; accessToken: string; refreshToken: string }): void {
+    this._user.set(authData.user);
+    this._accessToken.set(authData.accessToken);
+    this._refreshToken.set(authData.refreshToken);
+  }
+
+  private clearAuthState(): void {
+    this._user.set(null);
+    this._accessToken.set(null);
+    this._refreshToken.set(null);
+    this._error.set(null);
+    this.clearStorage();
+  }
+
+  private broadcastAuthState(authData: { user: User; accessToken: string; refreshToken: string } | null): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent<AuthSyncDetail>(AUTH_SYNC_EVENT, {
+      detail: {
+        sourceId: this.syncSourceId,
+        authData
+      }
+    }));
+  }
+
+  private handleAuthSync = (event: Event): void => {
+    const customEvent = event as CustomEvent<AuthSyncDetail>;
+    if (customEvent.detail.sourceId === this.syncSourceId) {
+      return;
+    }
+
+    if (customEvent.detail.authData) {
+      this.applyAuthState(customEvent.detail.authData);
+      return;
+    }
+
+    this.clearAuthState();
+  };
 
   /**
    * Decode JWT token to get payload

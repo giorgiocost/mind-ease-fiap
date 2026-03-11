@@ -26,7 +26,8 @@ describe('PreferencesStore', () => {
     contrast: 'high',
     fontScale: 1.2,
     spacingScale: 1.1,
-    motion: 'reduced'
+    motion: 'reduced',
+    wipLimitEnabled: false
   };
 
   beforeEach(() => {
