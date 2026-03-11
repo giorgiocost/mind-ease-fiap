@@ -204,12 +204,14 @@
   @if (vm.uiState().isCreatingTask) {
     <div
       class="modal-overlay"
-      (click)="onCloseCreateModal()"
+      (click)="onCreateModalOverlayClick($event)"
+      (keydown.enter)="onCloseCreateModal()"
+      (keydown.space)="onCloseCreateModal()"
       role="dialog"
       aria-modal="true"
-      tabindex="-1"
+      tabindex="0"
     >
-      <div class="modal-card" role="document" (click)="$event.stopPropagation()">
+      <div class="modal-card" role="document">
         <header class="modal-header">
           <h2 class="modal-title">Nova Tarefa</h2>
           <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Fechar modal">

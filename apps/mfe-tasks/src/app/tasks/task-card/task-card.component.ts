@@ -147,6 +147,12 @@ export class TaskCardComponent {
     this.previousFocus = null;
   }
 
+  handleModalOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeEditModal();
+    }
+  }
+
   addEditableSubtask(): void {
     this.tempSubtaskCounter += 1;
     const tempId = `tmp-${Date.now()}-${this.tempSubtaskCounter}`;
