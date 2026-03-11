@@ -23,7 +23,22 @@
     </div>
 
     @if (task().description) {
-      <p class="task-description">{{ task().description }}</p>
+      <div
+        class="task-description-wrapper"
+        [class.expanded]="isDescriptionExpanded()"
+        role="region"
+        [attr.aria-expanded]="isDescriptionExpanded()"
+        aria-label="Descrição da tarefa">
+        <p class="task-description" [class.expanded]="isDescriptionExpanded()">{{ task().description }}</p>
+        <button
+          class="description-toggle"
+          type="button"
+          (click)="toggleDescription(); $event.stopPropagation()"
+          (keydown)="onDescriptionKeydown($event)"
+          [attr.aria-label]="isDescriptionExpanded() ? 'Recolher descrição' : 'Expandir descrição'">
+          {{ isDescriptionExpanded() ? '▲ Recolher' : '▼ Ler mais' }}
+        </button>
+      </div>
     }
 
     @if (task().subtasks && task().subtasks!.length > 0) {

@@ -41,6 +41,39 @@
   font-weight: 600;
 }
 
+.column-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wip-indicator {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+  white-space: nowrap;
+
+  &.wip-full {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-color: #f87171;
+    animation: wip-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes wip-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.wip-at-limit {
+  border-color: #f87171;
+}
+
 // Status-specific badge colors
 [data-status='TODO'] .column-badge {
   background-color: #dbeafe;

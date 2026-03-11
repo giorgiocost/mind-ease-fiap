@@ -54,6 +54,7 @@
       [tasks]="doingTasks()"
       [loading]="loading()"
       [connectedTo]="doingConnected"
+      [wipLimit]="wipLimitEnabled() ? 2 : null"
       (taskDropped)="onTaskDropped($event)">
     </app-kanban-column>
 

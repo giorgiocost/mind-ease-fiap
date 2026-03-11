@@ -116,9 +116,10 @@ export class TasksViewModel {
 
   /**
    * WIP limit validation (max 2 tasks in DOING)
-   * Business rule for cognitive load management
+   * Only enforced when wipLimitEnabled preference is active
    */
   readonly canAddToDoing = computed(() => {
+    if (!this.preferencesStore.wipLimitEnabled()) return true;
     return this.taskCounts().DOING < 2; // WIP limit = 2
   });
 
@@ -167,6 +168,20 @@ export class TasksViewModel {
       }
     }, { allowSignalWrites: true });
 
+    // Enforce WIP limit: whenever enabled AND DOING has excess tasks, move them back
+    let enforcing = false;
+    effect(() => {
+      const enabled = this.preferencesStore.wipLimitEnabled();
+      const doingCount = this.tasksByStatus().DOING.length;
+      if (enabled && doingCount > 2 && !enforcing) {
+        enforcing = true;
+        setTimeout(async () => {
+          await this.enforceWipLimit();
+          enforcing = false;
+        });
+      }
+    });
+
     // Log errors for observability
     effect(() => {
       const error = this.error();
@@ -179,6 +194,30 @@ export class TasksViewModel {
   // ==========================================
   // ACTIONS (public methods for component)
   // ==========================================
+
+  /**
+   * Move excess DOING tasks back to TODO when WIP limit is activated.
+   * Keeps the 2 oldest tasks (by updatedAt) and moves newer ones back.
+   */
+  private async enforceWipLimit(): Promise<void> {
+    const doingTasks = [...this.tasksByStatus().DOING];
+    if (doingTasks.length <= 2) return;
+
+    // Sort by updatedAt ascending → oldest first
+    doingTasks.sort((a, b) =>
+      new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+    );
+
+    // Keep the 2 oldest, move the rest (most recent) back to TODO
+    const excess = doingTasks.slice(2);
+    for (const task of excess) {
+      try {
+        await this.tasksStore.updateTaskStatus(String(task.id), 'TODO');
+      } catch {
+        // error already handled inside store
+      }
+    }
+  }
 
   /**
    * Load all tasks from server
@@ -273,7 +312,7 @@ export class TasksViewModel {
   async moveTask(taskId: string, toStatus: 'TODO' | 'DOING' | 'DONE', toPosition: number): Promise<void> {
     const task = this.tasks().find(t => t.id === taskId);
 
-    // Validate WIP limit (max 2 in DOING)
+    // Validate WIP limit (max 2 in DOING) — only when preference is enabled
     if (toStatus === 'DOING' && !this.canAddToDoing()) {
       // Allow reordering within DOING
       if (task?.status !== 'DOING') {

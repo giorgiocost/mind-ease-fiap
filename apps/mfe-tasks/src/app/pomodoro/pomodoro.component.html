@@ -30,8 +30,8 @@
     </div>
   </header>
 
-  <!-- Work Duration Selector (only visible in work mode when not running) -->
-  @if (mode() === 'work' && !isRunning()) {
+  <!-- Work Duration Selector (visible in work mode) -->
+  @if (mode() === 'work') {
     <div class="duration-selector" role="radiogroup" aria-label="Duração do trabalho">
       @for (min of workDurationOptions; track min) {
         <button

@@ -62,6 +62,21 @@
         </button>
       </div>
 
+      <!-- WIP Limit -->
+      <div class="preference-row">
+        <div class="preference-label">
+          <h3>Modo de Complexidade <span class="wip-badge">⚠️ WIP Limit</span></h3>
+          <p class="preference-help">Limitação da quantidade de decisões</p>
+        </div>
+        <button
+          class="toggle-button"
+          [class.active]="wipLimitEnabled()"
+          (click)="toggleWipLimit()"
+          [attr.aria-pressed]="wipLimitEnabled()">
+          {{ wipLimitEnabled() ? 'Ligado' : 'Desligado' }}
+        </button>
+      </div>
+
       <!-- Content Mode -->
       <div class="preference-row">
         <div class="preference-label">

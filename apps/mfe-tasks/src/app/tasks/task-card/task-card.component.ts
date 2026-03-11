@@ -25,6 +25,7 @@ export class TaskCardComponent {
   private elementRef = inject(ElementRef);
 
   task = input.required<Task>();
+  isDescriptionExpanded = signal(false);
   isEditModalOpen = signal(false);
   isSaving = signal(false);
   editTitle = signal('');
@@ -34,6 +35,17 @@ export class TaskCardComponent {
   private originalSubtasks: EditableSubtask[] = [];
   private tempSubtaskCounter = 0;
   private previousFocus: HTMLElement | null = null;
+
+  toggleDescription(): void {
+    this.isDescriptionExpanded.update(v => !v);
+  }
+
+  onDescriptionKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleDescription();
+    }
+  }
 
   @HostListener('keydown', ['$event'])
   handleKeydown(event: KeyboardEvent): void {

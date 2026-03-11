@@ -139,6 +139,20 @@ $danger: rgb(220, 38, 38);
   }
 }
 
+.wip-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 1rem;
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
 .button-group, .reset-button, .toggle-button {
   transition: all 0.2s ease;
   cursor: pointer;

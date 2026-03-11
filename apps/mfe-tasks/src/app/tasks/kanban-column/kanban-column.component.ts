@@ -20,6 +20,9 @@ export class KanbanColumnComponent {
   /** IDs das listas conectadas para drag entre colunas */
   connectedTo = input<string[]>([]);
 
+  /** WIP limit para esta coluna (null = sem limite) */
+  wipLimit = input<number | null>(null);
+
   // Output for drop event
   taskDropped = output<CdkDragDrop<Task[]>>();
 

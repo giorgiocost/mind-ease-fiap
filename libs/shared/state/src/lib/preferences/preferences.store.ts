@@ -12,15 +12,15 @@
  * Based on ADR-002 (MVVM + Signals) and ADR-003 (Cognitive Tokens)
  */
 
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { firstValueFrom, catchError, throwError } from 'rxjs';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { AuthStore } from '../auth/auth.store';
 import {
-  CognitivePreferences,
-  PreferencesResponse,
-  UpdatePreferencesRequest,
-  DEFAULT_PREFERENCES
+    CognitivePreferences,
+    DEFAULT_PREFERENCES,
+    PreferencesResponse,
+    UpdatePreferencesRequest
 } from './preferences.models';
 
 const STORAGE_KEY = 'mindease_preferences';
@@ -47,6 +47,7 @@ export class PreferencesStore {
   // Note: Guard against undefined during initialization
   readonly uiDensity = computed(() => this._preferences()?.uiDensity ?? DEFAULT_PREFERENCES.uiDensity);
   readonly focusMode = computed(() => this._preferences()?.focusMode ?? DEFAULT_PREFERENCES.focusMode);
+  readonly wipLimitEnabled = computed(() => this._preferences()?.wipLimitEnabled ?? DEFAULT_PREFERENCES.wipLimitEnabled);
   readonly contentMode = computed(() => this._preferences()?.contentMode ?? DEFAULT_PREFERENCES.contentMode);
   readonly contrast = computed(() => this._preferences()?.contrast ?? DEFAULT_PREFERENCES.contrast);
   readonly fontScale = computed(() => this._preferences()?.fontScale ?? DEFAULT_PREFERENCES.fontScale);
