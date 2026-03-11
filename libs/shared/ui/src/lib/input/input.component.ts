@@ -58,8 +58,8 @@ export class InputComponent implements ControlValueAccessor {
   cvaDisabled = signal<boolean>(false);
 
   readonly inputId = `ui-input-${InputComponent.nextId++}`;
-  readonly helperTextId = `${this.inputId}-helper`;
-  readonly validationMessageId = `${this.inputId}-validation`;
+  readonly helperTextId = `input-helper-${this.inputId}`;
+  readonly validationMessageId = `input-validation-${this.inputId}`;
 
   // ControlValueAccessor
   private onChange: (value: string) => void = (_value) => undefined;

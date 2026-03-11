@@ -22,6 +22,10 @@ export type ButtonType = 'button' | 'submit' | 'reset';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'hostClasses()',
+    '[attr.role]': '"button"',
+    '[attr.tabindex]': 'isDisabled() ? -1 : 0',
+    '[attr.aria-busy]': 'loading()',
+    '[attr.disabled]': 'isDisabled() ? "" : null',
   },
 })
 export class ButtonComponent {
