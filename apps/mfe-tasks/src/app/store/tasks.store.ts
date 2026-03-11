@@ -1,12 +1,12 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
-  Task,
-  Subtask,
-  TasksResponse,
-  CreateTaskDto,
-  UpdateTaskDto
+    CreateTaskDto,
+    Subtask,
+    Task,
+    TasksResponse,
+    UpdateTaskDto
 } from '../models/task.model';
 import { getErrorMessage } from '../utils/error-handler';
 
@@ -159,6 +159,7 @@ export class TasksStore {
     try {
       // Construir query params
       let params = new HttpParams();
+      params = params.set('includeChecklist', 'true');
       if (filters?.status) params = params.set('status', filters.status);
       if (filters?.page) params = params.set('page', filters.page.toString());
       if (filters?.limit) params = params.set('limit', filters.limit.toString());

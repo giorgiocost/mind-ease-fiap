@@ -29,6 +29,7 @@ export class PreferencesComponent {
   // Computed (two-way binding with store)
   uiDensity = computed(() => this.prefsStore.uiDensity());
   focusMode = computed(() => this.prefsStore.focusMode());
+  wipLimitEnabled = computed(() => this.prefsStore.wipLimitEnabled());
   contentMode = computed(() => this.prefsStore.contentMode());
   contrast = computed(() => this.prefsStore.contrast());
   fontScale = computed(() => this.prefsStore.fontScale());
@@ -40,6 +41,7 @@ export class PreferencesComponent {
     const current = {
       uiDensity: this.uiDensity(),
       focusMode: this.focusMode(),
+      wipLimitEnabled: this.wipLimitEnabled(),
       contentMode: this.contentMode(),
       contrast: this.contrast(),
       fontScale: this.fontScale(),
@@ -65,6 +67,7 @@ export class PreferencesComponent {
     return (
       current.uiDensity === target.uiDensity &&
       current.focusMode === target.focusMode &&
+      current.wipLimitEnabled === target.wipLimitEnabled &&
       current.contentMode === target.contentMode &&
       current.contrast === target.contrast &&
       normalizeNumber(current.fontScale) === normalizeNumber(target.fontScale) &&
@@ -80,6 +83,7 @@ export class PreferencesComponent {
       preferences: {
         uiDensity: 'simple',
         focusMode: true,
+        wipLimitEnabled: true,
         contentMode: 'summary',
         contrast: 'high',
         fontScale: 1.0,
@@ -92,6 +96,7 @@ export class PreferencesComponent {
       preferences: {
         uiDensity: 'medium',
         focusMode: false,
+        wipLimitEnabled: true,
         contentMode: 'detailed',
         contrast: 'normal',
         fontScale: 1.2,
@@ -112,6 +117,10 @@ export class PreferencesComponent {
 
   async toggleFocusMode() {
     await this.prefsStore.updatePreferences({ focusMode: !this.focusMode() });
+  }
+
+  async toggleWipLimit() {
+    await this.prefsStore.updatePreferences({ wipLimitEnabled: !this.wipLimitEnabled() });
   }
 
   async updateContentMode(value: 'summary' | 'detailed') {

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthStore } from '@shared/state';
 import { ButtonComponent } from '@shared/ui';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -179,6 +181,7 @@ import { ButtonComponent } from '@shared/ui';
 export class RegisterComponent {
   private authStore = inject(AuthStore);
   private router = inject(Router);
+  private http = inject(HttpClient);
 
   name = '';
   email = '';
@@ -196,12 +199,58 @@ export class RegisterComponent {
         email: this.email,
         password: this.password
       });
+
+      // Create onboarding task for new user before navigating
+      await this.createOnboardingTask();
+
       this.router.navigate(['/tasks']);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Falha ao registrar';
       this.error.set(message);
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  /**
+   * Creates a default onboarding task with subtasks explaining the platform.
+   */
+  private async createOnboardingTask(): Promise<void> {
+    const API = '/api/v1/tasks';
+
+    try {
+      const task = await firstValueFrom(
+        this.http.post<{ id: string | number }>(API, {
+          title: '👋 Onboarding — Conheça o MindEase',
+          description:
+            'Bem-vindo ao MindEase! Esta é sua primeira tarefa. ' +
+            'O MindEase foi projetado para ajudar pessoas com TDAH a organizar suas atividades de forma acessível.\n\n' +
+            '📋 Tarefas (Kanban) — Organize suas atividades em colunas To Do, Doing e Done. Arraste e solte para mover.\n\n' +
+            '🍅 Pomodoro — Use o timer para trabalhar em blocos de 15, 25 ou 40 minutos com pausas programadas.\n\n' +
+            '⚙️ Configurações — Ajuste as preferências cognitivas: modo foco, modo de complexidade, densidade da interface, contraste e mais.\n\n' +
+            '👤 Perfil — Veja suas informações e edite seus dados pessoais.\n\n' +
+            'Marque as subtarefas abaixo conforme explorar cada recurso!',
+          status: 'TODO',
+          position: 0
+        })
+      );
+
+      const taskId = task.id;
+      const subtasks = [
+        'Explorar o Kanban — mova esta tarefa para "Doing"',
+        'Iniciar um Pomodoro de 15 minutos',
+        'Acessar Configurações e testar os presets cognitivos',
+        'Visitar o Perfil e conferir suas informações'
+      ];
+
+      for (const title of subtasks) {
+        await firstValueFrom(
+          this.http.post(`${API}/${taskId}/subtasks`, { title })
+        );
+      }
+    } catch {
+      // Onboarding is best-effort; don't block the user
+      console.warn('Failed to create onboarding task');
     }
   }
 }

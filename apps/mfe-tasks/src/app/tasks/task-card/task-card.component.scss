@@ -82,15 +82,51 @@
   }
 }
 
+.task-description-wrapper {
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
 .task-description {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
   line-height: 1.4;
-  margin: 0 0 var(--spacing-sm) 0;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  white-space: pre-line;
+
+  &.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+.description-toggle {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-primary, #4facfe);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    background-color: var(--color-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #4facfe);
+    outline-offset: 2px;
+  }
 }
 
 .task-progress {

@@ -249,13 +249,14 @@ export class PomodoroComponent implements OnInit, OnDestroy {
     this.saveTimerState();
   }
 
-  /** Change work duration (only when not running in work mode) */
+  /** Change work duration — pauses the timer if it is currently running */
   setWorkDuration(minutes: number): void {
-    this.selectedWorkMinutes.set(minutes);
-    if (this.mode() === 'work' && !this.isRunning()) {
-      this.timeRemaining.set(minutes * 60);
-      this.saveTimerState();
+    if (this.isRunning()) {
+      this.pause();
     }
+    this.selectedWorkMinutes.set(minutes);
+    this.timeRemaining.set(minutes * 60);
+    this.saveTimerState();
   }
 
   // ── Internal Logic ───────────────────────────────────────────

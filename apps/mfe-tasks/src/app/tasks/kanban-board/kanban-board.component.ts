@@ -1,7 +1,8 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { PreferencesStore } from '@shared/state';
 import { ButtonComponent } from '@shared/ui';
 import { Task } from '../../models/task.model';
 import { TasksStore } from '../../store/tasks.store';
@@ -21,15 +22,58 @@ const COLUMN_IDS = ['TODO', 'DOING', 'DONE'] as const;
 })
 export class KanbanBoardComponent {
   private tasksStore = inject(TasksStore);
+  private prefsStore = inject(PreferencesStore);
 
   // State
   filter = signal<TaskFilter>('all');
   searchQuery = signal('');
 
+  wipLimitEnabled = computed(() => this.prefsStore.wipLimitEnabled());
+
   /** Listas conectadas para cada coluna (exclui a própria) */
   todoConnected = COLUMN_IDS.filter(id => id !== 'TODO');
   doingConnected = COLUMN_IDS.filter(id => id !== 'DOING');
   doneConnected = COLUMN_IDS.filter(id => id !== 'DONE');
+
+  constructor() {
+    // Enforce WIP limit: whenever enabled AND DOING has excess tasks, move them back
+    let enforcing = false;
+    effect(() => {
+      const enabled = this.wipLimitEnabled();
+      const doingCount = this.tasksStore.doingTasks().length;
+      if (enabled && doingCount > 2 && !enforcing) {
+        enforcing = true;
+        setTimeout(async () => {
+          await this.enforceWipLimit();
+          enforcing = false;
+        });
+      }
+    });
+  }
+
+  /**
+   * Move excess DOING tasks back to TODO when WIP limit is activated.
+   * Keeps the 2 oldest tasks (by updatedAt) and moves the newer ones back.
+   */
+  private async enforceWipLimit(): Promise<void> {
+    const doingTasks = [...this.tasksStore.doingTasks()];
+    if (doingTasks.length <= 2) return;
+
+    // Sort by updatedAt ascending → oldest first
+    doingTasks.sort((a, b) =>
+      new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+    );
+
+    // Keep the 2 oldest, move the rest (most recent) back to TODO
+    const excess = doingTasks.slice(2);
+    for (const task of excess) {
+      try {
+        await this.tasksStore.updateTaskStatus(String(task.id), 'TODO');
+      } catch {
+        // error already handled inside store
+      }
+    }
+  }
 
   // Computed
   loading = computed(() => this.tasksStore.loading());
@@ -92,6 +136,7 @@ export class KanbanBoardComponent {
    *
    * - Same column: reorder via moveItemInArray
    * - Different column: transfer + optimistic status update via store
+   * - WIP limit: blocks drops into DOING when wipLimitEnabled and count >= 2
    */
   async onTaskDropped(event: CdkDragDrop<Task[]>) {
     const task = event.item.data as Task;
@@ -105,6 +150,14 @@ export class KanbanBoardComponent {
         event.currentIndex
       );
     } else {
+      // WIP limit: block the move if DOING would exceed 2 tasks
+      if (newStatus === 'DOING' && this.wipLimitEnabled()) {
+        const currentDoingCount = this.tasksStore.doingTasks().length;
+        if (currentDoingCount >= 2) {
+          return; // reject the drop silently
+        }
+      }
+
       // Transfer to new column
       transferArrayItem(
         event.previousContainer.data,

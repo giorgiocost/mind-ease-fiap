@@ -18,6 +18,7 @@ export type Motion = 'full' | 'reduced' | 'off';
 export interface CognitivePreferences {
   uiDensity: UiDensity;
   focusMode: boolean;
+  wipLimitEnabled: boolean;
   contentMode: ContentMode;
   contrast: Contrast;
   fontScale: FontScale;
@@ -38,6 +39,7 @@ export interface PreferencesResponse {
 export interface UpdatePreferencesRequest {
   uiDensity?: UiDensity;
   focusMode?: boolean;
+  wipLimitEnabled?: boolean;
   contentMode?: ContentMode;
   contrast?: Contrast;
   fontScale?: FontScale;
@@ -52,6 +54,7 @@ export interface UpdatePreferencesRequest {
 export const DEFAULT_PREFERENCES: CognitivePreferences = {
   uiDensity: 'medium',
   focusMode: false,
+  wipLimitEnabled: false,
   contentMode: 'detailed',
   contrast: 'normal',
   fontScale: 1.0,
