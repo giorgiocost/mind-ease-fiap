@@ -8,33 +8,33 @@ import { Directive, ElementRef, EventEmitter, HostListener, inject, Output } fro
  *
  * Usage:
  * ```html
- * <div (clickOutside)="closeDropdown()">
+ * <div (uiClickOutside)="closeDropdown()">
  *   <button>Dropdown</button>
  * </div>
  * ```
  */
 @Directive({
-  selector: '[clickOutside]',
+  selector: '[uiClickOutside]',
   standalone: true
 })
 export class ClickOutsideDirective {
   private elementRef = inject(ElementRef);
 
-  @Output() clickOutside = new EventEmitter<void>();
+  @Output() uiClickOutside = new EventEmitter<void>();
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     const clickedInside = this.elementRef.nativeElement.contains(target);
     if (!clickedInside) {
-      this.clickOutside.emit();
+      this.uiClickOutside.emit();
     }
   }
 
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.elementRef.nativeElement.contains(document.activeElement)) {
-      this.clickOutside.emit();
+      this.uiClickOutside.emit();
     }
   }
 }

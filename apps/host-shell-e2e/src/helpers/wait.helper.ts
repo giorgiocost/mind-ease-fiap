@@ -4,7 +4,7 @@ export class WaitHelper {
   constructor(private readonly page: Page) {}
 
   async waitForPageLoad() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('load');
   }
 
   async waitForApiCall(urlPattern: string | RegExp): Promise<void> {

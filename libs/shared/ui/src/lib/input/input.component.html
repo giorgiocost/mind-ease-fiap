@@ -1,6 +1,6 @@
 <div class="input-wrapper">
   @if (hasLabel()) {
-    <label class="input-label" [class.input-label-required]="required()">
+    <label class="input-label" [class.input-label-required]="required()" [for]="inputId">
       {{ label() }}
       @if (required()) {
         <span class="input-label-asterisk" aria-label="obrigatório">*</span>
@@ -11,11 +11,12 @@
   <div class="input-container">
     <input
       #inputElement
+      [id]="inputId"
       class="input-field"
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="value()"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       [readonly]="readonly()"
       [required]="required()"
       [attr.maxlength]="maxLength()"
@@ -48,14 +49,14 @@
   </div>
 
   @if (hasHelperText() && validationState() === 'default') {
-    <div id="input-helper" class="input-helper-text">
+    <div [id]="helperTextId" class="input-helper-text">
       {{ helperText() }}
     </div>
   }
 
   @if (hasValidationMessage()) {
     <div
-      id="input-validation"
+      [id]="validationMessageId"
       class="input-validation-message"
       [class.input-validation-error]="validationState() === 'error'"
       [class.input-validation-warning]="validationState() === 'warning'"

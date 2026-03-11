@@ -1,6 +1,6 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Task } from '../models/task.model';
 import { TaskCardComponent } from './task-card/task-card.component';
@@ -37,17 +37,9 @@ import { TasksViewModel } from './tasks.viewmodel';
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss']
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent {
   /** Inject scoped ViewModel */
   readonly vm = inject(TasksViewModel);
-
-  // ==========================================
-  // LIFECYCLE HOOKS
-  // ==========================================
-
-  ngOnInit(): void {
-    // Component initialization - tasks are automatically loaded via effect in ViewModel
-  }
 
   // ==========================================
   // EVENT HANDLERS

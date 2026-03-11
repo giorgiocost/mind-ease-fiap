@@ -1,9 +1,15 @@
 @if (open()) {
-  <div class="modal-backdrop" (click)="handleBackdropClick($event)">
+  <div
+    class="modal-backdrop"
+    tabindex="0"
+    [attr.aria-label]="closeOnBackdropClick() ? 'Fechar modal' : null"
+    (click)="handleBackdropClick($event)"
+    (keydown.enter)="handleBackdropClick($event)"
+    (keydown.space)="handleBackdropClick($event)"
+  >
     <div
       #modalContent
       class="modal-content"
-      (click)="$event.stopPropagation()"
     >
       @if (hasTitle() || showCloseButton()) {
         <div class="modal-header">

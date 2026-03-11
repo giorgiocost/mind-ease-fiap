@@ -19,19 +19,24 @@
         <p class="card-description">Aplique uma configuração pré-definida com um clique</p>
       </div>
       <div class="presets-grid">
-        <button
-          *ngFor="let preset of presets"
-          [class.loading]="saving()"
-          [class.selected]="selectedPreset() === preset.name"
-          class="preset-button"
-          type="button"
-          (click)="applyPreset(preset)"
-          [disabled]="saving()"
-        >
-          <span class="preset-name">{{ preset.name }}</span>
-          <span class="checkmark" *ngIf="selectedPreset() === preset.name">✓</span>
-          <div *ngIf="saving()" class="loading-spinner"></div>
-        </button>
+        @for (preset of presets; track preset.name) {
+          <button
+            [class.loading]="saving()"
+            [class.selected]="selectedPreset() === preset.name"
+            class="preset-button"
+            type="button"
+            (click)="applyPreset(preset)"
+            [disabled]="saving()"
+          >
+            <span class="preset-name">{{ preset.name }}</span>
+            @if (selectedPreset() === preset.name) {
+              <span class="checkmark">✓</span>
+            }
+            @if (saving()) {
+              <div class="loading-spinner"></div>
+            }
+          </button>
+        }
       </div>
     </div>
 
@@ -63,7 +68,7 @@
           <h3>Modo de Visualização</h3>
           <p class="preference-help">Escolha entre resumo rápido ou detalhes completos</p>
         </div>
-        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
+        <div class="button-group" role="radiogroup" tabindex="0" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="contentMode() === 'summary'"
@@ -99,7 +104,7 @@
           <h3>Densidade da Interface</h3>
           <p class="preference-help">Define o nível de compactação dos elementos da interface</p>
         </div>
-        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
+        <div class="button-group" role="radiogroup" tabindex="0" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="uiDensity() === 'simple'"
@@ -136,7 +141,7 @@
           <h3>Contraste</h3>
           <p class="preference-help">Ajuste para melhorar a diferenciação de cores</p>
         </div>
-        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
+        <div class="button-group" role="radiogroup" tabindex="0" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="contrast() === 'low'"
@@ -245,7 +250,7 @@
           <h3>Animações</h3>
           <p class="preference-help">Controle as animações e transições da interface</p>
         </div>
-        <div class="button-group" role="radiogroup" (keydown)="handleRadioKeydown($event)">
+        <div class="button-group" role="radiogroup" tabindex="0" (keydown)="handleRadioKeydown($event)">
           <button
             type="button"
             [class.active]="motion() === 'off'"
