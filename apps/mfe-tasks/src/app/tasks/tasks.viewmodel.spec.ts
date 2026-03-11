@@ -41,8 +41,9 @@ function makeFakeTasksStore(initialTasks: Task[] = []) {
 
 function makeFakePreferencesStore() {
   const _focusMode = signal(false);
+  const _wipLimitEnabled = signal(true);
   return {
-    preferences: signal({ uiDensity: 'medium', focusMode: false, contentMode: 'detailed', contrast: 'normal', fontScale: 1, spacingScale: 1, motion: 'full' }).asReadonly(),
+    preferences: signal({ uiDensity: 'medium', focusMode: false, contentMode: 'detailed', contrast: 'normal', fontScale: 1, spacingScale: 1, motion: 'full', wipLimitEnabled: true }).asReadonly(),
     uiDensity: signal<'simple' | 'medium' | 'detailed'>('medium').asReadonly(),
     focusMode: _focusMode.asReadonly(),
     contentMode: signal<'summary' | 'detailed'>('detailed').asReadonly(),
@@ -50,7 +51,9 @@ function makeFakePreferencesStore() {
     fontScale: signal(1).asReadonly(),
     spacingScale: signal(1).asReadonly(),
     motion: signal<'full' | 'reduced'>('full').asReadonly(),
+    wipLimitEnabled: _wipLimitEnabled.asReadonly(),
     _setFocusMode: (v: boolean) => _focusMode.set(v),
+    _setWipLimitEnabled: (v: boolean) => _wipLimitEnabled.set(v),
   };
 }
 

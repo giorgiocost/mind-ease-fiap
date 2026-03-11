@@ -55,7 +55,7 @@ describe('TasksStore', () => {
 
       const loadPromise = store.loadTasks();
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
 
@@ -69,7 +69,7 @@ describe('TasksStore', () => {
     it('deve lidar com erros ao carregar tasks', async () => {
       const loadPromise = store.loadTasks();
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
       req.error(new ProgressEvent('Network error'));
 
       await loadPromise;
@@ -132,7 +132,7 @@ describe('TasksStore', () => {
 
       // Mock initial load
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 
@@ -168,7 +168,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 
@@ -200,7 +200,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       loadReq.flush({
         data: [initialTask],
         meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
@@ -240,7 +240,7 @@ describe('TasksStore', () => {
 
     beforeEach(async () => {
       const loadPromise = store.loadTasks();
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       req.flush({
         data: [taskWithSubtasks],
         meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
@@ -305,7 +305,7 @@ describe('TasksStore', () => {
       ];
 
       const loadPromise = store.loadTasks();
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       req.flush({ data: mockTasks, meta: { total: 4, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
     });
@@ -372,7 +372,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 

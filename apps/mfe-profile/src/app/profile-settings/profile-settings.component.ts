@@ -125,8 +125,6 @@ export class ProfileSettingsComponent implements OnInit {
       const { name, email } = this.profileForm.value as { name: string; email: string };
       await new Promise(resolve => setTimeout(resolve, 800)); // mock API
       this.authStore.updateUser({ name, email });
-      // refresh the page to force header update (simple workaround)
-      window.location.reload();
       this.profileSaved.set(true);
       setTimeout(() => this.profileSaved.set(false), 3000);
     } catch (err: unknown) {

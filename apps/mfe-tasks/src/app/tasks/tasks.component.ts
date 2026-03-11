@@ -125,6 +125,12 @@ export class TasksComponent {
     this.vm.closeCreateTaskModal();
   }
 
+  onCreateModalOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.onCloseCreateModal();
+    }
+  }
+
   /**
    * Clear error state
    */
