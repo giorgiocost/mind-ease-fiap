@@ -55,7 +55,8 @@ export class LayoutComponent implements OnInit {
   readonly isAuthPage = signal<boolean>(false);
 
   // Computed signals from PreferencesStore
-  readonly focusMode = computed(() => this.#preferencesStore.focusMode());
+  readonly focusMode    = computed(() => this.#preferencesStore.focusMode());
+  readonly contentMode  = computed(() => this.#preferencesStore.contentMode());
 
   // Computed sidebar visibility
   // Sidebar is visible when:
@@ -110,12 +111,6 @@ export class LayoutComponent implements OnInit {
       }
     });
 
-    // Effect to close mobile menu when entering focus mode
-    effect(() => {
-      if (this.focusMode() && this.mobileMenuOpen()) {
-        this.mobileMenuOpen.set(false);
-      }
-    });
   }
 
   ngOnInit(): void {
@@ -170,8 +165,8 @@ export class LayoutComponent implements OnInit {
   getLayoutClasses(): { [key: string]: boolean } {
     return {
       'layout': true,
-      // Collapse sidebar when explicitly collapsed OR when in focus mode
-      'sidebar-collapsed': (this.sidebarCollapsed() && !this.isMobile()) || this.focusMode(),
+      // Collapse sidebar when explicitly collapsed, focus mode, or summary content mode
+      'sidebar-collapsed': (this.sidebarCollapsed() && !this.isMobile()) || this.focusMode() || this.contentMode() === 'summary',
       'focus-mode': this.focusMode(),
       'mobile': this.isMobile(),
       'mobile-menu-open': this.mobileMenuOpen(),

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
-    AbstractControl,
-    FormBuilder,
-    FormGroup,
-    ReactiveFormsModule,
-    ValidationErrors,
-    Validators
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthStore, PreferencesStore } from '@shared/state';
@@ -43,8 +43,9 @@ export class ProfileSettingsComponent implements OnInit {
   readonly error = signal<string | null>(null);
 
   // ── Selectors ─────────────────────────────────────────────
-  readonly user = this.authStore.user;
+  readonly user        = this.authStore.user;
   readonly preferences = this.preferencesStore.preferences;
+  readonly contentMode = computed(() => this.preferencesStore.contentMode());
 
   // ── Labels for preferences (Português) ───────────────────────
   uiDensityLabel(density?: string): string {

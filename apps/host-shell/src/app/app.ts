@@ -42,14 +42,20 @@ export class App {
 
   /**
    * Handle sidebar toggle event from header.
-   * In focus mode the sidebar is locked to collapsed — toggle is ignored.
+   * On mobile: always allowed (even in focus/summary mode).
+   * On desktop: locked when focus mode or summary mode is active.
    */
   handleToggleSidebar(): void {
-    if (this._prefsStore.focusMode()) return; // locked in focus mode
     if (this.layout?.isMobile()) {
       this.layout.toggleMobileMenu();
     } else {
+      if (
+        this._prefsStore.focusMode() ||
+        this._prefsStore.contentMode() === 'summary'
+      ) return;
       this.sidebarCollapsed.update((collapsed) => !collapsed);
+      // Sync layout grid width with the new collapsed state
+      this.layout?.sidebarCollapsed.set(this.sidebarCollapsed());
     }
   }
 }

@@ -114,11 +114,14 @@ export class SidebarComponent {
   private router = inject(Router);
 
   // Computed
-  uiDensity  = computed(() => this.prefsStore.uiDensity());
-  focusMode  = computed(() => this.prefsStore.focusMode());
+  uiDensity   = computed(() => this.prefsStore.uiDensity());
+  focusMode   = computed(() => this.prefsStore.focusMode());
+  contentMode = computed(() => this.prefsStore.contentMode());
 
-  /** Sidebar fica sempre colapsada quando em modo foco, independente do input externo */
-  isCollapsed = computed(() => this.collapsed() || this.focusMode());
+  /** Sidebar fica colapsada em modo foco, modo resumo ou quando o input externo pede */
+  isCollapsed = computed(
+    () => this.collapsed() || this.focusMode() || this.contentMode() === 'summary'
+  );
 
   /** Em modo foco mostra apenas: Tarefas (kanban), Pomodoro e Configurações (para sair) */
   menuItems = computed(() => {

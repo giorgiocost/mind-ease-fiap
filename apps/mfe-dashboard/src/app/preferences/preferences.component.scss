@@ -2,6 +2,14 @@ $primary: rgba(79, 172, 254, 0.9);
 $primary-light: rgba(79, 172, 254, 0.15);
 $danger: rgb(220, 38, 38);
 
+// Modo Resumo — oculta textos de apoio não essenciais
+.summary-mode {
+  .preference-help,
+  .card-description {
+    display: none;
+  }
+}
+
 .preferences-page {
   display: flex;
   flex-direction: column;
