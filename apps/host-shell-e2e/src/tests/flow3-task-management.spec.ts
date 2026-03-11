@@ -134,6 +134,7 @@ test.describe('Flow 3: Task Management', () => {
     await expect(deleteBtn).toBeVisible();
 
     // Click delete and wait for API
+    authenticatedPage.on('dialog', dialog => dialog.accept());
     await deleteBtn.click();
     await authenticatedPage.waitForResponse(/\/api\/v1\/tasks/);
   });

@@ -11,27 +11,28 @@
  */
 import { test, expect } from '../fixtures/test.fixture';
 import { Page } from '@playwright/test';
-import { makeAuthResponse, MOCK_STATS, MOCK_PREFERENCES } from '../helpers/mock-data';
+import { makeAuthResponse } from '../helpers/mock-data';
 
 // ─── Shared API mock setup ──────────────────────────────────────────────────
 
 async function setupLoginApiMock(page: Page, user?: { id: string; name: string; email: string }) {
   const authData = makeAuthResponse(user);
 
-  await page.context().route('**/api/v1/auth/login', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(authData),
-    })
-  );
-
-  // Stub remaining API calls so the dashboard doesn't throw 404s
+  // Register catch-all FIRST so it has lower priority (Playwright LIFO)
   await page.context().route('**/api/**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ data: null, message: 'mocked' }),
+    })
+  );
+
+  // Specific login route registered LAST → highest priority
+  await page.context().route('**/api/v1/auth/login', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(authData),
     })
   );
 }
@@ -107,6 +108,15 @@ test.describe('Flow 1: Login & Dashboard', () => {
     loginPage,
     dashboardPage,
   }) => {
+    // Register catch-all FIRST (lower priority in LIFO)
+    await page.context().route('**/api/**', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: null, message: 'mocked' }),
+      })
+    );
+    // Specific login route LAST (highest priority)
     await page.context().route('**/api/v1/auth/login', (route) =>
       route.fulfill({
         status: 200,
@@ -114,13 +124,6 @@ test.describe('Flow 1: Login & Dashboard', () => {
         body: JSON.stringify(
           makeAuthResponse({ id: '1', name: 'Maria Silva', email: 'maria@example.com' })
         ),
-      })
-    );
-    await page.context().route('**/api/**', (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ data: null, message: 'mocked' }),
       })
     );
 
