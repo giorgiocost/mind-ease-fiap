@@ -26,6 +26,7 @@ function mockPreferencesStore() {
     preferences: signal(DEFAULT_PREFERENCES),
     uiDensity: signal(DEFAULT_PREFERENCES.uiDensity),
     focusMode: signal(DEFAULT_PREFERENCES.focusMode),
+    contentMode: signal(DEFAULT_PREFERENCES.contentMode),
     contrast: signal(DEFAULT_PREFERENCES.contrast),
     motion: signal(DEFAULT_PREFERENCES.motion),
     loadFromApi: jest.fn().mockResolvedValue(undefined),
