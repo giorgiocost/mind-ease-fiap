@@ -200,14 +200,16 @@ export class AuthStore {
         )
       );
 
+      // Update both tokens
       this._accessToken.set(response.accessToken);
+      this._refreshToken.set(response.refreshToken);
+
       const user = this._user();
-      const refreshToken = this._refreshToken();
-      if (user && refreshToken) {
+      if (user) {
         this.broadcastAuthState({
           user,
           accessToken: response.accessToken,
-          refreshToken
+          refreshToken: response.refreshToken
         });
       }
       return response.accessToken;
