@@ -1,6 +1,19 @@
 import { withModuleFederation } from '@nx/module-federation/angular';
 import config from './module-federation.config';
 
+const normalizeUrl = (value: string) => value.replace(/\/+$/, '');
+
+const remoteUrl = (envName: string, fallback: string) => {
+  const value = process.env[envName] || fallback;
+  return normalizeUrl(value);
+};
+
+const productionRemotes: [string, string][] = [
+  ['mfe-dashboard', remoteUrl('MFE_DASHBOARD_URL', 'http://localhost:4201')],
+  ['mfe-tasks', remoteUrl('MFE_TASKS_URL', 'http://localhost:4202')],
+  ['mfe-profile', remoteUrl('MFE_PROFILE_URL', 'http://localhost:4203')],
+];
+
 /**
  * DTS Plugin is disabled in Nx Workspaces as Nx already provides Typing support for Module Federation
  * The DTS Plugin can be enabled by setting dts: true
@@ -9,16 +22,8 @@ import config from './module-federation.config';
 export default withModuleFederation(
   {
     ...config,
-    /*
-     * Remote overrides for production.
-     * Each entry is a pair of a unique name and the URL where it is deployed.
-     *
-     * e.g.
-     * remotes: [
-     *   ['app1', 'https://app1.example.com'],
-     *   ['app2', 'https://app2.example.com'],
-     * ]
-     */
+    // In production we must not depend on localhost remotes.
+    remotes: productionRemotes,
   },
   { dts: false },
 );

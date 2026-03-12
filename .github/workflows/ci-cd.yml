@@ -126,7 +126,20 @@ jobs:
         run: npx nx build mfe-profile --configuration=production
 
       - name: Build host-shell (host)
+        env:
+          MFE_DASHBOARD_URL: /remotes/mfe-dashboard
+          MFE_TASKS_URL: /remotes/mfe-tasks
+          MFE_PROFILE_URL: /remotes/mfe-profile
         run: npx nx build host-shell --configuration=production
+
+      - name: Package remotes into host-shell artifact
+        run: |
+          mkdir -p dist/apps/host-shell/remotes/mfe-dashboard
+          mkdir -p dist/apps/host-shell/remotes/mfe-tasks
+          mkdir -p dist/apps/host-shell/remotes/mfe-profile
+          cp -R dist/apps/mfe-dashboard/. dist/apps/host-shell/remotes/mfe-dashboard/
+          cp -R dist/apps/mfe-tasks/. dist/apps/host-shell/remotes/mfe-tasks/
+          cp -R dist/apps/mfe-profile/. dist/apps/host-shell/remotes/mfe-profile/
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

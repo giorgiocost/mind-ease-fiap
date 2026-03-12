@@ -11,7 +11,7 @@
       "dest": "/remoteEntry.js"
     },
     {
-      "src": "/(.*\\.(js|css|ico|png|svg|woff2?))",
+      "src": "/(.*\\.(js|mjs|css|ico|png|svg|woff2?))",
       "dest": "/$1"
     },
     {
