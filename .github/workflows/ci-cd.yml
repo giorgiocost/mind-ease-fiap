@@ -21,6 +21,7 @@ permissions:
 
 env:
   NODE_VERSION: '20.x'
+  VERCEL_PROJECT_DIR: 'dist/apps/host-shell'
 
 # ──────────────────────────────────────────────────────────────────────────────
 # LINT
@@ -212,11 +213,17 @@ jobs:
           name: build-artifacts
           path: dist/
 
+      - name: Verify host-shell build artifact
+        run: |
+          test -f "${{ env.VERCEL_PROJECT_DIR }}/index.html"
+          ls -la "${{ env.VERCEL_PROJECT_DIR }}"
+
       - name: Deploy to Vercel (production)
         id: deploy
         run: |
-          url=$(vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes)
+          url=$(vercel deploy "${{ env.VERCEL_PROJECT_DIR }}" --prod --token=${{ secrets.VERCEL_TOKEN }} --yes | tail -n 1)
           echo "url=$url" >> $GITHUB_OUTPUT
+          echo "Production deploy URL: $url"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -245,11 +252,17 @@ jobs:
           name: build-artifacts
           path: dist/
 
+      - name: Verify host-shell build artifact
+        run: |
+          test -f "${{ env.VERCEL_PROJECT_DIR }}/index.html"
+          ls -la "${{ env.VERCEL_PROJECT_DIR }}"
+
       - name: Deploy preview to Vercel
         id: preview
         run: |
-          url=$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --yes)
+          url=$(vercel deploy "${{ env.VERCEL_PROJECT_DIR }}" --token=${{ secrets.VERCEL_TOKEN }} --yes | tail -n 1)
           echo "url=$url" >> $GITHUB_OUTPUT
+          echo "Preview deploy URL: $url"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
