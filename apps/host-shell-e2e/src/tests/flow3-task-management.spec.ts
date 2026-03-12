@@ -113,6 +113,7 @@ test.describe('Flow 3: Task Management', () => {
 
   test('should delete a task @critical', async ({
     authenticatedPage,
+    tasksPage,
   }) => {
     const taskTitle = 'Existing Task';
 
