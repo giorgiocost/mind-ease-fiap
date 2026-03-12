@@ -69,7 +69,7 @@ async function expectRouteToRender(
   }
 
   await expect(page).toHaveURL(new RegExp(path.replace('/', '\\/')));
-  await page.waitForLoadState('networkidle').catch(() => undefined);
+  await page.waitForLoadState('load').catch(() => undefined);
   await expect(page.locator(stableSelector)).toBeVisible({ timeout: 20000 });
 }
 
