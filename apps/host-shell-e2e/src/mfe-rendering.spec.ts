@@ -38,32 +38,32 @@ test.beforeEach(async ({ page, context }) => {
 });
 
 test('mfe-dashboard renders dashboard page', async ({ page }) => {
-  await page.goto('/dashboard');
+  await page.goto('/dashboard', { waitUntil: 'networkidle' });
   await expect(page.locator('app-dashboard')).toBeVisible();
 });
 
 test('mfe-dashboard renders preferences page', async ({ page }) => {
-  await page.goto('/dashboard/preferences');
+  await page.goto('/dashboard/preferences', { waitUntil: 'networkidle' });
   await expect(page.locator('app-preferences')).toBeVisible();
 });
 
 test('mfe-tasks renders tasks page', async ({ page }) => {
-  await page.goto('/tasks');
+  await page.goto('/tasks', { waitUntil: 'networkidle' });
   await expect(page.locator('app-tasks')).toBeVisible();
 });
 
 test('mfe-tasks renders pomodoro page', async ({ page }) => {
-  await page.goto('/tasks/pomodoro');
+  await page.goto('/tasks/pomodoro', { waitUntil: 'networkidle' });
   await expect(page.locator('app-pomodoro')).toBeVisible();
 });
 
 test('mfe-profile renders profile settings page', async ({ page }) => {
-  await page.goto('/profile');
+  await page.goto('/profile', { waitUntil: 'networkidle' });
   await expect(page.locator('app-profile-settings')).toBeVisible();
 });
 
 test('mfe-profile renders onboarding page', async ({ page }) => {
-  await page.goto('/profile/onboarding');
+  await page.goto('/profile/onboarding', { waitUntil: 'networkidle' });
   await expect(page.locator('app-onboarding')).toBeVisible();
 });
 

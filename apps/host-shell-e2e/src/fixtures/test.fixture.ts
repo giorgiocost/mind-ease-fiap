@@ -1,9 +1,9 @@
 import { test as base, Page } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { DashboardPage } from '../pages/dashboard.page';
-import { TasksPage } from '../pages/tasks.page';
 import { AuthHelper } from '../helpers/auth.helper';
 import { WaitHelper } from '../helpers/wait.helper';
+import { DashboardPage } from '../pages/dashboard.page';
+import { LoginPage } from '../pages/login.page';
+import { TasksPage } from '../pages/tasks.page';
 
 type TestFixtures = {
   loginPage: LoginPage;
@@ -54,9 +54,12 @@ export const test = base.extend<TestFixtures>({
     await page.goto('/login');
     await authHelper.injectAuth();
 
-    // Navigate to dashboard
+    // Navigate to dashboard and wait for MFEs to fully load via Module Federation
     await page.goto('/dashboard');
-    await page.waitForLoadState('domcontentloaded');
+    // 'networkidle' ensures remoteEntry.js + MFE chunks have been fetched and Angular rendered
+    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
+      // Ignore if networkidle times out (e.g. background polling) — assertions handle the rest
+    });
 
     await use(page);
 
