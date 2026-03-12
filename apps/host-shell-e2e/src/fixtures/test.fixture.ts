@@ -56,9 +56,9 @@ export const test = base.extend<TestFixtures>({
 
     // Navigate to dashboard and wait for MFEs to fully load via Module Federation
     await page.goto('/dashboard');
-    // 'networkidle' ensures remoteEntry.js + MFE chunks have been fetched and Angular rendered
-    await page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
-      // Ignore if networkidle times out (e.g. background polling) — assertions handle the rest
+    // Wait for the shell + remote entries to be parsed before assertions run
+    await page.waitForLoadState('load', { timeout: 30000 }).catch(() => {
+      // Ignore if load times out — assertions handle the rest
     });
 
     await use(page);

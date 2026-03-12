@@ -8,8 +8,8 @@
  * - Search/filter tasks
  * - Delete task
  */
-import { test, expect } from '../fixtures/test.fixture';
 import { Page } from '@playwright/test';
+import { expect, test } from '../fixtures/test.fixture';
 import { makeTaskResponse, MOCK_TASKS } from '../helpers/mock-data';
 
 /** Override API mocks with task-aware responses. */
@@ -78,7 +78,7 @@ test.describe('Flow 3: Task Management', () => {
     await authenticatedPage.click('.modal-footer button[type="submit"]');
 
     // Modal should close
-    await expect(modal).not.toBeVisible();
+    await expect(modal).toBeHidden();
   });
 
   test('should change task status via move-select @critical', async ({
@@ -106,22 +106,13 @@ test.describe('Flow 3: Task Management', () => {
     authenticatedPage,
     tasksPage,
   }) => {
-    // Only visible when uiDensity is not 'simple' (default='medium')
     const searchInput = authenticatedPage.locator('input.search-input');
-    if (await searchInput.isVisible()) {
-      await tasksPage.searchTasks('Existing');
-      // After search, unrelated tasks should be hidden (or "In Progress" not visible)
-      // We can only assert the search input contains the query
-      await expect(searchInput).toHaveValue('Existing');
-    } else {
-      // In simple density, search is hidden — just skip
-      test.skip();
-    }
+    await tasksPage.searchTasks('Existing');
+    await expect(searchInput).toHaveValue('Existing');
   });
 
   test('should delete a task @critical', async ({
     authenticatedPage,
-    tasksPage,
   }) => {
     const taskTitle = 'Existing Task';
 

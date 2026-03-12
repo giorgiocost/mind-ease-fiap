@@ -18,21 +18,21 @@ export class WaitHelper {
   }
 
   async waitForElement(selector: string, timeout = 5000): Promise<void> {
-    await this.page.waitForSelector(selector, { timeout });
+    await this.page.locator(selector).waitFor({ timeout });
   }
 
   async waitForElementToDisappear(
     selector: string,
     timeout = 5000
   ): Promise<void> {
-    await this.page.waitForSelector(selector, {
+    await this.page.locator(selector).waitFor({
       state: 'detached',
       timeout,
     });
   }
 
   async waitForText(text: string, timeout = 5000): Promise<void> {
-    await this.page.waitForSelector(`text=${text}`, { timeout });
+    await this.page.getByText(text).waitFor({ timeout });
   }
 
   /** Routes all API calls to a 200 stub to avoid backend dependency. */

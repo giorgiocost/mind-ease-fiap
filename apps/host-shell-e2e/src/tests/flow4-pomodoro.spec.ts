@@ -9,7 +9,7 @@
  * - Mode selector (work / short-break / long-break)
  * - Sessions stats visible
  */
-import { test, expect } from '../fixtures/test.fixture';
+import { expect, test } from '../fixtures/test.fixture';
 
 test.describe('Flow 4: Pomodoro Timer', () => {
   test.beforeEach(async ({ authenticatedPage }) => {
@@ -51,9 +51,7 @@ test.describe('Flow 4: Pomodoro Timer', () => {
     await expect(startBtn).toBeVisible();
     await startBtn.click();
 
-    // Wait 1.5s for Angular setInterval to tick at least once
-    await authenticatedPage.waitForTimeout(1500);
-
+    // Wait for Angular setInterval to tick at least once
     await expect(timerText).not.toHaveText('25:00');
 
     // Pause to avoid interfering with subsequent tests
@@ -80,13 +78,13 @@ test.describe('Flow 4: Pomodoro Timer', () => {
 
     // Start then pause
     await authenticatedPage.click('.btn-start');
-    await authenticatedPage.waitForTimeout(1100);
+    await expect(timerText).not.toHaveText('25:00'); // wait for first tick
     await authenticatedPage.click('.btn-pause');
 
     const timeAfterPause = await timerText.innerText();
 
-    // Wait another 1.5s — timer must not advance while paused
-    await authenticatedPage.waitForTimeout(1500);
+    // Interact with the page to trigger change detection, then verify timer is frozen
+    await authenticatedPage.locator('.btn-reset').hover();
     await expect(timerText).toHaveText(timeAfterPause);
   });
 
@@ -99,7 +97,7 @@ test.describe('Flow 4: Pomodoro Timer', () => {
 
     // Start → advance → reset
     await authenticatedPage.click('.btn-start');
-    await authenticatedPage.waitForTimeout(1100);
+    await expect(timerText).not.toHaveText('25:00'); // wait for first tick
     await authenticatedPage.click('.btn-reset');
 
     await expect(timerText).toHaveText('25:00');

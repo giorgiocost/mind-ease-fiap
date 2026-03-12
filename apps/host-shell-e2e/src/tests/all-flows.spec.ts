@@ -5,7 +5,7 @@
  * the application works end-to-end in one session.
  * Run with:  npm run e2e:smoke
  */
-import { test, expect } from '../fixtures/test.fixture';
+import { expect, test } from '../fixtures/test.fixture';
 
 test.describe('Critical User Flows — Full Suite @smoke', () => {
   test('should complete all 5 critical flows in one session', async ({
@@ -44,7 +44,7 @@ test.describe('Critical User Flows — Full Suite @smoke', () => {
 
     // Quick start + reset check
     await authenticatedPage.click('.btn-start');
-    await authenticatedPage.waitForTimeout(1200);
+    await expect(timerText).not.toHaveText('25:00');
     await authenticatedPage.click('.btn-reset');
     await expect(timerText).toHaveText('25:00');
 

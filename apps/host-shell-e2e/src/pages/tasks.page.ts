@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 /** Status values as they appear in the DOM (cdkDropList [id] attribute) */
 type KanbanStatus = 'TODO' | 'DOING' | 'DONE';
@@ -37,9 +37,7 @@ export class TasksPage {
     }
     await this.page.click('.modal-footer button[type="submit"]');
     // Wait for the task title to appear anywhere in the columns
-    await this.page.waitForSelector(`.drag-wrapper:has-text("${title}")`, {
-      timeout: 5000,
-    });
+    await this.page.locator('.drag-wrapper').filter({ hasText: title }).waitFor({ timeout: 5000 });
   }
 
   /**
@@ -74,8 +72,7 @@ export class TasksPage {
 
   async searchTasks(query: string) {
     await this.searchInput.fill(query);
-    // Allow Angular search debounce to fire
-    await this.page.waitForTimeout(500);
+    // Angular search debounce fires automatically; subsequent assertions poll
   }
 
   /**
