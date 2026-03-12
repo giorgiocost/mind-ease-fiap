@@ -50,8 +50,7 @@ test.describe('Dashboard (authenticated)', () => {
       }
     });
 
-    await authenticatedPage.goto('/dashboard');
-    await authenticatedPage.waitForLoadState('domcontentloaded');
+    await authenticatedPage.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     expect(errors).toHaveLength(0);
   });

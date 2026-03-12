@@ -51,8 +51,11 @@ test.describe('Flow 1: Login & Dashboard', () => {
     await loginPage.goto();
     await loginPage.login('test@mindease.com', 'Test123456!');
 
-    // Step 4: Verify redirect to dashboard
-    await expect(page).toHaveURL(/\/dashboard/);
+    // Step 4: Verify redirect to /tasks (default post-login route)
+    await expect(page).toHaveURL(/\/tasks/);
+
+    // Navigate to dashboard to verify dashboard content
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     // Step 5: Verify greeting message exists and has text
     const greeting = await dashboardPage.getGreeting();
@@ -72,7 +75,10 @@ test.describe('Flow 1: Login & Dashboard', () => {
 
     await loginPage.goto();
     await loginPage.login('test@mindease.com', 'Test123456!');
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/tasks/);
+
+    // Navigate to dashboard to test stats card navigation
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     // Step 7–8: Click first stats card (Tarefas Pendentes → navigates to /tasks)
     await dashboardPage.clickStatsCard(0);
@@ -129,7 +135,10 @@ test.describe('Flow 1: Login & Dashboard', () => {
 
     await loginPage.goto();
     await loginPage.login('maria@example.com', 'Pass12345!');
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/tasks/);
+
+    // Navigate to dashboard to verify greeting
+    await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
 
     const greeting = await dashboardPage.getGreeting();
     expect(greeting).toBeTruthy();

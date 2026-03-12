@@ -1,9 +1,10 @@
-import { Page, Locator } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 
 export class DashboardPage {
   readonly page: Page;
   readonly greeting: Locator;
   readonly statsCards: Locator;
+  readonly statsCardContent: Locator;
   readonly dashboard: Locator;
 
   constructor(page: Page) {
@@ -12,24 +13,35 @@ export class DashboardPage {
     this.greeting = page.locator('.greeting');
     // Stats are <app-stats-card> elements inside .stats-grid
     this.statsCards = page.locator('app-stats-card');
+    this.statsCardContent = page.locator('.stats-grid .stats-card');
     // The root dashboard div that carries data-ui-density
     this.dashboard = page.locator('.dashboard');
   }
 
   async goto() {
-    await this.page.goto('/dashboard');
+    await this.page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
+    await this.waitUntilReady();
+  }
+
+  async waitUntilReady() {
+    await expect(this.dashboard).toBeVisible({ timeout: 15000 });
+    await expect(this.greeting).toBeVisible({ timeout: 15000 });
+    await expect(this.statsCardContent.first()).toBeVisible({ timeout: 15000 });
   }
 
   async getGreeting(): Promise<string> {
+    await this.waitUntilReady();
     return (await this.greeting.textContent()) ?? '';
   }
 
   async getStatsCardCount(): Promise<number> {
+    await this.waitUntilReady();
     return await this.statsCards.count();
   }
 
   async clickStatsCard(index: number) {
-    await this.statsCards.nth(index).click();
+    await this.waitUntilReady();
+    await this.statsCards.nth(index).locator('ui-card').click();
   }
 
   /** Returns the value of data-ui-density on the .dashboard root element. */

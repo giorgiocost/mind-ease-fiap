@@ -5,5 +5,26 @@
   "sourceRoot": "apps/host-shell-e2e/src",
   "implicitDependencies": ["host-shell"],
   "// targets": "to see all targets run: nx show project host-shell-e2e --web",
-  "targets": {}
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "options": {
+        "cwd": "apps/host-shell-e2e",
+        "command": "playwright test"
+      },
+      "outputs": [
+        "{workspaceRoot}/dist/.playwright/apps/host-shell-e2e/test-output",
+        "{projectRoot}/playwright-report",
+        "{projectRoot}/test-results/junit.xml"
+      ],
+      "inputs": [
+        "default",
+        "^production",
+        {
+          "externalDependencies": ["@playwright/test"]
+        }
+      ]
+    }
+  }
 }

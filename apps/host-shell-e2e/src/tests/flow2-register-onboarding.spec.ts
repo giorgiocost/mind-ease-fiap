@@ -1,11 +1,11 @@
 /**
- * Flow 2: Register → Onboarding → Dashboard
+ * Flow 2: Register → Onboarding → Tasks
  *
  * Covers:
  * - Registration form with name / email / password
- * - After register → navigates to /dashboard (actual app behavior)
- * - Onboarding flow: welcome → preferences → tour → finish → /dashboard
- * - Skip onboarding redirects to /dashboard
+ * - After register → navigates to /tasks
+ * - Onboarding flow: welcome → preferences → tour → finish → /tasks
+ * - Skip onboarding redirects to /tasks
  */
 import { test, expect } from '../fixtures/test.fixture';
 import { Page } from '@playwright/test';
@@ -36,7 +36,7 @@ async function stubAllApis(page: Page, extraUser?: { id: string; name: string; e
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 test.describe('Flow 2: Registration & Onboarding', () => {
-  test('should complete registration form and reach dashboard', async ({ page }) => {
+  test('should complete registration form and reach tasks', async ({ page }) => {
     await stubAllApis(page);
 
     await page.goto('/register');
@@ -50,8 +50,8 @@ test.describe('Flow 2: Registration & Onboarding', () => {
     // Submit (button text is "Registrar" in the actual component)
     await page.click('ui-button[type="submit"]');
 
-    // Register component navigates to /dashboard after successful registration
-    await expect(page).toHaveURL(/\/dashboard/);
+    // Register component navigates to /tasks after successful registration
+    await expect(page).toHaveURL(/\/tasks/);
   });
 
   test('should show validation errors for short name', async ({ page }) => {
@@ -104,11 +104,11 @@ test.describe('Flow 2: Registration & Onboarding', () => {
     // Click "Finalizar →" (last step button)
     await authenticatedPage.click('.btn-primary');
 
-    // Onboarding finish navigates to /dashboard
-    await expect(authenticatedPage).toHaveURL(/\/dashboard/);
+    // Onboarding finish navigates to /tasks
+    await expect(authenticatedPage).toHaveURL(/\/tasks/);
   });
 
-  test('should skip onboarding and redirect to dashboard', async ({
+  test('should skip onboarding and redirect to tasks', async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto('/profile/onboarding');
@@ -116,7 +116,7 @@ test.describe('Flow 2: Registration & Onboarding', () => {
     // Click "Pular" button
     await authenticatedPage.click('button:has-text("Pular")');
 
-    // Should redirect to dashboard
-    await expect(authenticatedPage).toHaveURL(/\/dashboard/);
+    // Should redirect to tasks
+    await expect(authenticatedPage).toHaveURL(/\/tasks/);
   });
 });

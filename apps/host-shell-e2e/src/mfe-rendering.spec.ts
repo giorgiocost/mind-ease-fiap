@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, Page } from '@playwright/test';
 
 const MOCK_JWT = () => {
   const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
@@ -37,34 +37,38 @@ test.beforeEach(async ({ page, context }) => {
   }, MOCK_JWT());
 });
 
+async function expectRouteToRender(
+  page: Page,
+  path: string,
+  stableSelector: string
+) {
+  await page.goto(path);
+  await expect(page).toHaveURL(new RegExp(path.replace('/', '\\/')));
+  await expect(page.locator(stableSelector)).toBeVisible({ timeout: 15000 });
+}
+
 test('mfe-dashboard renders dashboard page', async ({ page }) => {
-  await page.goto('/dashboard');
-  await expect(page.locator('app-dashboard')).toBeVisible();
+  await expectRouteToRender(page, '/dashboard', '.dashboard');
 });
 
 test('mfe-dashboard renders preferences page', async ({ page }) => {
-  await page.goto('/dashboard/preferences');
-  await expect(page.locator('app-preferences')).toBeVisible();
+  await expectRouteToRender(page, '/dashboard/preferences', '.preferences-page');
 });
 
 test('mfe-tasks renders tasks page', async ({ page }) => {
-  await page.goto('/tasks');
-  await expect(page.locator('app-tasks')).toBeVisible();
+  await expectRouteToRender(page, '/tasks', '.tasks-container');
 });
 
 test('mfe-tasks renders pomodoro page', async ({ page }) => {
-  await page.goto('/tasks/pomodoro');
-  await expect(page.locator('app-pomodoro')).toBeVisible();
+  await expectRouteToRender(page, '/tasks/pomodoro', '.pomodoro-container');
 });
 
 test('mfe-profile renders profile settings page', async ({ page }) => {
-  await page.goto('/profile');
-  await expect(page.locator('app-profile-settings')).toBeVisible();
+  await expectRouteToRender(page, '/profile', '.profile-settings');
 });
 
 test('mfe-profile renders onboarding page', async ({ page }) => {
-  await page.goto('/profile/onboarding');
-  await expect(page.locator('app-onboarding')).toBeVisible();
+  await expectRouteToRender(page, '/profile/onboarding', '.onboarding-container');
 });
 
 test('no critical Angular errors on dashboard', async ({ page }) => {
@@ -78,8 +82,7 @@ test('no critical Angular errors on dashboard', async ({ page }) => {
     }
   });
 
-  await page.goto('/dashboard');
-  await page.waitForLoadState('load');
+  await expectRouteToRender(page, '/dashboard', '.dashboard');
 
   expect(errors).toHaveLength(0);
 });
@@ -95,8 +98,7 @@ test('no critical Angular errors on profile', async ({ page }) => {
     }
   });
 
-  await page.goto('/profile');
-  await page.waitForLoadState('load');
+  await expectRouteToRender(page, '/profile', '.profile-settings');
 
   expect(errors).toHaveLength(0);
 });

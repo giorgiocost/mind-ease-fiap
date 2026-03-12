@@ -90,7 +90,17 @@ export class TasksPage {
       .locator('.drag-wrapper')
       .filter({ hasText: taskTitle })
       .first();
-    await taskCard.locator('button[aria-label="Excluir tarefa"]').click();
-    await this.page.waitForResponse(/\/api\/v1\/tasks/);
+    this.page.once('dialog', dialog => dialog.accept());
+
+    await Promise.all([
+      this.page.waitForResponse(
+        response =>
+          /\/api\/v1\/tasks/.test(response.url()) &&
+          response.request().method() === 'DELETE'
+      ),
+      taskCard.locator('button[aria-label="Excluir tarefa"]').click(),
+    ]);
+
+    await taskCard.waitFor({ state: 'detached' });
   }
 }

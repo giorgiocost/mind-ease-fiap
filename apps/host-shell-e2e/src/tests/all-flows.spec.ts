@@ -25,9 +25,9 @@ test.describe('Critical User Flows — Full Suite @smoke', () => {
     const onboardingTitle = authenticatedPage.locator('h1#welcome-title');
     await expect(onboardingTitle).toBeVisible();
 
-    // Skip back to dashboard
+    // Skip — onboarding navigates to /tasks
     await authenticatedPage.click('button:has-text("Pular")');
-    await expect(authenticatedPage).toHaveURL(/\/dashboard/);
+    await expect(authenticatedPage).toHaveURL(/\/tasks/);
 
     // ── Flow 3: Tasks — verify kanban loads ──────────────────────────────────
     await tasksPage.goto();

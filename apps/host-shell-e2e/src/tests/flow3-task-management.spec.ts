@@ -124,9 +124,7 @@ test.describe('Flow 3: Task Management', () => {
     const deleteBtn = taskCard.locator('button[aria-label="Excluir tarefa"]');
     await expect(deleteBtn).toBeVisible();
 
-    // Click delete and wait for API
-    authenticatedPage.on('dialog', dialog => dialog.accept());
-    await deleteBtn.click();
-    await authenticatedPage.waitForResponse(/\/api\/v1\/tasks/);
+    // Click delete and wait for API + optimistic DOM removal
+    await tasksPage.deleteTask(taskTitle);
   });
 });

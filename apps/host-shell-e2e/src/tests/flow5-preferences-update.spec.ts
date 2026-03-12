@@ -54,7 +54,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
   test('should show density buttons (Simples / Médio / Completo)', async ({
     authenticatedPage,
   }) => {
-    const densityGroup = authenticatedPage.locator('.button-group').first();
+    const densityGroup = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Densidade da Interface' }) })
+      .locator('.button-group');
     await expect(densityGroup.locator('button:has-text("Simples")')).toBeVisible();
     await expect(densityGroup.locator('button:has-text("Médio")')).toBeVisible();
     await expect(densityGroup.locator('button:has-text("Completo")')).toBeVisible();
@@ -63,9 +66,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
   test('should change ui density to Simples and call API @critical', async ({
     authenticatedPage,
   }) => {
-    const simplesBtn = authenticatedPage.locator(
-      '.button-group button:has-text("Simples")'
-    ).first();
+    const simplesBtn = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Densidade da Interface' }) })
+      .locator('button:has-text("Simples")');
 
     // Click and wait for API call
     const [response] = await Promise.all([
@@ -81,9 +85,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
   test('should change ui density to Completo and call API', async ({
     authenticatedPage,
   }) => {
-    const completoBtn = authenticatedPage.locator(
-      '.button-group button:has-text("Completo")'
-    ).first();
+    const completoBtn = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Densidade da Interface' }) })
+      .locator('button:has-text("Completo")');
 
     const [response] = await Promise.all([
       authenticatedPage.waitForResponse(/\/api\/v1\/preferences/),
@@ -95,7 +100,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
   test('should toggle focusMode and call API @critical', async ({
     authenticatedPage,
   }) => {
-    const toggleBtn = authenticatedPage.locator('.toggle-button').first();
+    const toggleBtn = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Modo Foco' }) })
+      .locator('.toggle-button');
     await expect(toggleBtn).toBeVisible();
 
     const [response] = await Promise.all([
@@ -108,10 +116,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
   test('should change contrast and call API', async ({
     authenticatedPage,
   }) => {
-    // Contrast buttons are in the 3rd .button-group (Baixo / Normal / Alto)
-    const altoBtn = authenticatedPage.locator(
-      'button:has-text("Alto")'
-    ).first();
+    const altoBtn = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Contraste' }) })
+      .locator('button:has-text("Alto")');
     await expect(altoBtn).toBeVisible();
 
     const [response] = await Promise.all([
@@ -142,9 +150,10 @@ test.describe('Flow 5: Preferences Real-time Update', () => {
     authenticatedPage,
   }) => {
     // Make a preference change (density)
-    const simplesBtn = authenticatedPage.locator(
-      '.button-group button:has-text("Simples")'
-    ).first();
+    const simplesBtn = authenticatedPage
+      .locator('.preference-row')
+      .filter({ has: authenticatedPage.locator('h3', { hasText: 'Densidade da Interface' }) })
+      .locator('button:has-text("Simples")');
     await Promise.all([
       authenticatedPage.waitForResponse(/\/api\/v1\/preferences/),
       simplesBtn.click(),
