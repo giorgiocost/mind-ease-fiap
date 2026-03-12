@@ -12,7 +12,7 @@ import { getErrorMessage } from '../utils/error-handler';
 
 // Environment configuration
 const environment = {
-  apiUrl: 'http://localhost:3333/api/v1/tasks'
+  apiUrl: '/api/v1/tasks'
 };
 
 /**
