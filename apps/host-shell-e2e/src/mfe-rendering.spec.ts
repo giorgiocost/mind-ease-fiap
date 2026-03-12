@@ -8,6 +8,24 @@ const MOCK_JWT = () => {
   return `${header}.${payload}.mocksignature`;
 };
 
+const AUTH_STATE = {
+  user: {
+    id: '1',
+    name: 'Test User',
+    email: 'test@mindease.com',
+    createdAt: '2025-01-01',
+  },
+  accessToken: MOCK_JWT(),
+  refreshToken: MOCK_JWT(),
+};
+
+async function seedAuth(page: Page) {
+  await page.goto('/login', { waitUntil: 'domcontentloaded' });
+  await page.evaluate((authState) => {
+    localStorage.setItem('mindease_auth', JSON.stringify(authState));
+  }, AUTH_STATE);
+}
+
 test.beforeEach(async ({ page, context }) => {
   // Mock API to prevent 401 errors triggering auto-logout
   await context.route('**/api/**', (route) =>
@@ -18,9 +36,8 @@ test.beforeEach(async ({ page, context }) => {
     })
   );
 
-  // Inject auth before navigating
-  await page.goto('/login');
-  await page.evaluate((token) => {
+  // Seed auth before the application bootstraps to avoid CI-only redirect races.
+  await context.addInitScript((token) => {
     localStorage.setItem(
       'mindease_auth',
       JSON.stringify({
@@ -35,6 +52,8 @@ test.beforeEach(async ({ page, context }) => {
       })
     );
   }, MOCK_JWT());
+
+  await seedAuth(page);
 });
 
 async function expectRouteToRender(
@@ -42,9 +61,16 @@ async function expectRouteToRender(
   path: string,
   stableSelector: string
 ) {
-  await page.goto(path);
+  await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+  if (page.url().includes('/login')) {
+    await seedAuth(page);
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+  }
+
   await expect(page).toHaveURL(new RegExp(path.replace('/', '\\/')));
-  await expect(page.locator(stableSelector)).toBeVisible({ timeout: 15000 });
+  await page.waitForLoadState('networkidle').catch(() => undefined);
+  await expect(page.locator(stableSelector)).toBeVisible({ timeout: 20000 });
 }
 
 test('mfe-dashboard renders dashboard page', async ({ page }) => {

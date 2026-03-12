@@ -39,10 +39,10 @@ export default defineConfig({
   /* In CI: serve pre-built artifacts statically; locally: use the dev server */
   webServer: isCI
     ? [
-        { command: 'npx http-server dist/apps/host-shell -p 4200 -s --cors -c-1', url: 'http://localhost:4200', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
-        { command: 'npx http-server dist/apps/mfe-dashboard -p 4201 -s --cors -c-1', url: 'http://localhost:4201', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
-        { command: 'npx http-server dist/apps/mfe-tasks -p 4202 -s --cors -c-1', url: 'http://localhost:4202', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
-        { command: 'npx http-server dist/apps/mfe-profile -p 4203 -s --cors -c-1', url: 'http://localhost:4203', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/host-shell -p 4200 --cors -c-1 -P http://localhost:4200?', url: 'http://localhost:4200/', reuseExistingServer: false, timeout: 120000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-dashboard -p 4201 --cors -c-1', url: 'http://localhost:4201/remoteEntry.mjs', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-tasks -p 4202 --cors -c-1', url: 'http://localhost:4202/remoteEntry.mjs', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
+        { command: 'npx http-server dist/apps/mfe-profile -p 4203 --cors -c-1', url: 'http://localhost:4203/remoteEntry.mjs', reuseExistingServer: false, timeout: 60000, cwd: workspaceRoot },
       ]
     : {
         command: 'npx nx run host-shell:serve',

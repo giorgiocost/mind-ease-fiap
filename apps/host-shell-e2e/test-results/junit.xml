@@ -1,0 +1,20 @@
+<testsuites id="" name="" tests="8" failures="0" skipped="0" errors="0" time="28.634166">
+<testsuite name="mfe-rendering.spec.ts" timestamp="2026-03-12T05:41:26.552Z" hostname="chromium" tests="8" failures="0" skipped="0" time="28.197" errors="0">
+<testcase name="mfe-dashboard renders dashboard page" classname="mfe-rendering.spec.ts" time="3.848">
+</testcase>
+<testcase name="mfe-dashboard renders preferences page" classname="mfe-rendering.spec.ts" time="3.661">
+</testcase>
+<testcase name="mfe-tasks renders tasks page" classname="mfe-rendering.spec.ts" time="4.047">
+</testcase>
+<testcase name="mfe-tasks renders pomodoro page" classname="mfe-rendering.spec.ts" time="4.847">
+</testcase>
+<testcase name="mfe-profile renders profile settings page" classname="mfe-rendering.spec.ts" time="4.081">
+</testcase>
+<testcase name="mfe-profile renders onboarding page" classname="mfe-rendering.spec.ts" time="4.07">
+</testcase>
+<testcase name="no critical Angular errors on dashboard" classname="mfe-rendering.spec.ts" time="1.861">
+</testcase>
+<testcase name="no critical Angular errors on profile" classname="mfe-rendering.spec.ts" time="1.782">
+</testcase>
+</testsuite>
+</testsuites>
