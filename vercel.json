@@ -15,7 +15,7 @@
     },
     {
       "src": "/api/v1/(.*)",
-      "dest": "https://mock-mind-ease-fiap-f99amp8mr-gegiorgio1991-8329s-projects.vercel.app/$1"
+      "dest": "https://mock-mind-ease-fiap.vercel.app/api/v1/$1"
     },
     {
       "src": "/(.*\\.(js|mjs|css|ico|png|svg|woff2?))",
