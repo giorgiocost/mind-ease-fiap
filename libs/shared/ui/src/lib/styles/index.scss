@@ -1,0 +1,29 @@
+// =============================================================================
+// MindEase — Design System Styles Entry Point
+// =============================================================================
+//
+// Import this file in global stylesheets or component styles:
+//
+//   @use '@shared/styles' as *;
+//   @use '@shared/styles/tokens' as *;      ← tokens only (no output)
+//   @use '@shared/styles/mixins' as *;      ← mixins only (no output)
+//
+// This file forwards ALL partials so consuming code can cherry-pick what
+// it needs via the Sass module system (@use / @forward).
+// =============================================================================
+
+// Core design tokens (colors, spacing, typography, etc.)
+// Outputs :root { --var: value; } CSS custom properties.
+@forward 'tokens';
+
+// Cognitive accessibility tokens (density, focus, contrast, motion, etc.)
+// Outputs [data-*] attribute selectors and helper classes.
+@forward 'cognitive-tokens';
+
+// Reusable SCSS mixins (responsive, focus, layout, animations, etc.)
+// Pure mixins — zero CSS output until invoked with @include.
+@forward 'mixins';
+
+// Atomic utility classes (.p-md, .flex, .text-center, etc.)
+// Outputs utility CSS classes.
+@forward 'utilities';

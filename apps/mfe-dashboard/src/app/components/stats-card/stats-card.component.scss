@@ -1,0 +1,213 @@
+// apps/mfe-dashboard/src/app/components/stats-card/stats-card.component.scss
+@use '../../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+:host {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ui-card.clickable {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+ui-card.loading {
+  pointer-events: none;
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.stats-icon-container {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-hover);
+  transition: background-color 0.2s;
+}
+
+.stats-icon {
+  font-size: 2rem;
+}
+
+// Variant-specific icon backgrounds
+[data-variant='info'] .stats-icon-container {
+  background-color: var(--color-info-100, #E3F2FD);
+}
+
+[data-variant='success'] .stats-icon-container {
+  background-color: var(--color-success-100, #E8F5E9);
+}
+
+[data-variant='warning'] .stats-icon-container {
+  background-color: var(--color-warning-100, #FFF3E0);
+}
+
+[data-variant='danger'] .stats-icon-container {
+  background-color: var(--color-danger-100, #FFEBEE);
+}
+
+.stats-content {
+  flex: 1;
+  min-width: 0; // Allow text truncation
+}
+
+.stats-label {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  margin: 0 0 var(--spacing-xs);
+  font-weight: 500;
+}
+
+.stats-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color-primary);
+  margin: 0;
+}
+
+.stats-trend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--border-radius-sm);
+
+  &.trend-up {
+    color: var(--color-success);
+    background-color: var(--color-success-100, #E8F5E9);
+  }
+
+  &.trend-down {
+    color: var(--color-danger);
+    background-color: var(--color-danger-100, #FFEBEE);
+  }
+}
+
+// Skeleton loaders
+.skeleton-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-hover) 0%,
+    var(--color-surface) 50%,
+    var(--color-hover) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--border-radius-md);
+
+  &.skeleton-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--border-radius-lg);
+  }
+
+  &.skeleton-text {
+    height: 16px;
+    width: 120px;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &.skeleton-number {
+    height: 32px;
+    width: 80px;
+  }
+}
+
+.skeleton-content {
+  flex: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// UI Density variants
+[data-ui-density='simple'] {
+  .stats-icon-container {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stats-icon {
+    font-size: 1.5rem;
+  }
+
+  .stats-value {
+    font-size: 1.5rem;
+  }
+}
+
+[data-ui-density='full'] {
+  .stats-icon-container {
+    width: 72px;
+    height: 72px;
+  }
+
+  .stats-icon {
+    font-size: 2.5rem;
+  }
+
+  .stats-value {
+    font-size: 2.5rem;
+  }
+}
+
+// Motion preferences
+[data-motion='reduced'],
+[data-motion='off'] {
+  :host {
+    animation: none;
+  }
+
+  ui-card.clickable {
+    transition: none;
+  }
+
+  .skeleton {
+    animation: none;
+  }
+}

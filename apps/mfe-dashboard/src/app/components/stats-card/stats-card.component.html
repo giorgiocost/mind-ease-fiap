@@ -1,0 +1,47 @@
+<!-- apps/mfe-dashboard/src/app/components/stats-card/stats-card.component.html -->
+<ui-card
+  [variant]="cardVariant()"
+  [clickable]="clickable()"
+  [class.loading]="loading()"
+  (click)="handleClick()"
+  [attr.aria-label]="label() + ': ' + value()">
+
+  <div card-body>
+    @if (loading()) {
+      <!-- Skeleton loader -->
+      <div class="skeleton-container">
+        <div class="skeleton skeleton-icon"></div>
+        <div class="skeleton-content">
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-number"></div>
+        </div>
+      </div>
+    } @else {
+      <!-- Actual content -->
+      <div
+        class="stats-card"
+        [attr.data-variant]="variant()">
+
+        <div class="stats-icon-container">
+          <span class="stats-icon">{{ icon() }}</span>
+        </div>
+
+        <div class="stats-content">
+          <p class="stats-label">{{ label() }}</p>
+          <div class="stats-value-row">
+            <p class="stats-value">{{ value() }}</p>
+
+            @if (trend() && trendValue()) {
+              <span
+                class="stats-trend"
+                [class.trend-up]="trend() === 'up'"
+                [class.trend-down]="trend() === 'down'">
+                {{ trend() === 'up' ? '↑' : '↓' }} {{ trendValue() }}
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</ui-card>

@@ -1,0 +1,228 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-fast);
+
+  // Focus indicator (WCAG 2.4.7)
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: var(--shadow-focus);
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// ==================== Sizes ====================
+:host(.button-sm) {
+  height: 32px;
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-xxs);
+}
+
+:host(.button-md) {
+  height: 40px;
+  padding: 0 var(--spacing-md);
+  font-size: var(--font-size-base);
+  gap: var(--spacing-xs);
+}
+
+:host(.button-lg) {
+  height: 48px;
+  padding: 0 var(--spacing-lg);
+  font-size: var(--font-size-lg);
+  gap: var(--spacing-sm);
+}
+
+// ==================== Variants ====================
+:host(.button-primary) {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-neutral-0);
+
+  &:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:active:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary-700);
+    border-color: var(--color-primary-700);
+    transform: translateY(0);
+  }
+}
+
+:host(.button-secondary) {
+  background-color: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+
+  &:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary-50);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary-100);
+    transform: translateY(0);
+  }
+}
+
+:host(.button-danger) {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-neutral-0);
+
+  &:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-error-dark);
+    border-color: var(--color-error-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:active:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-error-dark);
+    border-color: var(--color-error-dark);
+    transform: translateY(0);
+    filter: brightness(0.9);
+  }
+}
+
+:host(.button-ghost) {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-text-primary);
+
+  &:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-neutral-100);
+  }
+
+  &:active:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-neutral-200);
+  }
+}
+
+// ==================== States ====================
+:host(.button-disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+:host(.button-loading) {
+  cursor: wait;
+  pointer-events: none;
+}
+
+// ==================== Content ====================
+.button-content {
+  // Reset native button styles
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: inherit;
+  color: inherit;
+  font: inherit;
+
+  // Layout
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+}
+
+.button-label {
+  line-height: 1;
+}
+
+// ==================== Spinner ====================
+.button-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 0.6s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ==================== Icon ====================
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+// ==================== Motion: off — suppress all hover visual changes ====================
+:host-context([data-motion='off']) {
+  &.button-primary:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: none;
+  }
+
+  &.button-secondary:hover:not(.button-disabled):not(.button-loading) {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  &.button-danger:hover:not(.button-disabled):not(.button-loading) {
+    background-color: var(--color-error);
+    border-color: var(--color-error);
+    box-shadow: none;
+  }
+
+  &.button-ghost:hover:not(.button-disabled):not(.button-loading) {
+    background-color: transparent;
+  }
+}
+
+// ==================== Cognitive Accessibility ====================
+:host {
+  @include cognitive-spacing;
+}

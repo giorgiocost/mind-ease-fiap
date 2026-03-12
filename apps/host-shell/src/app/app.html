@@ -1,2 +1,9 @@
-<app-nx-welcome></app-nx-welcome>
-<router-outlet></router-outlet>
+<app-layout>
+  <!-- Header with sidebar toggle -->
+  <app-header header (toggleSidebar)="handleToggleSidebar()"></app-header>
+
+  <!-- Sidebar with navigation menu -->
+  <app-sidebar sidebar [collapsed]="sidebarCollapsed()"></app-sidebar>
+
+  <!-- Main content is rendered via router-outlet in LayoutComponent -->
+</app-layout>

@@ -1,0 +1,17 @@
+import { ModuleFederationConfig } from '@nx/module-federation';
+
+const config: ModuleFederationConfig = {
+  name: 'mfe-profile',
+  exposes: {
+    './Routes': 'apps/mfe-profile/src/app/remote-entry/entry.routes.ts',
+  },
+  additionalShared: [
+    ['@angular/router', { singleton: true, strictVersion: false, requiredVersion: false }],
+    ['@angular/forms', { singleton: true, strictVersion: false, requiredVersion: false }],
+  ],
+};
+
+/**
+ * Nx requires a default export of the config to allow correct resolution of the module federation graph.
+ **/
+export default config;

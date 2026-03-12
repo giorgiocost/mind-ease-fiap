@@ -1,0 +1,112 @@
+@use '../styles/tokens' as *;
+@use '../styles/mixins' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Variants
+:host(.card-flat) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: none;
+  --_card-shadow: none;
+}
+
+:host(.card-outlined) {
+  border: 1px solid var(--color-neutral-300);
+  box-shadow: var(--shadow-sm);
+  --_card-shadow: var(--shadow-sm);
+}
+
+:host(.card-elevated) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-md);
+  --_card-shadow: var(--shadow-md);
+}
+
+:host(.card-raised) {
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-lg);
+  --_card-shadow: var(--shadow-lg);
+}
+
+// Clickable
+:host(.card-clickable) {
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Density (spacing)
+:host(.card-density-simple) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-sm);
+  }
+}
+
+:host(.card-density-medium) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-md);
+  }
+}
+
+:host(.card-density-full) {
+  ::ng-deep ui-card-header,
+  ::ng-deep ui-card-body,
+  ::ng-deep ui-card-footer {
+    padding: var(--spacing-lg);
+  }
+}
+
+// High contrast mode
+[data-contrast="high"] :host {
+  border-width: 2px;
+}
+
+// Motion: off — hover must not change the card's appearance at all
+:host-context([data-motion='off']):host(.card-clickable) {
+  &:hover {
+    transform: none !important;
+    // Restore the variant's rest shadow (defined via --_card-shadow per variant above)
+    box-shadow: var(--_card-shadow, none) !important;
+  }
+}
+
+// Cognitive spacing scale
+:host {
+  @include cognitive-spacing;
+}

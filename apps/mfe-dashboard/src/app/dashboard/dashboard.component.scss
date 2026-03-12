@@ -1,0 +1,142 @@
+// apps/mfe-dashboard/src/app/dashboard/dashboard.component.scss
+@use '../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+// Header
+.dashboard-header {
+  margin-bottom: var(--spacing-xl);
+
+  .greeting {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-color-primary);
+    margin: 0 0 var(--spacing-xs);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-md);
+    color: var(--text-color-secondary);
+    margin: 0;
+  }
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+// Error State
+.dashboard-error {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px solid var(--color-error, #dc2626);
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: var(--spacing-xl);
+
+  p {
+    color: var(--text-color-primary);
+    margin: var(--spacing-sm) 0;
+  }
+
+  button {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm, 4px);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// Content Grid
+.activity-section {
+  .card-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+
+    h2 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-color-primary);
+      margin: 0;
+    }
+  }
+
+  .card-body {
+    padding: var(--spacing-md);
+  }
+
+  .placeholder-text {
+    color: var(--text-color-secondary);
+    font-style: italic;
+    text-align: center;
+    padding: var(--spacing-lg);
+  }
+}
+
+// UI Density Variants
+[data-ui-density='simple'] {
+  .dashboard {
+    padding: var(--spacing-md);
+  }
+
+  .greeting {
+    font-size: var(--font-size-xl) !important;
+  }
+}
+
+[data-ui-density='full'] {
+  .greeting {
+    font-size: var(--font-size-3xl) !important;
+  }
+}
+
+// Focus Mode
+.focus-mode {
+  .activity-section {
+    display: none;
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  // Activity section is now single column
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: var(--spacing-md);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    .greeting {
+      font-size: var(--font-size-xl);
+    }
+  }
+}
+
+// Motion Preferences
+[data-motion='reduced'],
+[data-motion='off'] {
+  // Animation preferences handled by StatsCardComponent
+}

@@ -1,0 +1,138 @@
+<div class="pomodoro-container">
+
+  <!-- Mode Selector -->
+  <header class="pomodoro-header">
+    <div class="mode-selector" role="tablist" aria-label="Modo do timer">
+      <button
+        role="tab"
+        class="mode-button"
+        [class.active]="mode() === 'work'"
+        [attr.aria-selected]="mode() === 'work'"
+        (click)="changeMode('work')">
+        🍅 Trabalho
+      </button>
+      <button
+        role="tab"
+        class="mode-button"
+        [class.active]="mode() === 'short-break'"
+        [attr.aria-selected]="mode() === 'short-break'"
+        (click)="changeMode('short-break')">
+        ☕ Pausa Curta
+      </button>
+      <button
+        role="tab"
+        class="mode-button"
+        [class.active]="mode() === 'long-break'"
+        [attr.aria-selected]="mode() === 'long-break'"
+        (click)="changeMode('long-break')">
+        🌴 Pausa Longa
+      </button>
+    </div>
+  </header>
+
+  <!-- Work Duration Selector (visible in work mode) -->
+  @if (mode() === 'work') {
+    <div class="duration-selector" role="radiogroup" aria-label="Duração do trabalho">
+      @for (min of workDurationOptions; track min) {
+        <button
+          role="radio"
+          class="duration-button"
+          [class.active]="selectedWorkMinutes() === min"
+          [attr.aria-checked]="selectedWorkMinutes() === min"
+          (click)="setWorkDuration(min)">
+          {{ min }} min
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Timer Display -->
+  <div
+    class="timer-display"
+    role="timer"
+    [attr.aria-label]="formattedTime() + ' — ' + modeLabel()"
+    [attr.aria-live]="isRunning() ? 'off' : 'polite'">
+
+    <svg
+      class="progress-ring"
+      width="280"
+      height="280"
+      aria-hidden="true">
+
+      <!-- Background circle -->
+      <circle
+        class="progress-ring__bg"
+        cx="140" cy="140" r="120"
+        fill="none"
+        stroke-width="10">
+      </circle>
+
+      <!-- Progress circle -->
+      <circle
+        class="progress-ring__fill"
+        [attr.data-mode]="mode()"
+        cx="140" cy="140" r="120"
+        fill="none"
+        stroke-width="10"
+        stroke-linecap="round"
+        [style.stroke-dasharray]="circumference"
+        [style.stroke-dashoffset]="strokeDashoffset()">
+      </circle>
+    </svg>
+
+    <!-- Inner content -->
+    <div class="timer-content">
+      <span class="timer-icon" aria-hidden="true">{{ modeIcon() }}</span>
+      <span class="timer-text">{{ formattedTime() }}</span>
+      <span class="timer-mode">{{ modeLabel() }}</span>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="timer-controls">
+    @if (!isRunning()) {
+      <button
+        class="btn-control btn-start"
+        (click)="start()"
+        aria-label="Iniciar timer">
+        ▶ Iniciar
+      </button>
+    } @else {
+      <button
+        class="btn-control btn-pause"
+        (click)="pause()"
+        aria-label="Pausar timer">
+        ⏸ Pausar
+      </button>
+    }
+    <button
+      class="btn-control btn-reset"
+      (click)="reset()"
+      aria-label="Reiniciar timer">
+      ↻ Reiniciar
+    </button>
+  </div>
+
+  <!-- Notification prompt -->
+  @if (notificationPermission() === 'default') {
+    <div class="notification-prompt" role="status">
+      <p>Ativar notificações ao completar sessões?</p>
+      <button
+        class="btn-enable-notifications"
+        (click)="requestNotificationPermission()">
+        🔔 Ativar Notificações
+      </button>
+    </div>
+  }
+
+  <!-- Clear history -->
+  @if (sessionsCompleted() > 0) {
+    <button
+      class="btn-clear"
+      (click)="clearHistory()"
+      aria-label="Limpar histórico de sessões">
+      Limpar histórico
+    </button>
+  }
+
+</div>

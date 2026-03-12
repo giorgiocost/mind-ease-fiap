@@ -1,0 +1,221 @@
+<div class="onboarding-container">
+
+  <!-- Stepper -->
+  <nav class="stepper" aria-label="Progresso do onboarding">
+    @for (step of steps; track step; let i = $index) {
+      <div
+        class="step"
+        [class.active]="i === currentStepIndex()"
+        [class.completed]="i < currentStepIndex()"
+        [attr.aria-current]="i === currentStepIndex() ? 'step' : null">
+        <div class="step-number" aria-hidden="true">
+          @if (i < currentStepIndex()) {
+            ✓
+          } @else {
+            {{ i + 1 }}
+          }
+        </div>
+        <span class="step-label">
+          @switch (step) {
+            @case ('welcome') { Boas-vindas }
+            @case ('preferences') { Preferências }
+            @case ('tour') { Tour }
+          }
+        </span>
+      </div>
+
+      @if (!$last) {
+        <div
+          class="step-connector"
+          [class.completed]="i < currentStepIndex()"
+          aria-hidden="true">
+        </div>
+      }
+    }
+  </nav>
+
+  <!-- Step Content -->
+  <div class="onboarding-content">
+
+    <!-- Step 1: Welcome -->
+    @if (currentStep() === 'welcome') {
+      <div class="step-welcome" role="region" aria-labelledby="welcome-title">
+        <div class="welcome-icon" aria-hidden="true">👋</div>
+        <h1 id="welcome-title">Bem-vindo ao MindEase!</h1>
+        <p class="welcome-description">
+          O MindEase é sua plataforma de gerenciamento de tarefas com foco em
+          acessibilidade cognitiva e produtividade.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">🎨</span>
+            <h3>Interface Adaptável</h3>
+            <p>Ajuste densidade, contraste e tamanho de texto</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">🧠</span>
+            <h3>Foco Cognitivo</h3>
+            <p>Modo foco para reduzir distrações</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">✅</span>
+            <h3>Kanban Board</h3>
+            <p>Organize tarefas visualmente</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">🍅</span>
+            <h3>Pomodoro Timer</h3>
+            <p>Técnica comprovada de produtividade</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 2: Preferences -->
+    @if (currentStep() === 'preferences') {
+      <div class="step-preferences" role="region" aria-labelledby="prefs-title">
+        <h1 id="prefs-title">Configure suas preferências</h1>
+        <p class="step-description">
+          Ajuste a interface para se adequar às suas necessidades.
+          Você pode mudar isso a qualquer momento nas configurações.
+        </p>
+
+        <!-- UI Density -->
+        <div class="preference-section">
+          <p class="preference-label" id="density-label">Densidade da Interface</p>
+          <div class="option-buttons" role="group" aria-labelledby="density-label">
+            <button
+              class="option-button"
+              [class.selected]="selectedDensity() === 'simple'"
+              [attr.aria-pressed]="selectedDensity() === 'simple'"
+              (click)="selectDensity('simple')">
+              <span class="option-icon" aria-hidden="true">📱</span>
+              <span class="option-title">Simples</span>
+              <span class="option-desc">Menos elementos</span>
+            </button>
+            <button
+              class="option-button"
+              [class.selected]="selectedDensity() === 'medium'"
+              [attr.aria-pressed]="selectedDensity() === 'medium'"
+              (click)="selectDensity('medium')">
+              <span class="option-icon" aria-hidden="true">💻</span>
+              <span class="option-title">Médio</span>
+              <span class="option-desc">Equilibrado</span>
+            </button>
+            <button
+              class="option-button"
+              [class.selected]="selectedDensity() === 'full'"
+              [attr.aria-pressed]="selectedDensity() === 'full'"
+              (click)="selectDensity('full')">
+              <span class="option-icon" aria-hidden="true">🖥️</span>
+              <span class="option-title">Completo</span>
+              <span class="option-desc">Todos os detalhes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Focus Mode -->
+        <div class="preference-section">
+          <p class="preference-label" id="focus-label">Modo Foco</p>
+          <button
+            class="toggle-button"
+            [class.active]="selectedFocusMode()"
+            [attr.aria-pressed]="selectedFocusMode()"
+            aria-labelledby="focus-label"
+            (click)="toggleFocusMode()">
+            <span class="toggle-icon" aria-hidden="true">
+              {{ selectedFocusMode() ? '🎯' : '👁️' }}
+            </span>
+            <div class="toggle-content">
+              <span class="toggle-title">
+                {{ selectedFocusMode() ? 'Modo Foco Ativo' : 'Modo Foco Inativo' }}
+              </span>
+              <span class="toggle-desc">
+                {{ selectedFocusMode() ? 'Interface simplificada' : 'Interface completa' }}
+              </span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Contrast -->
+        <div class="preference-section">
+          <p class="preference-label" id="contrast-label">Contraste</p>
+          <div class="option-buttons" role="group" aria-labelledby="contrast-label">
+            <button
+              class="option-button"
+              [class.selected]="selectedContrast() === 'low'"
+              [attr.aria-pressed]="selectedContrast() === 'low'"
+              (click)="selectContrast('low')">
+              <span class="option-title">Baixo</span>
+            </button>
+            <button
+              class="option-button"
+              [class.selected]="selectedContrast() === 'normal'"
+              [attr.aria-pressed]="selectedContrast() === 'normal'"
+              (click)="selectContrast('normal')">
+              <span class="option-title">Normal</span>
+            </button>
+            <button
+              class="option-button"
+              [class.selected]="selectedContrast() === 'high'"
+              [attr.aria-pressed]="selectedContrast() === 'high'"
+              (click)="selectContrast('high')">
+              <span class="option-title">Alto</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 3: Tour -->
+    @if (currentStep() === 'tour') {
+      <div class="step-tour" role="region" aria-labelledby="tour-title">
+        <h1 id="tour-title">Conheça as funcionalidades</h1>
+        <p class="step-description">
+          Aqui está um resumo do que você pode fazer no MindEase.
+        </p>
+
+        <div class="tour-grid">
+          @for (card of tourCards; track card.title) {
+            <div class="tour-card">
+              <span class="tour-icon" aria-hidden="true">{{ card.icon }}</span>
+              <h3>{{ card.title }}</h3>
+              <p>{{ card.description }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <!-- Actions -->
+  <div class="onboarding-actions">
+    <button
+      class="btn-secondary"
+      (click)="skip()"
+      aria-label="Pular onboarding e ir para o dashboard">
+      Pular
+    </button>
+
+    <div class="actions-right">
+      @if (!isFirstStep()) {
+        <button
+          class="btn-secondary"
+          (click)="prevStep()"
+          aria-label="Voltar ao passo anterior">
+          ← Voltar
+        </button>
+      }
+
+      <button
+        class="btn-primary"
+        (click)="nextStep()"
+        [attr.aria-label]="isLastStep() ? 'Finalizar onboarding' : 'Continuar para próximo passo'">
+        {{ isLastStep() ? 'Finalizar' : 'Continuar' }} →
+      </button>
+    </div>
+  </div>
+
+</div>

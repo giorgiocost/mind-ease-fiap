@@ -1,0 +1,188 @@
+<div class="demo-container">
+  <h1>Card Component Demo</h1>
+  <p class="subtitle">Demonstração do componente Card com variantes, densidades e slots de conteúdo</p>
+
+  <section class="demo-section">
+    <h2>Variantes de Card</h2>
+    <div class="card-grid">
+      <ui-card variant="flat">
+        <ui-card-header>
+          <h3>Flat Card</h3>
+        </ui-card-header>
+        <ui-card-body>
+          Sem shadow, apenas border simples. Ideal para layouts minimalistas.
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card variant="outlined">
+        <ui-card-header>
+          <h3>Outlined Card</h3>
+        </ui-card-header>
+        <ui-card-body>
+          Border visível com shadow leve. Bom para destacar conteúdo secundário.
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card variant="elevated">
+        <ui-card-header>
+          <h3>Elevated Card (Default)</h3>
+        </ui-card-header>
+        <ui-card-body>
+          Shadow média, padrão do componente. Mais comum em interfaces modernas.
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card variant="raised">
+        <ui-card-header>
+          <h3>Raised Card</h3>
+        </ui-card-header>
+        <ui-card-body>
+          Shadow forte para destaque. Use para cards importantes ou principais.
+        </ui-card-body>
+      </ui-card>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Card com Footer e Ações</h2>
+    <div class="card-grid">
+      <ui-card>
+        <ui-card-header>
+          <h3>Task Completa</h3>
+          <span class="badge">Concluído</span>
+        </ui-card-header>
+        <ui-card-body>
+          <p>Esta tarefa foi marcada como concluída. Você pode revisar os detalhes ou arquivá-la.</p>
+        </ui-card-body>
+        <ui-card-footer>
+          <ui-button size="sm" variant="secondary">Arquivar</ui-button>
+          <ui-button size="sm" variant="primary">Revisar</ui-button>
+        </ui-card-footer>
+      </ui-card>
+
+      <ui-card>
+        <ui-card-header>
+          <h3>Nova Notificação</h3>
+          <span class="badge badge-warning">Novo</span>
+        </ui-card-header>
+        <ui-card-body>
+          <p>Você tem uma nova mensagem de João Silva sobre o projeto MindEase.</p>
+        </ui-card-body>
+        <ui-card-footer>
+          <ui-button size="sm" variant="ghost">Ignorar</ui-button>
+          <ui-button size="sm" variant="primary">Ver Mensagem</ui-button>
+        </ui-card-footer>
+      </ui-card>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Densidades de UI</h2>
+    <div class="card-grid">
+      <ui-card density="simple">
+        <ui-card-header>
+          <h3>Simple Density</h3>
+        </ui-card-header>
+        <ui-card-body>
+          <strong>Padding: 8px</strong><br>
+          Ideal para listas compactas ou quando você precisa economizar espaço vertical.
+        </ui-card-body>
+        <ui-card-footer>
+          <ui-button size="sm">Ação</ui-button>
+        </ui-card-footer>
+      </ui-card>
+
+      <ui-card density="medium">
+        <ui-card-header>
+          <h3>Medium Density (Default)</h3>
+        </ui-card-header>
+        <ui-card-body>
+          <strong>Padding: 16px</strong><br>
+          Densidade padrão. Equilibra conforto visual com eficiência espacial.
+        </ui-card-body>
+        <ui-card-footer>
+          <ui-button size="sm">Ação</ui-button>
+        </ui-card-footer>
+      </ui-card>
+
+      <ui-card density="full">
+        <ui-card-header>
+          <h3>Full Density</h3>
+        </ui-card-header>
+        <ui-card-body>
+          <strong>Padding: 24px</strong><br>
+          Padding generoso para melhor acessibilidade cognitiva. Recomendado para usuários com TDAH.
+        </ui-card-body>
+        <ui-card-footer>
+          <ui-button size="sm">Ação</ui-button>
+        </ui-card-footer>
+      </ui-card>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Card Clicável</h2>
+    <div class="card-grid">
+      <ui-card [clickable]="true" (click)="handleCardClick()">
+        <ui-card-header>
+          <h3>Card Interativo</h3>
+          <span class="icon">→</span>
+        </ui-card-header>
+        <ui-card-body>
+          <p>Este card é clicável. Passe o mouse para ver o efeito de elevação.</p>
+          <p class="counter">Cliques: {{ clickCount }}</p>
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card [clickable]="true">
+        <ui-card-header>
+          <h3>Ir para Dashboard</h3>
+          <span class="icon">📊</span>
+        </ui-card-header>
+        <ui-card-body>
+          Visualize suas métricas e estatísticas em tempo real.
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card [clickable]="true">
+        <ui-card-header>
+          <h3>Gerenciar Tarefas</h3>
+          <span class="icon">✓</span>
+        </ui-card-header>
+        <ui-card-body>
+          Organize suas tarefas usando o kanban board.
+        </ui-card-body>
+      </ui-card>
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <h2>Card Simples (Apenas Body)</h2>
+    <div class="card-grid">
+      <ui-card variant="flat">
+        <ui-card-body>
+          <p><strong>Nota Rápida</strong></p>
+          <p>Este é um card sem header nem footer, apenas conteúdo principal.</p>
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card variant="outlined">
+        <ui-card-body>
+          <p><strong>Estatística</strong></p>
+          <p class="stat">42</p>
+          <p>Tarefas Completadas</p>
+        </ui-card-body>
+      </ui-card>
+
+      <ui-card variant="elevated">
+        <ui-card-body>
+          <p><strong>Progresso</strong></p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%"></div>
+          </div>
+          <p>75% completo</p>
+        </ui-card-body>
+      </ui-card>
+    </div>
+  </section>
+</div>

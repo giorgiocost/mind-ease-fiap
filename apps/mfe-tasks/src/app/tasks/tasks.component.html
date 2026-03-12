@@ -1,0 +1,264 @@
+<div
+  class="tasks-container"
+  [attr.data-ui-density]="vm.uiDensity()"
+  [attr.data-focus-mode]="vm.focusMode()"
+  [attr.data-content-mode]="vm.contentMode()"
+>
+  <!-- ========================================
+       HEADER COM FILTROS E AÇÕES
+       ======================================== -->
+  <header class="tasks-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="title-text">Suas Tarefas</span>
+        @if (vm.tasks().length > 0) {
+          <span class="task-count">({{ vm.tasks().length }})</span>
+        }
+      </h1>
+    </div>
+
+    <div class="header-actions">
+      <!-- Busca/Filtro -->
+      @if (vm.uiDensity() !== 'simple') {
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Pesquisar tarefas..."
+            [value]="vm.uiState().filterText"
+            (input)="onFilterChange($event)"
+            class="search-input"
+            aria-label="Pesquisar tarefas"
+          />
+        </div>
+      }
+
+      <!-- Botão Sync -->
+      <button
+        type="button"
+        class="btn-icon btn-refresh"
+        (click)="onRefresh()"
+        [disabled]="vm.isLoading()"
+        aria-label="Sincronizar tarefas"
+      >
+        <span class="icon">🔄</span>
+      </button>
+
+      <!-- Botão Criar -->
+      <button
+        type="button"
+        class="btn-primary btn-create"
+        (click)="onOpenCreateModal()"
+        [disabled]="vm.isLoading()"
+      >
+        <span class="icon">➕</span>
+        <span class="label">Nova Tarefa</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================
+       LOADING STATE
+       ======================================== -->
+  @if (vm.isLoading()) {
+    <div class="loading-state" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="loading-message">Carregando suas tarefas...</p>
+      <span class="sr-only">Carregando tarefas, por favor aguarde</span>
+    </div>
+  }
+
+  <!-- ========================================
+       ERROR STATE
+       ======================================== -->
+  @if (vm.error() && !vm.isLoading()) {
+    <div class="error-state" role="alert" aria-live="assertive">
+      <div class="error-card">
+        <span class="error-icon">⚠️</span>
+        <p class="error-message">{{ vm.error() }}</p>
+        <div class="error-actions">
+          <button type="button" class="btn-secondary" (click)="onRefresh()">
+            Tentar Novamente
+          </button>
+          <button type="button" class="btn-text" (click)="onClearError()">
+            Dispensar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       EMPTY STATE
+       ======================================== -->
+  @if (vm.tasks().length === 0 && !vm.isLoading() && !vm.error()) {
+    <div class="empty-state">
+      <div class="empty-card">
+        <span class="empty-icon">📝</span>
+        <h2 class="empty-title">Sem tarefas ainda</h2>
+        <p class="empty-message">Crie sua primeira tarefa para começar a usar seu quadro de tarefas amigável à cognição.</p>
+        <button type="button" class="btn-primary" (click)="onOpenCreateModal()">
+          <span class="icon">➕</span>
+          Criar Primeira Tarefa
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       KANBAN BOARD (CDK Drag & Drop)
+       ======================================== -->
+  @if (vm.tasks().length > 0 && !vm.isLoading()) {
+    <div class="kanban-board" cdkDropListGroup role="region" aria-label="Quadro Kanban de tarefas">
+      <!-- Coluna TODO -->
+      <div class="kanban-column column-todo" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().TODO)">
+        <div class="column-header">
+          <h3 class="column-title">
+            📋 Para Fazer
+            <span class="column-count">({{ vm.taskCounts().TODO }})</span>
+          </h3>
+        </div>
+        <div
+          class="column-body"
+          cdkDropList
+          id="TODO"
+          [cdkDropListData]="vm.tasksByStatus().TODO"
+          [cdkDropListConnectedTo]="todoConnected"
+          (cdkDropListDropped)="onTaskDropped($event)">
+          @if (vm.tasksByStatus().TODO.length === 0) {
+            <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().TODO; track task.id) {
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
+                <app-task-card [task]="task"></app-task-card>
+                <div class="drag-placeholder" *cdkDragPlaceholder></div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Coluna DOING -->
+      <div class="kanban-column column-doing" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().DOING)">
+        <div class="column-header">
+          <h3 class="column-title">
+            🚀 Fazendo
+            <span class="column-count">({{ vm.taskCounts().DOING }})</span>
+            @if (!vm.canAddToDoing()) {
+              <span class="wip-warning">⚠️ WIP Limit</span>
+            }
+          </h3>
+        </div>
+        <div
+          class="column-body"
+          cdkDropList
+          id="DOING"
+          [cdkDropListData]="vm.tasksByStatus().DOING"
+          [cdkDropListConnectedTo]="doingConnected"
+          (cdkDropListDropped)="onTaskDropped($event)">
+          @if (vm.tasksByStatus().DOING.length === 0) {
+            <p class="placeholder-text">Mova as tarefas para esta coluna...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().DOING; track task.id) {
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
+                <app-task-card [task]="task"></app-task-card>
+                <div class="drag-placeholder" *cdkDragPlaceholder></div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Coluna DONE -->
+      <div class="kanban-column column-done" [class.column-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && !hasActiveInColumn(vm.tasksByStatus().DONE)">
+        <div class="column-header">
+          <h3 class="column-title">
+            ✅ Concluído
+            <span class="column-count">({{ vm.taskCounts().DONE }})</span>
+          </h3>
+        </div>
+        <div
+          class="column-body"
+          cdkDropList
+          id="DONE"
+          [cdkDropListData]="vm.tasksByStatus().DONE"
+          [cdkDropListConnectedTo]="doneConnected"
+          (cdkDropListDropped)="onTaskDropped($event)">
+          @if (vm.tasksByStatus().DONE.length === 0) {
+            <p class="placeholder-text">Movas as tarefas para esta coluna...</p>
+          } @else {
+            @for (task of vm.tasksByStatus().DONE; track task.id) {
+              <div cdkDrag [cdkDragData]="task" class="drag-wrapper" [class.card-dimmed]="vm.focusMode() && vm.activeTaskId() !== null && task.id !== vm.activeTaskId()">
+                <app-task-card [task]="task"></app-task-card>
+                <div class="drag-placeholder" *cdkDragPlaceholder></div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================
+       MODAL DE CRIAR TAREFA
+       ======================================== -->
+  @if (vm.uiState().isCreatingTask) {
+    <div
+      class="modal-overlay"
+      (click)="onCreateModalOverlayClick($event)"
+      (keydown.enter)="onCloseCreateModal()"
+      (keydown.space)="onCloseCreateModal()"
+      role="dialog"
+      aria-modal="true"
+      tabindex="0"
+    >
+      <div class="modal-card" role="document">
+        <header class="modal-header">
+          <h2 class="modal-title">Nova Tarefa</h2>
+          <button type="button" class="btn-close" (click)="onCloseCreateModal()" aria-label="Fechar modal">
+            ✕
+          </button>
+        </header>
+
+        <form #createForm="ngForm" (ngSubmit)="onCreateTask(taskTitle.value, taskDescription.value); taskTitle.value=''; taskDescription.value=''">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="task-title" class="form-label">Título</label>
+              <input
+                id="task-title"
+                #taskTitle
+                type="text"
+                class="form-input"
+                placeholder="O que precisa ser feito?"
+                required
+                maxlength="200"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group" [style.display]="vm.contentMode() === 'detailed' ? 'block' : 'none'">
+              <label for="task-description" class="form-label">Descrição</label>
+              <textarea
+                id="task-description"
+                #taskDescription
+                class="form-textarea"
+                placeholder="Adicione mais detalhes sobre esta tarefa (opcional)"
+                rows="3"
+                maxlength="2000"
+              ></textarea>
+            </div>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="onCloseCreateModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary" [disabled]="createForm.invalid">
+              <span class="icon">➕</span>
+              Criar
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+</div>

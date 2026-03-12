@@ -1,0 +1,60 @@
+<!-- Kanban Column Template -->
+<div
+  class="kanban-column"
+  [attr.data-status]="status()"
+  [class.wip-at-limit]="wipLimit() !== null && tasks().length >= wipLimit()!"
+>
+  <header class="column-header">
+    <h2 class="column-title">{{ title() }}</h2>
+    <div class="column-header-right">
+      @if (wipLimit() !== null) {
+        <span
+          class="wip-indicator"
+          [class.wip-full]="tasks().length >= wipLimit()!"
+          [attr.aria-label]="'WIP: ' + tasks().length + ' de ' + wipLimit()">
+          ⚠️ {{ tasks().length }}/{{ wipLimit() }}
+        </span>
+      }
+      <span class="column-badge">{{ tasks().length }}</span>
+    </div>
+  </header>
+
+  <div
+    class="column-content"
+    cdkDropList
+    [cdkDropListData]="tasks()"
+    [cdkDropListConnectedTo]="connectedTo()"
+    [id]="status()"
+    (cdkDropListDropped)="onDrop($event)">
+
+    @if (loading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    } @else {
+      @if (tasks().length === 0) {
+        <div class="empty-state">
+          <p>Nenhuma tarefa</p>
+        </div>
+      } @else {
+        @for (task of tasks(); track task.id) {
+          <div
+            cdkDrag
+            [cdkDragData]="task"
+            class="drag-container">
+            <app-task-card [task]="task"></app-task-card>
+
+            <!-- Custom drag placeholder (dashed border in drop zone) -->
+            <div class="task-placeholder" *cdkDragPlaceholder></div>
+
+            <!-- Custom drag preview (floating card while dragging) -->
+            <div class="drag-preview" *cdkDragPreview>
+              <div class="drag-preview__title">{{ task.title }}</div>
+              <div class="drag-preview__status">→ Arraste para mover</div>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

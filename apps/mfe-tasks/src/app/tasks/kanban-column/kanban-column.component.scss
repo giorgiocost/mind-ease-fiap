@@ -1,0 +1,240 @@
+@use '../../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.column-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: calc(0.05em + var(--letter-spacing-add, 0em));
+}
+
+.column-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  background-color: var(--color-hover);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.column-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wip-indicator {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+  white-space: nowrap;
+
+  &.wip-full {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-color: #f87171;
+    animation: wip-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes wip-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.wip-at-limit {
+  border-color: #f87171;
+}
+
+// Status-specific badge colors
+[data-status='TODO'] .column-badge {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+[data-status='DOING'] .column-badge {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+[data-status='DONE'] .column-badge {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.column-content {
+  flex: 1;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: 80px;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.skeleton-card {
+  height: 120px;
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 0%,
+    #ffffff 50%,
+    #f3f4f6 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ============================================
+// DRAG & DROP STYLES
+// ============================================
+
+// Drag container — cursor and touch handling
+.drag-container {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Placeholder where item will be dropped
+.task-placeholder {
+  min-height: 100px;
+  background: var(--color-hover, rgba(0, 0, 0, 0.04));
+  border: 2px dashed var(--color-primary, #6366f1);
+  border-radius: var(--radius-md, 8px);
+  opacity: 0.6;
+  transition: all 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Custom drag preview (floating card while dragging)
+.drag-preview {
+  width: 260px;
+  padding: 12px 16px;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-primary, #6366f1);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: rotate(2deg);
+  opacity: 0.92;
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text, #1f2937);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__desc {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary, #6b7280);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  &__status {
+    font-size: 0.6875rem;
+    color: var(--color-primary, #6366f1);
+    font-weight: 500;
+  }
+}
+
+// Animate items shifting when dragging over them
+.column-content.cdk-drop-list-dragging .drag-container:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Animate item returning to position after drop
+.drag-container.cdk-drag-animating {
+  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Visual highlight when dragging over a column
+.column-content.cdk-drop-list-receiving {
+  background-color: rgba(99, 102, 241, 0.04);
+  border-radius: var(--radius-md, 8px);
+  outline: 2px dashed rgba(99, 102, 241, 0.3);
+  outline-offset: -4px;
+}
+
+// ============================================
+// MOTION PREFERENCES (Acessibilidade Cognitiva)
+// ============================================
+
+// reduced: drag animations removed, hover transitions kept via global rule
+[data-motion='reduced'] {
+  .drag-container.cdk-drag-animating,
+  .column-content.cdk-drop-list-dragging .drag-container {
+    transition-duration: 0ms;
+  }
+
+  .drag-preview { transform: none; }
+  .task-placeholder { transition: none; }
+
+  // shimmer is a continuous loop — kill it
+  .skeleton-card { animation: none; }
+}
+
+// off: total silence; global rule handles *; only extras below
+[data-motion='off'] {
+  .drag-container.cdk-drag-animating,
+  .column-content.cdk-drop-list-dragging .drag-container,
+  .task-placeholder,
+  .drag-preview,
+  .task-card {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+// (fim do arquivo)

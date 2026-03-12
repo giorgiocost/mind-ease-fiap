@@ -1,0 +1,225 @@
+<div class="profile-settings" [class.summary-mode]="contentMode() === 'summary'">
+
+  <!-- Header -->
+  <header class="settings-header">
+    <div class="header-avatar">
+      <div class="avatar-circle">
+        <span class="avatar-initials">{{ user()?.name?.charAt(0)?.toUpperCase() || '?' }}</span>
+      </div>
+      <div class="header-badge">
+        <span class="badge-icon">✓</span>
+        <span class="badge-text">Ativo</span>
+      </div>
+    </div>
+    <div class="header-info">
+      <h1>{{ user()?.name || 'Usuário' }}</h1>
+      <p class="header-email">{{ user()?.email || 'email@exemplo.com' }}</p>
+      <p class="header-subtitle">Gerencie suas informações pessoais e visualize suas preferências cognitivas</p>
+    </div>
+  </header>
+
+  <!-- Global error banner -->
+  @if (error()) {
+    <div class="error-banner" role="alert">
+      ⚠️ {{ error() }}
+    </div>
+  }
+
+  <!-- ① User Information -->
+  <section class="settings-section" aria-labelledby="section-profile">
+    <h2 id="section-profile">Informações Pessoais</h2>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+      <div class="form-group">
+        <label for="name">Nome Completo</label>
+        <ui-input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Seu nome completo">
+        </ui-input>
+        @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+          <span class="form-error" role="alert">Nome deve ter pelo menos 3 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <ui-input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu@email.com">
+        </ui-input>
+        @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+          <span class="form-error" role="alert">Email inválido</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="profileForm.invalid || savingProfile()"
+          [attr.aria-busy]="savingProfile()">
+          @if (savingProfile()) { ⏳ Salvando... } @else { 💾 Salvar Alterações }
+        </button>
+
+        @if (profileSaved()) {
+          <span class="success-message" aria-live="polite">✓ Perfil atualizado!</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <!-- ② Change Password -->
+  <section class="settings-section" aria-labelledby="section-password">
+    <h2 id="section-password">Alterar Senha</h2>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+      <div class="form-group">
+        <label for="currentPassword">Senha Atual</label>
+        <ui-input
+          id="currentPassword"
+          type="password"
+          formControlName="currentPassword"
+          placeholder="Digite sua senha atual">
+        </ui-input>
+        @if (passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched) {
+          <span class="form-error" role="alert">Campo obrigatório</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="newPassword">Nova Senha</label>
+        <ui-input
+          id="newPassword"
+          type="password"
+          formControlName="newPassword"
+          placeholder="Mínimo 8 caracteres">
+        </ui-input>
+        @if (passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+          <span class="form-error" role="alert">Senha deve ter pelo menos 8 caracteres</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Nova Senha</label>
+        <ui-input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Repita a nova senha">
+        </ui-input>
+        @if (passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched) {
+          <span class="form-error" role="alert">As senhas não coincidem</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="passwordForm.invalid || changingPassword()"
+          [attr.aria-busy]="changingPassword()">
+          @if (changingPassword()) { ⏳ Alterando... } @else { 🔒 Alterar Senha }
+        </button>
+
+        @if (passwordChanged()) {
+          <span class="success-message" aria-live="polite">✓ Senha alterada!</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <!-- ③ Preferences Summary -->
+  <section class="settings-section preferences-showcase" aria-labelledby="section-prefs">
+    <div class="section-header">
+      <div>
+        <h2 id="section-prefs">🧠 Preferências Cognitivas</h2>
+        <p class="section-description">Suas configurações personalizadas para melhor experiência</p>
+      </div>
+      <button class="btn-link" (click)="navigateToPreferences()" aria-label="Editar preferências">
+        ✏️ Editar
+      </button>
+    </div>
+
+    <div class="preferences-grid">
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().uiDensity === 'simple'">📐</div>
+        <div class="pref-content">
+          <span class="pref-label">Densidade UI</span>
+          <span class="pref-value">{{ uiDensityLabel(preferences().uiDensity) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card" [class.pref-highlighted]="preferences().focusMode">
+        <div class="pref-icon" [class.pref-active]="preferences().focusMode">🎯</div>
+        <div class="pref-content">
+          <span class="pref-label">Modo Foco</span>
+          <span class="pref-value">{{ preferences().focusMode ? 'Ativo' : 'Inativo' }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().contrast === 'high'">🌓</div>
+        <div class="pref-content">
+          <span class="pref-label">Contraste</span>
+          <span class="pref-value">{{ contrastLabel(preferences().contrast) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon" [class.pref-active]="preferences().motion === 'reduced'">🎬</div>
+        <div class="pref-content">
+          <span class="pref-label">Movimento</span>
+          <span class="pref-value">{{ motionLabel(preferences().motion) }}</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon">🔤</div>
+        <div class="pref-content">
+          <span class="pref-label">Escala de Fonte</span>
+          <span class="pref-value">{{ preferences().fontScale }}x</span>
+        </div>
+      </div>
+
+      <div class="pref-card">
+        <div class="pref-icon">📏</div>
+        <div class="pref-content">
+          <span class="pref-label">Espaçamento</span>
+          <span class="pref-value">{{ preferences().spacingScale }}x</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ Danger Zone -->
+  <section class="settings-section danger-zone" aria-labelledby="section-danger">
+    <h2 id="section-danger">Zona de Perigo</h2>
+
+    <div class="danger-actions">
+      <div class="danger-item">
+        <div class="danger-info">
+          <h3>Sair da conta</h3>
+          <p>Encerrar a sessão atual no MindEase</p>
+        </div>
+        <button class="btn-danger-outline" (click)="logout()" aria-label="Fazer logout">
+          🚪 Sair
+        </button>
+      </div>
+
+      <div class="danger-item">
+        <div class="danger-info">
+          <h3>Excluir conta</h3>
+          <p>Remove permanentemente sua conta e todos os dados associados</p>
+        </div>
+        <button class="btn-danger" (click)="deleteAccount()" aria-label="Excluir conta permanentemente">
+          🗑️ Excluir Conta
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

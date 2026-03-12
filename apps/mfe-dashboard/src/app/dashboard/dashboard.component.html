@@ -1,0 +1,63 @@
+<!-- apps/mfe-dashboard/src/app/dashboard/dashboard.component.html -->
+<div class="dashboard" [attr.data-ui-density]="uiDensity()" [class.focus-mode]="focusMode()">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <h1 class="greeting">{{ greeting() }}</h1>
+    <p class="subtitle">Aqui está sua visão geral de produtividade</p>
+  </header>
+
+  <!-- Error State -->
+  @if (error()) {
+    <div class="dashboard-error" role="alert" aria-live="assertive">
+      <span aria-hidden="true">⚠️</span>
+      <p>{{ error() }}</p>
+      <button (click)="loadDashboardData()" aria-label="Tentar carregar novamente">Tentar novamente</button>
+    </div>
+  }
+
+  <!-- Stats Cards Grid -->
+  @if (!error()) {
+  <section class="stats-grid" aria-label="Estatísticas de produtividade">
+    <app-stats-card
+      icon="📋"
+      label="Tarefas Pendentes"
+      [value]="stats()?.pendingTasks || 0"
+      variant="info"
+      [loading]="loading()"
+      (clicked)="navigateToTasks()">
+    </app-stats-card>
+
+    <app-stats-card
+      icon="✅"
+      label="Concluídas Hoje"
+      [value]="stats()?.completedToday || 0"
+      variant="success"
+      [loading]="loading()"
+      trend="up"
+      trendValue="+2"
+      (clicked)="navigateToTasks()">
+    </app-stats-card>
+
+    <app-stats-card
+      icon="⏱️"
+      label="Foco Hoje"
+      [value]="formatFocusTime(stats()?.focusTimeToday || 0)"
+      variant="warning"
+      [loading]="loading()"
+      (clicked)="navigateToPomodoro()">
+    </app-stats-card>
+  </section>
+  }
+
+  <!-- Activity Section -->
+  <section class="activity-section">
+    <ui-card>
+      <div class="card-header">
+        <h2>Atividade Recente</h2>
+      </div>
+      <div class="card-body">
+        <p class="placeholder-text">Em breve: visualização de atividades recentes</p>
+      </div>
+    </ui-card>
+  </section>
+</div>

@@ -1,0 +1,109 @@
+<div class="demo-container">
+  <h1>Input Component Demo</h1>
+  <p class="subtitle">Demonstração do componente Input com validação e integração com Reactive Forms</p>
+
+  <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="demo-form">
+    <section class="demo-section">
+      <h2>Input com validação de e-mail</h2>
+      <ui-input
+        type="email"
+        [label]="'E-mail'"
+        [placeholder]="'seu@email.com'"
+        [helperText]="'Digite um e-mail válido para login'"
+        [formControl]="emailControl"
+        [required]="true"
+        [error]="getEmailError()">
+      </ui-input>
+    </section>
+
+    <section class="demo-section">
+      <h2>Input tipo password com toggle</h2>
+      <ui-input
+        type="password"
+        [label]="'Senha'"
+        [placeholder]="'Senha segura'"
+        [helperText]="'Mínimo 8 caracteres'"
+        [formControl]="passwordControl"
+        [required]="true"
+        [showPasswordToggle]="true"
+        [error]="getPasswordError()">
+      </ui-input>
+    </section>
+
+    <section class="demo-section">
+      <h2>Input com validação de tamanho mínimo</h2>
+      <ui-input
+        type="text"
+        [label]="'Nome de usuário'"
+        [placeholder]="'Escolha um nome'"
+        [helperText]="'Mínimo 3 caracteres'"
+        [formControl]="usernameControl"
+        [required]="true"
+        [maxLength]="20"
+        [error]="getUsernameError()"
+        [success]="usernameControl.valid && usernameControl.touched ? 'Nome disponível' : null">
+      </ui-input>
+    </section>
+
+    <section class="demo-section">
+      <h2>Input com warning (formato de telefone)</h2>
+      <ui-input
+        type="tel"
+        [label]="'Telefone'"
+        [placeholder]="'(99) 99999-9999'"
+        [helperText]="'Formato brasileiro'"
+        [formControl]="phoneControl"
+        [warning]="getPhoneWarning()">
+      </ui-input>
+    </section>
+
+    <section class="demo-section">
+      <h2>Input desabilitado</h2>
+      <ui-input
+        type="text"
+        [label]="'Campo desabilitado'"
+        [placeholder]="'Não editável'"
+        [disabled]="true"
+        [helperText]="'Este campo está desabilitado'">
+      </ui-input>
+    </section>
+
+    <section class="demo-section">
+      <h2>Input readonly</h2>
+      <ui-input
+        type="text"
+        [label]="'Campo somente leitura'"
+        [placeholder]="'Somente visualização'"
+        [readonly]="true"
+        [helperText]="'Este campo é somente leitura'">
+      </ui-input>
+    </section>
+
+    <div class="form-actions">
+      <ui-button type="submit" [disabled]="submitted && form.invalid">
+        Enviar
+      </ui-button>
+      <ui-button type="button" variant="secondary" (click)="resetForm()">
+        Resetar
+      </ui-button>
+    </div>
+
+    @if (submitted && form.valid) {
+      <div class="success-message">
+        ✓ Formulário válido! Todos os campos estão corretos.
+      </div>
+    }
+
+    @if (submitted && form.invalid) {
+      <div class="error-message">
+        ✗ Formulário inválido. Corrija os erros acima.
+      </div>
+    }
+  </form>
+
+  <section class="demo-section">
+    <h2>Valores do Formulário</h2>
+    <pre>{{ form.value | json }}</pre>
+    <p>Estado: {{ form.valid ? 'Válido ✓' : 'Inválido ✗' }}</p>
+  </section>
+</div>

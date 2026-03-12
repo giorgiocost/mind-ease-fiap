@@ -1,0 +1,333 @@
+// apps/host-shell/src/app/header/header.component.scss
+@use '../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+:host {
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  gap: var(--spacing-md);
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:active {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 1.125rem;
+
+  &:hover .logo-text {
+    color: var(--color-primary-500);
+  }
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+}
+
+.logo-text {
+  transition: color 0.2s;
+
+  // Hide on mobile
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.notifications-wrapper {
+  position: relative;
+}
+
+.notifications {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+  // letter-spacing from spacing-scale would push the icon off-centre
+  letter-spacing: 0;
+  word-spacing: 0;
+
+  &.toast-active {
+    background: var(--color-primary-50, #eef2ff);
+    box-shadow: 0 0 0 2px var(--color-primary-300, #a5b4fc);
+    color: var(--color-primary-600, #4f46e5);
+  }
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+
+  .badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background-color: var(--color-danger-500);
+    color: white;
+    border-radius: 9px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.user-dropdown-container {
+  position: relative;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  // Vertical padding is fixed so button height never changes with spacing-scale.
+  // Horizontal padding scales with --spacing-sm (letter-spacing intent).
+  padding-block: 6px;
+  padding-inline: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  background-color: transparent;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-primary-500);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  // Prevent letter-spacing from pushing initials off-centre
+  letter-spacing: 0;
+  word-spacing: 0;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+
+  // Hide on mobile
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.dropdown-icon {
+  transition: transform 0.2s;
+  color: var(--color-text-secondary);
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  padding: var(--spacing-xs);
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  text-align: left;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: -2px;
+  }
+
+  &.danger {
+    color: var(--color-danger-500);
+
+    &:hover {
+      background-color: var(--color-danger-50);
+    }
+  }
+
+  .icon {
+    font-size: 1rem;
+  }
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-xs) 0;
+}
+
+// ─────────────────────────────────────────
+// Pomodoro Toast (below bell icon)
+// ─────────────────────────────────────────
+.pomodoro-toast {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 6px);
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-secondary, #fff);
+  border: 1px solid var(--color-primary-200, #c7d2fe);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  white-space: nowrap;
+  z-index: 1001;
+  animation: toastSlideIn 0.3s ease-out;
+
+  &.toast-end {
+    border-color: var(--color-success-200, #bbf7d0);
+    background: var(--color-success-50, #f0fdf4);
+  }
+}
+
+.toast-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Respect motion preferences
+[data-motion='reduced'],
+[data-motion='off'] {
+  .dropdown-icon {
+    transition: none;
+  }
+
+  .dropdown-menu {
+    animation: none;
+  }
+
+  .pomodoro-toast {
+    animation: none;
+  }
+}
+
+// reduced: global kills animations; also remove the transform hover on dropdown items
+[data-motion='reduced'] {
+  .dropdown-item:hover {
+    transform: none;
+  }
+}

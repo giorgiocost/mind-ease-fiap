@@ -91,21 +91,22 @@ export interface Preferences {
 **File:** [task.model.md](models/task.model.md)
 
 ```typescript
-export interface Task {
+export interface Subtask {
   id: string;
   title: string;
-  description?: string;
-  status: 'todo' | 'doing' | 'done';
-  checklist: ChecklistItem[];
-  notes?: string;
-  updatedAt: string; // ISO 8601
+  completed: boolean;
 }
 
-export interface ChecklistItem {
-  id: string;
-  label: string;
-  done: boolean;
-  suggested?: boolean; // AI-suggested item
+export interface Task {
+  id: string | number;
+  title: string;
+  description?: string;
+  status: 'TODO' | 'DOING' | 'DONE';
+  position: number;
+  userId: string;
+  subtasks?: Subtask[];
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
 }
 ```
 
@@ -167,9 +168,17 @@ export interface TaskMovedEvent {
 }
 
 export interface ChecklistStepCompletedEvent {
+  /** @deprecated use SubtaskToggledEvent */
   type: 'checklist_step_completed';
   taskId: string;
   itemId: string;
+}
+
+export interface SubtaskToggledEvent {
+  type: 'subtask_toggled';
+  taskId: string;
+  subtaskId: string;
+  completed: boolean;
 }
 ```
 

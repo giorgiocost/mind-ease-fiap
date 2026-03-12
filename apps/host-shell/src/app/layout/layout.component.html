@@ -1,0 +1,30 @@
+<div [ngClass]="getLayoutClasses()" [attr.data-mobile]="isMobile()">
+  <!-- Skip Navigation Link -->
+  @if (showShell()) {
+    <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+  }
+
+  <!-- Header Area -->
+  @if (showShell()) {
+    <header class="layout__header" role="banner">
+      <ng-content select="[header]"></ng-content>
+    </header>
+  }
+
+  <!-- Sidebar Area -->
+  @if (showShell() && sidebarVisible()) {
+    <aside class="layout__sidebar" [class.collapsed]="sidebarCollapsed()" aria-label="Navegação lateral">
+      <ng-content select="[sidebar]"></ng-content>
+    </aside>
+  }
+
+  <!-- Mobile Overlay -->
+  @if (isMobile() && mobileMenuOpen()) {
+    <div class="layout__overlay" tabindex="0" (click)="closeMobileMenu()" (keydown.enter)="closeMobileMenu()" (keydown.space)="closeMobileMenu()"></div>
+  }
+
+  <!-- Main Content Area -->
+  <main class="layout__main" id="main-content" aria-label="Conteúdo principal">
+    <router-outlet></router-outlet>
+  </main>
+</div>

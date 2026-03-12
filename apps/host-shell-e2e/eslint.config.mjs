@@ -7,6 +7,8 @@ export default [
   {
     files: ['**/*.ts', '**/*.js'],
     // Override or add rules here
-    rules: {},
+    rules: {
+      'playwright/expect-expect': ['warn', { assertFunctionNames: ['expect', 'expectRouteToRender'] }],
+    },
   },
 ];

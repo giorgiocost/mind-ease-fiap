@@ -1,0 +1,205 @@
+@use '../../../../../libs/shared/ui/src/lib/styles/tokens' as *;
+
+// Layout constants
+$header-height: 64px;
+$sidebar-width-expanded: 240px;
+$sidebar-width-collapsed: 64px;
+$mobile-breakpoint: 768px;
+
+// Skip navigation link (WCAG 2.4.1)
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: var(--spacing-sm);
+  z-index: 9999;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-primary-500);
+  color: var(--color-neutral-0);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+
+  &:focus {
+    top: var(--spacing-sm);
+  }
+}
+
+.layout {
+  // CSS Grid layout
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'sidebar main';
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: $header-height 1fr;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+
+  // Default sidebar width
+  --sidebar-width: #{$sidebar-width-expanded};
+
+  // Background
+  background-color: var(--color-bg-primary);
+
+  // Header
+  &__header {
+    grid-area: header;
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-md);
+  }
+
+  // Sidebar
+  &__sidebar {
+    grid-area: sidebar;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: var(--sidebar-width);
+    transition: width 0.3s ease;
+
+    &.collapsed {
+      width: $sidebar-width-collapsed;
+    }
+  }
+
+  // Main content
+  &__main {
+    grid-area: main;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--density-padding, var(--spacing-lg));
+    background-color: var(--color-bg-primary);
+  }
+
+  // When rendering auth page we don't need any padding or sidebar grid
+  &.auth-page {
+    display: block;
+    grid-template-areas: none;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+
+    &__main {
+      padding: 0;
+    }
+  }
+
+  // Overlay for mobile menu
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+    animation: fadeIn 0.2s ease;
+  }
+
+  // State: Sidebar collapsed (desktop)
+  &.sidebar-collapsed {
+    --sidebar-width: #{$sidebar-width-collapsed};
+
+    .layout__sidebar {
+      width: $sidebar-width-collapsed;
+    }
+  }
+
+  // State: Focus mode — sidebar collapses to icons-only (menu items reduced via sidebar component)
+  &.focus-mode {
+    --sidebar-width: #{$sidebar-width-collapsed};
+
+    .layout__sidebar {
+      width: $sidebar-width-collapsed;
+    }
+  }
+
+  // State: Mobile (< 768px)
+  &.mobile {
+    grid-template-areas:
+      'header'
+      'main';
+    grid-template-columns: 1fr;
+
+    .layout__main {
+      padding: var(--spacing-sm);
+    }
+
+    .layout__sidebar {
+      position: fixed;
+      top: $header-height;
+      left: -#{$sidebar-width-expanded};
+      bottom: 0;
+      width: $sidebar-width-expanded;
+      z-index: 95;
+      transition: left 0.3s ease;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &.mobile-menu-open {
+      .layout__sidebar {
+        left: 0;
+      }
+    }
+  }
+
+  // Respect motion preferences
+  &[data-motion='reduced'],
+  &[data-motion='off'] {
+    .layout__sidebar,
+    .layout__overlay {
+      transition: none;
+      animation: none;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Scrollbar styling
+.layout__sidebar,
+.layout__main {
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  // Webkit
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--color-text-secondary);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: $mobile-breakpoint - 1px) {
+  .layout__main {
+    padding: var(--spacing-md);
+  }
+}
