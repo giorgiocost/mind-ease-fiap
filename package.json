@@ -6,6 +6,7 @@
     "start": "nx serve host-shell",
     "start:all": "nx run-many --target=serve --projects=host-shell,mfe-dashboard,mfe-tasks,mfe-profile --parallel=4",
     "build": "nx build host-shell",
+    "build:vercel": "npx nx build mfe-dashboard --configuration=production && npx nx build mfe-tasks --configuration=production && npx nx build mfe-profile --configuration=production && MFE_DASHBOARD_URL=/remotes/mfe-dashboard MFE_TASKS_URL=/remotes/mfe-tasks MFE_PROFILE_URL=/remotes/mfe-profile npx nx build host-shell --configuration=production && mkdir -p dist/apps/host-shell/remotes/mfe-dashboard dist/apps/host-shell/remotes/mfe-tasks dist/apps/host-shell/remotes/mfe-profile && cp -R dist/apps/mfe-dashboard/. dist/apps/host-shell/remotes/mfe-dashboard/ && cp -R dist/apps/mfe-tasks/. dist/apps/host-shell/remotes/mfe-tasks/ && cp -R dist/apps/mfe-profile/. dist/apps/host-shell/remotes/mfe-profile/",
     "build:all": "nx run-many --target=build --all --parallel=4",
     "test": "nx test",
     "test:all": "nx run-many --target=test --all",

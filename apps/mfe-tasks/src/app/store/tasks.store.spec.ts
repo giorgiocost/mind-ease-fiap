@@ -55,7 +55,7 @@ describe('TasksStore', () => {
 
       const loadPromise = store.loadTasks();
 
-      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
+      const req = httpMock.expectOne(r => r.url === '/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
 
@@ -69,7 +69,7 @@ describe('TasksStore', () => {
     it('deve lidar com erros ao carregar tasks', async () => {
       const loadPromise = store.loadTasks();
 
-      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
+      const req = httpMock.expectOne(r => r.url === '/api/v1/tasks' && r.params.get('includeChecklist') === 'true');
       req.error(new ProgressEvent('Network error'));
 
       await loadPromise;
@@ -102,7 +102,7 @@ describe('TasksStore', () => {
 
       const createPromise = store.createTask(newTaskDto);
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne('/api/v1/tasks');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(newTaskDto);
       req.flush(mockCreated);
@@ -132,7 +132,7 @@ describe('TasksStore', () => {
 
       // Mock initial load
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 
@@ -142,7 +142,7 @@ describe('TasksStore', () => {
 
       const updatePromise = store.updateTask('task-1', updateDto);
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1');
       expect(req.request.method).toBe('PATCH');
       req.flush(updatedTask);
 
@@ -168,7 +168,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 
@@ -177,7 +177,7 @@ describe('TasksStore', () => {
       // Delete
       const deletePromise = store.deleteTask('task-1');
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1');
       expect(req.request.method).toBe('DELETE');
       req.flush({});
 
@@ -200,7 +200,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       loadReq.flush({
         data: [initialTask],
         meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
@@ -210,7 +210,7 @@ describe('TasksStore', () => {
       expect(store.tasks().length).toBe(1);
 
       const deletePromise = store.deleteTask('1');
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/1');
+      const req = httpMock.expectOne('/api/v1/tasks/1');
       expect(req.request.method).toBe('DELETE');
       req.flush({});
       await deletePromise;
@@ -240,7 +240,7 @@ describe('TasksStore', () => {
 
     beforeEach(async () => {
       const loadPromise = store.loadTasks();
-      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       req.flush({
         data: [taskWithSubtasks],
         meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false }
@@ -256,7 +256,7 @@ describe('TasksStore', () => {
       expect(store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.completed).toBe(true);
       expect(store.tasks()[0].checklistCompletedCount).toBe(2);
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks/sub-1');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1/subtasks/sub-1');
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual({ title: 'Sub 1 editada', completed: true });
       req.flush({});
@@ -268,7 +268,7 @@ describe('TasksStore', () => {
       const previousTitle = store.tasks()[0].subtasks?.find(s => s.id === 'sub-1')?.title;
 
       const updatePromise = store.updateSubtask('task-1', 'sub-1', { title: 'Falha' });
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks/sub-1');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1/subtasks/sub-1');
       req.error(new ProgressEvent('Network error'));
 
       await expect(updatePromise).rejects.toBeTruthy();
@@ -278,7 +278,7 @@ describe('TasksStore', () => {
     it('deve retornar subtarefa criada no addSubtask', async () => {
       const addPromise = store.addSubtask('task-1', 'Nova subtask');
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1/subtasks');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1/subtasks');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ title: 'Nova subtask' });
 
@@ -305,7 +305,7 @@ describe('TasksStore', () => {
       ];
 
       const loadPromise = store.loadTasks();
-      const req = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const req = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       req.flush({ data: mockTasks, meta: { total: 4, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
     });
@@ -372,7 +372,7 @@ describe('TasksStore', () => {
       };
 
       const loadPromise = store.loadTasks();
-      const loadReq = httpMock.expectOne(r => r.url === 'http://localhost:3333/api/v1/tasks');
+      const loadReq = httpMock.expectOne(r => r.url === '/api/v1/tasks');
       loadReq.flush({ data: [initialTask], meta: { total: 1, page: 1, limit: 50, totalPages: 1, hasNextPage: false, hasPreviousPage: false } });
       await loadPromise;
 
@@ -382,7 +382,7 @@ describe('TasksStore', () => {
       const updatedTask = { ...initialTask, status: 'DOING' as const, updatedAt: '2026-02-10T12:00:00.000Z' };
       const updatePromise = store.updateTaskStatus('task-1', 'DOING');
 
-      const req = httpMock.expectOne('http://localhost:3333/api/v1/tasks/task-1');
+      const req = httpMock.expectOne('/api/v1/tasks/task-1');
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual({ status: 'DOING' });
       req.flush(updatedTask);

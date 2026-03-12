@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "mindease",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist/apps/host-shell",
   "routes": [
     {
       "src": "/assets/(.*)",
@@ -9,6 +12,10 @@
     {
       "src": "/remoteEntry.js",
       "dest": "/remoteEntry.js"
+    },
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "https://mock-mind-ease-fiap-f99amp8mr-gegiorgio1991-8329s-projects.vercel.app/$1"
     },
     {
       "src": "/(.*\\.(js|mjs|css|ico|png|svg|woff2?))",
